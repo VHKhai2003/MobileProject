@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField({super.key, required this.controller, required this.focusNode});
+  const PasswordField({super.key, required this.controller, required this.focusNode, required this.focusNodeNext, required this.isConfirmPassword});
   final TextEditingController controller;
   final FocusNode focusNode;
-
+  final FocusNode? focusNodeNext;
+  final bool isConfirmPassword;
   @override
   _PasswordFieldState createState() => _PasswordFieldState();
 }
@@ -17,16 +18,17 @@ class _PasswordFieldState extends State<PasswordField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Password', style: TextStyle(fontSize: 15)),
+        Text(widget.isConfirmPassword ? 'Confirm password' : 'Password', style: const TextStyle(fontSize: 15)),
         const SizedBox(
           height: 2,
         ),
         TextField(
           focusNode: widget.focusNode,
           controller: widget.controller,
+          cursorColor: Colors.indigoAccent,
           obscureText: !_isPasswordVisible,
           decoration: InputDecoration(
-            hintText: 'Enter your password',
+            hintText: widget.isConfirmPassword ? 'Retype your password' : 'Enter your password',
             hintStyle: const TextStyle(color: Colors.grey),
             filled: true,
             fillColor: const Color(0xFFEBEFFF),
@@ -52,7 +54,8 @@ class _PasswordFieldState extends State<PasswordField> {
             ),
           ),
           onSubmitted: (value) {
-            FocusScope.of(context).unfocus();
+            widget.focusNodeNext == null ? FocusScope.of(context).unfocus() :
+            FocusScope.of(context).requestFocus(widget.focusNodeNext);
           },
         ),
       ],

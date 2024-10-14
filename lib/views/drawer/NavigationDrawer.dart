@@ -79,7 +79,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.accessibility_new),
+            leading: const Icon(Icons.explore),
             title: const Text('Ai Action', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
               // _navigateTo(const AiAction());
@@ -91,13 +91,13 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               fontWeight: FontWeight.bold
             ),),
             onTap: () {
-              _navigateTo(const ProfilePage());
+              _navigateTo(const ProfilePage(isAuthenticated: true));
             },
           ),
           const Divider(height: 1, color: Colors.grey,),
 
           ListTile(
-            leading: const Icon(Icons.login),
+            leading: const Icon(Icons.account_box_outlined),
             title: const Text('Sign in / Sign up', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
               Navigator.push(

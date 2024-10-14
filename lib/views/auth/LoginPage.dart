@@ -25,10 +25,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
   final FocusNode usernameFocusNode = FocusNode();
   final FocusNode passwordFocusNode = FocusNode();
   final FocusNode emailFocusNode = FocusNode();
-  
+  final FocusNode confirmPasswordFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +51,11 @@ class _LoginPageState extends State<LoginPage> {
         _scrollToFocusedField(emailFocusNode);
       }
     });
+    confirmPasswordFocusNode.addListener(() {
+      if (confirmPasswordFocusNode.hasFocus) {
+        _scrollToFocusedField(confirmPasswordFocusNode);
+      }
+    });
   }
 
   void _scrollToFocusedField(FocusNode focusNode) {
@@ -60,7 +68,6 @@ class _LoginPageState extends State<LoginPage> {
           var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
           final fieldBottomPosition = offset.dy + renderBox.size.height;
           final screenHeight = MediaQuery.of(context).size.height;
-          print("$fieldBottomPosition, $screenHeight - $keyboardHeight");
           if (fieldBottomPosition > screenHeight - keyboardHeight - 10) {
             Scrollable.ensureVisible(
               context,
@@ -81,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
     usernameController.clear();
     passwordController.clear();
     emailController.clear();
+    confirmPasswordController.clear();
   }
 
   @override
@@ -88,9 +96,11 @@ class _LoginPageState extends State<LoginPage> {
     usernameController.dispose();
     passwordController.dispose();
     emailController.dispose();
+    confirmPasswordController.dispose();
     usernameFocusNode.dispose();
     passwordFocusNode.dispose();
     emailFocusNode.dispose();
+    confirmPasswordFocusNode.dispose();
     super.dispose();
   }
 
@@ -151,16 +161,35 @@ class _LoginPageState extends State<LoginPage> {
                               focusNodeNext: passwordFocusNode
                           ),
                           const SizedBox(height: 15),
+                          PasswordField(
+                            controller: passwordController,
+                            focusNode: passwordFocusNode,
+                            focusNodeNext: confirmPasswordFocusNode,
+                            isConfirmPassword: false,
+                          ),
+                          const SizedBox(height: 15),
                         ],
-                        PasswordField(controller: passwordController, focusNode: passwordFocusNode),
-                        const SizedBox(height: 15),
                         if (currentState == "Login") ...[
+                          PasswordField(
+                            controller: passwordController,
+                            focusNode: passwordFocusNode,
+                            focusNodeNext: null,
+                            isConfirmPassword: false,
+                          ),
+                          const SizedBox(height: 15),
                           ForgotPasswordButton(onMessageChange: _updateState,),
                           const SizedBox(height: 15),
                           const LoginButton(),
                           const SizedBox(height: 15),
                           RichTextRegister(updateState: _updateState)
                         ] else if (currentState == "Register") ...[
+                          PasswordField(
+                            controller: confirmPasswordController,
+                            focusNode: confirmPasswordFocusNode,
+                            focusNodeNext: null,
+                            isConfirmPassword: true,
+                          ),
+                          const SizedBox(height: 15),
                           const RegisterButton(),
                           const SizedBox(height: 15),
                           const PrivacyPolicy(),
