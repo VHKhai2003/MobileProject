@@ -34,7 +34,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const MyHomePage()
+      home: const MyHomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -49,10 +50,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: CustomAppBar(),
       drawer: navigation_drawer.NavigationDrawer(),
-      body: const Center(
+      body: Center(
         child: Text('Home Screen'),
       ),
     );

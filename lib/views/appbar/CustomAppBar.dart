@@ -4,9 +4,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize; // kick thuoc cua appbar
 
-   CustomAppBar({Key? key})
-      : preferredSize = const Size.fromHeight(kToolbarHeight), // thiet lap chieu cao mac dinh
-        super(key: key);
+   const CustomAppBar({super.key})
+      : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:code/views/auth/LoginPage.dart';
 import 'package:flutter/material.dart';
 
 class NavigationDrawer extends StatefulWidget {
@@ -14,10 +15,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-
             Container(
               padding: const EdgeInsets.fromLTRB(16, 12, 0, 12),
-              child: Row(
+              child:
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Row(
@@ -38,7 +39,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 ],
               ),
             ),
-
           const Divider(height: 1, color: Colors.grey,),
           ListTile(
             leading: const Icon(Icons.chat),
@@ -75,7 +75,22 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             leading: const Icon(Icons.login),
             title: const Text('Sign in / Sign up', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
-
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(state: "Login"),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.ease;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    return SlideTransition(
+                        position: animation.drive(tween),
+                    child: child,
+                    );
+                  },
+                ),
+              );
             },
           ),
         ],
