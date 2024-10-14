@@ -28,11 +28,49 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode usernameFocusNode = FocusNode();
   final FocusNode passwordFocusNode = FocusNode();
   final FocusNode emailFocusNode = FocusNode();
-
+  
   @override
   void initState() {
     super.initState();
     currentState = widget.state;
+    usernameFocusNode.addListener(() {
+      if (usernameFocusNode.hasFocus) {
+        _scrollToFocusedField(usernameFocusNode);
+      }
+    });
+    passwordFocusNode.addListener(() {
+      if (passwordFocusNode.hasFocus) {
+        _scrollToFocusedField(passwordFocusNode);
+      }
+    });
+    emailFocusNode.addListener(() {
+      if (emailFocusNode.hasFocus) {
+        _scrollToFocusedField(emailFocusNode);
+      }
+    });
+  }
+
+  void _scrollToFocusedField(FocusNode focusNode) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = focusNode.context;
+      if (context != null) {
+        final RenderBox renderBox = context.findRenderObject() as RenderBox;
+        final offset = renderBox.localToGlobal(Offset.zero);
+        Future.delayed(const Duration(milliseconds: 350), () {
+          var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+          final fieldBottomPosition = offset.dy + renderBox.size.height;
+          final screenHeight = MediaQuery.of(context).size.height;
+          print("$fieldBottomPosition, $screenHeight - $keyboardHeight");
+          if (fieldBottomPosition > screenHeight - keyboardHeight - 10) {
+            Scrollable.ensureVisible(
+              context,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      }
+    });
   }
 
   void _updateState(String newState) {
@@ -70,40 +108,21 @@ class _LoginPageState extends State<LoginPage> {
               icon: const Icon(Icons.close, size: 25, color: Colors.grey,)
           ),
         ),
-        body: Row(
-            children: [
-              Expanded(flex: 1, child: Container()),
-              Expanded(
-                flex: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const JarvisLogoAndLabel(),
-                    const SizedBox(height: 15),
-                    const SignInWithGoogleButton(),
-                    const HorizontalLine(),
-                    if (currentState == "Forgot password") ...[
-                      Field(
-                          fieldName: 'Email',
-                          controller: emailController,
-                          focusNode: emailFocusNode,
-                          focusNodeNext: passwordFocusNode
-                      ),
+        body: ListView(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 30),
+          children: [Row(
+              children: [
+                Expanded(flex: 1, child: Container()),
+                Expanded(
+                  flex: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const JarvisLogoAndLabel(),
                       const SizedBox(height: 15),
-                      const ResetPasswordButton(),
-                      const SizedBox(height: 15),
-                      RichTextLogin(updateState: _updateState),
-                    ] else ...[
-                      SwitchLoginButton(isLoginMode: currentState == 'Login' ? true : false, onMessageChange: _updateState),
-                      const SizedBox(height: 15),
-                      Field(
-                          fieldName: 'Username',
-                          controller: usernameController,
-                          focusNode: usernameFocusNode,
-                          focusNodeNext: currentState == "Register" ? emailFocusNode : passwordFocusNode
-                      ),
-                      const SizedBox(height: 15),
-                      if (currentState == "Register") ...[
+                      const SignInWithGoogleButton(),
+                      const HorizontalLine(),
+                      if (currentState == "Forgot password") ...[
                         Field(
                             fieldName: 'Email',
                             controller: emailController,
@@ -111,27 +130,50 @@ class _LoginPageState extends State<LoginPage> {
                             focusNodeNext: passwordFocusNode
                         ),
                         const SizedBox(height: 15),
-                      ],
-                      PasswordField(controller: passwordController, focusNode: passwordFocusNode),
-                      const SizedBox(height: 15),
-                      if (currentState == "Login") ...[
-                        ForgotPasswordButton(onMessageChange: _updateState,),
+                        const ResetPasswordButton(),
                         const SizedBox(height: 15),
-                        const LoginButton(),
+                        RichTextLogin(updateState: _updateState),
+                      ] else ...[
+                        SwitchLoginButton(isLoginMode: currentState == 'Login' ? true : false, onMessageChange: _updateState),
                         const SizedBox(height: 15),
-                        RichTextRegister(updateState: _updateState)
-                      ] else if (currentState == "Register") ...[
-                        const RegisterButton(),
+                        Field(
+                            fieldName: 'Username',
+                            controller: usernameController,
+                            focusNode: usernameFocusNode,
+                            focusNodeNext: currentState == "Register" ? emailFocusNode : passwordFocusNode
+                        ),
                         const SizedBox(height: 15),
-                        const PrivacyPolicy(),
+                        if (currentState == "Register") ...[
+                          Field(
+                              fieldName: 'Email',
+                              controller: emailController,
+                              focusNode: emailFocusNode,
+                              focusNodeNext: passwordFocusNode
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                        PasswordField(controller: passwordController, focusNode: passwordFocusNode),
+                        const SizedBox(height: 15),
+                        if (currentState == "Login") ...[
+                          ForgotPasswordButton(onMessageChange: _updateState,),
+                          const SizedBox(height: 15),
+                          const LoginButton(),
+                          const SizedBox(height: 15),
+                          RichTextRegister(updateState: _updateState)
+                        ] else if (currentState == "Register") ...[
+                          const RegisterButton(),
+                          const SizedBox(height: 15),
+                          const PrivacyPolicy(),
+                        ]
                       ]
-                    ]
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(flex: 1, child: Container()),
-            ],
-          ),
+                Expanded(flex: 1, child: Container()),
+              ],
+            ),
+          ]
+        ),
         resizeToAvoidBottomInset: false,
       ),
     );

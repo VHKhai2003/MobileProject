@@ -1,5 +1,6 @@
 import 'package:code/views/auth/LoginPage.dart';
 import 'package:flutter/material.dart';
+import 'package:code/views/profile/ProfilePage.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({super.key});
@@ -9,6 +10,28 @@ class NavigationDrawer extends StatefulWidget {
 }
 
 class _NavigationDrawerState extends State<NavigationDrawer> {
+  var transitionsBuilder = (context, animation, secondaryAnimation, child) {
+    const begin = Offset(1.0, 0.0); // Bắt đầu từ bên phải
+    const end = Offset.zero; // Kết thúc tại vị trí gốc
+    const curve = Curves.easeInOut; // Hiệu ứng chuyển cảnh
+    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+    var offsetAnimation = animation.drive(tween);
+    return SlideTransition(
+      position: offsetAnimation,
+      child: child,
+    );
+  };
+
+  void _navigateTo(Widget page) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+        transitionsBuilder: transitionsBuilder
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -21,12 +44,20 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.android, color: Colors.blue,),
-                      SizedBox(width: 10),
-                      Text(
+                      // Icon(Icons.android, color: Colors.blue,),
+                      ClipOval(
+                        child: Image.asset(
+                          'assets/icons/jarvis-icon.png',
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
                         'Jarvis15',
                         style: TextStyle(
                           fontSize: 24,
@@ -44,18 +75,14 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             leading: const Icon(Icons.chat),
             title: const Text('Chat', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
-            //   Navigator.pushReplacement(
-            //     context,
-            //     MaterialPageRoute(builder: (context) => ChatPage()),);
+              // _navigateTo(const ChatPage());
             },
           ),
           ListTile(
             leading: const Icon(Icons.accessibility_new),
             title: const Text('Ai Action', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => AiAction()),);
+              // _navigateTo(const AiAction());
             }
           ),
           ListTile(
@@ -64,9 +91,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               fontWeight: FontWeight.bold
             ),),
             onTap: () {
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ProfilePage()),);
+              _navigateTo(const ProfilePage());
             },
           ),
           const Divider(height: 1, color: Colors.grey,),
@@ -79,16 +104,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(state: "Login"),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset.zero;
-                    const curve = Curves.ease;
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                    return SlideTransition(
-                        position: animation.drive(tween),
-                    child: child,
-                    );
-                  },
+                  transitionsBuilder: transitionsBuilder
                 ),
               );
             },

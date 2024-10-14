@@ -1,6 +1,7 @@
 import 'package:code/views/appbar/CustomAppBar.dart';
 import 'package:code/views/drawer/NavigationDrawer.dart' as navigation_drawer;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 void main() {
@@ -33,6 +34,14 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent, // Đặt màu nền trong suốt
+          elevation: 0, // Xóa bóng đổ
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Color.fromARGB(255, 25, 118, 210), // Màu nền status bar
+            statusBarIconBrightness: Brightness.dark, // Màu icon status bar
+          ),
+        ),
       ),
       home: const MyHomePage(),
       debugShowCheckedModeBanner: false,
@@ -52,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: CustomAppBar(),
-      drawer: navigation_drawer.NavigationDrawer(),
+      drawer: SafeArea(child: navigation_drawer.NavigationDrawer()),
       body: Center(
         child: Text('Home Screen'),
       ),
