@@ -1,4 +1,5 @@
 import 'package:code/views/appbar/CustomAppBar.dart';
+import 'package:code/views/chat/ChatPage.dart';
 import 'package:code/views/drawer/NavigationDrawer.dart' as navigation_drawer;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MyHomePage(),
+      home: const ChatPage(),
       debugShowCheckedModeBanner: false,
     );
   }

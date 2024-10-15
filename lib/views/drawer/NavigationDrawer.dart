@@ -2,6 +2,8 @@ import 'package:code/views/auth/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:code/views/profile/ProfilePage.dart';
 
+import '../chat/ChatPage.dart';
+
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({super.key});
 
@@ -75,7 +77,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             leading: const Icon(Icons.chat),
             title: const Text('Chat', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
-              // _navigateTo(const ChatPage());
+              _navigateTo(const ChatPage());
             },
           ),
           ListTile(
