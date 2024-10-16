@@ -1,3 +1,4 @@
+import 'package:code/views/prompt/dialog/AddDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:code/views/prompt/ListPrompts.dart';
 
@@ -53,7 +54,7 @@ class _PromptbottomsheetState extends State<Promptbottomsheet> {
                   Row(
                     children: [
                       IconButton(onPressed: () {
-                        // showDialog(context: context, builder: (context) => AddPromptDialog());
+                        showDialog(context: context, builder: (context) => AddDialog());
                       }, icon: Icon(Icons.add_box_rounded, color: Colors.blue.shade700,)),
                       IconButton(onPressed: () {Navigator.pop(context);}, icon: Icon(Icons.close))
                     ],

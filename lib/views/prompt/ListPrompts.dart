@@ -1,3 +1,5 @@
+import 'package:code/views/prompt/dialog/DeleteDialog.dart';
+import 'package:code/views/prompt/dialog/EditDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:code/models/Prompt.dart';
 
@@ -55,12 +57,16 @@ class _ListPromptsState extends State<ListPrompts> {
                   },
                 ),
                 IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.info_outline_rounded, color: Colors.blueGrey,)
+                    onPressed: () {
+                      showDialog(context: context, builder: (context) => EditDialog(prompt: prompt));
+                    },
+                    icon: const Icon(Icons.info_outline_rounded, color: Colors.blueGrey,)
                 ),
                 IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.delete_outline, color: Colors.blueGrey,)
+                    onPressed: () {
+                      showDialog(context: context, builder: (context) => const DeleteDialog());
+                    },
+                    icon: const Icon(Icons.delete_outline, color: Colors.blueGrey,)
                 ),
                 IconButton(
                   onPressed: () {},
