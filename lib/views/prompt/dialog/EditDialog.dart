@@ -15,16 +15,15 @@ class EditDialog extends StatefulWidget {
 }
 
 class _EditDialogState extends State<EditDialog> {
-  late bool isPrivate;
 
+  bool isPrivate = true;
   void _updateIsPrivate(bool? value) {
     setState(() {
       isPrivate = value ?? true;
     });
   }
 
-  late String selectedCategory;
-
+  String selectedCategory = 'Other';
   void _handleChangeCategory(String? category) {
     setState(() {
       selectedCategory = category ?? 'Other';
@@ -38,13 +37,9 @@ class _EditDialogState extends State<EditDialog> {
   @override
   void initState() {
     super.initState();
-    isPrivate = widget.prompt.isPrivate;
-    selectedCategory = widget.prompt.category;
     promptNameController = TextEditingController(text: widget.prompt.name);
-    promptDescriptionController =
-        TextEditingController(text: widget.prompt.description);
-    promptContentController =
-        TextEditingController(text: widget.prompt.content);
+    promptDescriptionController = TextEditingController();
+    promptContentController = TextEditingController(text: widget.prompt.content);
   }
 
   @override
@@ -74,8 +69,7 @@ class _EditDialogState extends State<EditDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Radio buttons for Private/Public Prompt
-            PrivatePublicOption(
-              isPrivate: isPrivate, onChanged: _updateIsPrivate,),
+            PrivatePublicOption(isPrivate: isPrivate, onChanged: _updateIsPrivate,),
         
         
             Container(
@@ -88,11 +82,10 @@ class _EditDialogState extends State<EditDialog> {
               ),
             ),
             // TextField for Name
-            CustomTextField(
-                controller: promptNameController, hinText: 'Name of the prompt'),
+            CustomTextField(controller: promptNameController, hinText: 'Name of the prompt'),
         
         
-            Container(
+            !isPrivate ? Container(
               margin: const EdgeInsets.fromLTRB(0, 12, 0, 6),
               child: const Row(
                 children: [
@@ -100,26 +93,25 @@ class _EditDialogState extends State<EditDialog> {
                   Text('*', style: TextStyle(color: Colors.red),)
                 ],
               ),
-            ),
+            ) : const SizedBox.shrink(),
             // dropdown menu for category
-            CategoryMenu(selectedCategory: selectedCategory,
-                onChanged: _handleChangeCategory),
+            !isPrivate ? CategoryMenu(selectedCategory: selectedCategory, onChanged: _handleChangeCategory) : const SizedBox.shrink(),
         
         
-            Container(
+            !isPrivate ? Container(
               margin: const EdgeInsets.fromLTRB(0, 12, 0, 6),
               child: const Row(
                 children: [
                   Text('Description'),
                 ],
               ),
-            ),
+            ) : const SizedBox.shrink(),
             // TextField for description
-            CustomTextField(
+            !isPrivate ? CustomTextField(
               controller: promptDescriptionController,
               hinText: 'Describe your prompts',
               maxLines: 2,
-            ),
+            ) : const SizedBox.shrink(),
         
         
             Container(

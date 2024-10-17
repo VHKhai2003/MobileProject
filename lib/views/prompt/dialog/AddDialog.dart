@@ -77,7 +77,7 @@ class _AddDialogState extends State<AddDialog> {
             CustomTextField(controller: promptNameController, hinText: 'Name of the prompt'),
         
         
-            Container(
+            !isPrivate ? Container(
               margin: const EdgeInsets.fromLTRB(0, 12, 0, 6),
               child: const Row(
                 children: [
@@ -85,25 +85,25 @@ class _AddDialogState extends State<AddDialog> {
                   Text('*', style: TextStyle(color: Colors.red),)
                 ],
               ),
-            ),
+            ) : const SizedBox.shrink(),
             // dropdown menu for category
-            CategoryMenu(selectedCategory: selectedCategory, onChanged: _handleChangeCategory),
+            !isPrivate ? CategoryMenu(selectedCategory: selectedCategory, onChanged: _handleChangeCategory) : const SizedBox.shrink(),
         
         
-            Container(
+            !isPrivate ? Container(
               margin: const EdgeInsets.fromLTRB(0, 12, 0, 6),
               child: const Row(
                 children: [
                   Text('Description'),
                 ],
               ),
-            ),
+            ) : const SizedBox.shrink(),
             // TextField for description
-            CustomTextField(
+            !isPrivate ? CustomTextField(
               controller: promptDescriptionController,
               hinText: 'Describe your prompts',
               maxLines: 2,
-            ),
+            ) : const SizedBox.shrink(),
         
         
             Container(

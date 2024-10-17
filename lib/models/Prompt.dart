@@ -1,9 +1,17 @@
 class Prompt {
   String name;
   String content;
-  bool isPrivate;
   bool isFavorite;
+
+  Prompt(this.name, this.content, this.isFavorite);
+}
+
+class PrivatePrompt extends Prompt {
+  PrivatePrompt(super.name, super.content, super.isFavorite, );
+}
+
+class PublicPrompt extends Prompt {
   String description;
   String category;
-  Prompt(this.name, this.content, this.isPrivate, this.category, {this.description = '', this.isFavorite = false});
+  PublicPrompt(super.name, super.content, this.category, super.isFavorite, {this.description = ''});
 }
