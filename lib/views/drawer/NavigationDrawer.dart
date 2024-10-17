@@ -1,8 +1,8 @@
 import 'package:code/views/auth/LoginPage.dart';
-import 'package:flutter/material.dart';
 import 'package:code/views/profile/ProfilePage.dart';
-
-import '../chat/ChatPage.dart';
+import 'package:code/views/ai-action/AIAction.dart';
+import 'package:code/views/chat/ChatPage.dart';
+import 'package:flutter/material.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({super.key});
@@ -84,7 +84,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             leading: const Icon(Icons.explore),
             title: const Text('Ai Action', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
-              // _navigateTo(const AiAction());
+              _navigateTo(const AIAction());
             }
           ),
           ListTile(

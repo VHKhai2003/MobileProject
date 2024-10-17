@@ -62,7 +62,13 @@ flutter:
   assets:
     - assets/icons/jarvis-icon.png
     - assets/icons/google-icon.png
-
+    - assets/icons/confused.png
+    - assets/icons/dislike.png
+    - assets/icons/fire.png
+    - assets/icons/followup.png
+    - assets/icons/like.png
+    - assets/icons/sorry.png
+    - assets/icons/thanks.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

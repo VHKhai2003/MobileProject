@@ -12,25 +12,35 @@ class TokenUsage extends StatelessWidget {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10)
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(10),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Token Usage", style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            )),
-            SizedBox(height: 10),
             Row(
+              children: [
+                const Text("Token Usage", style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                )),
+                const SizedBox(width: 10),
+                Image.asset(
+                  'assets/icons/fire.png',
+                  width: 25,
+                  height: 25,
+                )
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Today", style: TextStyle(fontWeight: FontWeight.bold)),
                 Text("Total", style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
-            TokenUsageWidget(totalTokens: 30, usedTokens: 10),
-            Row(
+            const TokenUsageWidget(totalTokens: 30, usedTokens: 10),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("10"),

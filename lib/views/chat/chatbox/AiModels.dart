@@ -35,7 +35,12 @@ class _AiModelsState extends State<AiModels> {
         Row(
           children: [
             Text(agent.token.toString()),
-            Icon(Icons.local_fire_department, color: Colors.blue.shade600,)
+            const SizedBox(width: 2),
+            Image.asset(
+              'assets/icons/fire.png',
+              width: 20,
+              height: 20,
+            )
           ],
         )
       ],
@@ -85,7 +90,12 @@ class _AiModelsState extends State<AiModels> {
                       Row(
                         children: [
                           Text(agent.token.toString()),
-                          Icon(Icons.local_fire_department_rounded, color: Colors.blue.shade600,)
+                          const SizedBox(width: 2),
+                          Image.asset(
+                            'assets/icons/fire.png',
+                            width: 20,
+                            height: 20,
+                          )
                         ],
                       )
                     ]

@@ -14,9 +14,9 @@ class ChatPage extends StatelessWidget {
           Container(
               child: Row(
                 children: [
-                  Text('Upgrade', style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text('Upgrade', style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold, fontSize: 17)),
                   const SizedBox(width: 4,),
-                  Icon(Icons.rocket_launch, color: Colors.blue.shade700, size: 16,)
+                  Icon(Icons.rocket_launch, color: Colors.blue.shade700, size: 20,)
                 ],
               )
           ),
@@ -26,8 +26,13 @@ class ChatPage extends StatelessWidget {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey.shade200),
             child: Row(
               children: [
-                const Text('50', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
-                Icon(Icons.local_fire_department_rounded, color: Colors.blue.shade700, size: 13,)
+                const Text('50', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                const SizedBox(width: 5),
+                Image.asset(
+                  'assets/icons/fire.png',
+                  width: 20,
+                  height: 20,
+                )
               ],
             ),
           )
