@@ -1,6 +1,4 @@
-import 'package:code/views/appbar/CustomAppBar.dart';
 import 'package:code/views/chat/ChatPage.dart';
-import 'package:code/views/drawer/NavigationDrawer.dart' as navigation_drawer;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -46,26 +44,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const ChatPage(),
       debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: CustomAppBar(),
-      drawer: SafeArea(child: navigation_drawer.NavigationDrawer()),
-      body: Center(
-        child: Text('Home Screen'),
-      ),
     );
   }
 }
