@@ -62,6 +62,11 @@ flutter:
   assets:
     - assets/icons/jarvis-icon.png
     - assets/icons/google-icon.png
+    - assets/icons/gpt-4o-mini.png
+    - assets/icons/gpt-4o.png
+    - assets/icons/gemini-15-flash.webp
+    - assets/icons/gemini-15-pro.png
+    - assets/icons/claude-3-haiku.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:code/models/AiAgent.dart';
 
 List<AiAgent> agents = [
-  AiAgent("GPT-4o mini", null, 1),
-  AiAgent("GPT-4o", null, 5),
-  AiAgent("Gemini 1.5 Flash", null, 1),
-  AiAgent("Gemini 1.5 Pro", null, 2),
-  AiAgent("Clause 3 Haiku", null, 3),
+  AiAgent("GPT-4o mini", 'assets/icons/gpt-4o-mini.png', 1),
+  AiAgent("GPT-4o", 'assets/icons/gpt-4o.png', 5),
+  AiAgent("Gemini 1.5 Flash", 'assets/icons/gemini-15-flash.webp', 1),
+  AiAgent("Gemini 1.5 Pro", 'assets/icons/gemini-15-pro.png', 2),
+  AiAgent("Clause 3 Haiku", 'assets/icons/claude-3-haiku.jpg', 3),
 ];
 
 
@@ -27,9 +27,16 @@ class _AiModelsState extends State<AiModels> {
       children: [
         Row(
           children: [
-            const Icon(Icons.android, color: Colors.green),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image.asset(
+                  agent.image,
+                width: 20, height: 20,
+                fit: BoxFit.contain,
+              ),
+            ),
             const SizedBox(width: 4),
-            Text(agent.name.toString()),
+            Text(agent.name),
           ],
         ),
         Row(
@@ -68,7 +75,7 @@ class _AiModelsState extends State<AiModels> {
           borderRadius: BorderRadius.circular(16),
           selectedItemBuilder: (BuildContext context) {
             return agents.map((agent) {
-              return Container(
+              return SizedBox(
                 width: 200,
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,9 +84,16 @@ class _AiModelsState extends State<AiModels> {
                       Row(
                         children: [
                           const SizedBox(width: 8,),
-                          const Icon(Icons.android, color: Colors.green),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.asset(
+                              agent.image,
+                              width: 20, height: 20,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                           const SizedBox(width: 4),
-                          Text(agent.name.toString()),
+                          Text(agent.name),
                         ],
                       ),
                       Row(

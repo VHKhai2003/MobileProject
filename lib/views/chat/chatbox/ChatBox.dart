@@ -1,9 +1,13 @@
+import 'package:code/views/chat/history/HistoryBottomSheet.dart';
 import 'package:flutter/material.dart';
 import 'package:code/views/chat/chatbox/AiModels.dart';
 import 'package:code/views/prompt/PromptBottomSheet.dart';
 
 class Chatbox extends StatelessWidget {
-  const Chatbox({super.key});
+  Chatbox({super.key, required this.changeConversation, required this.openNewChat});
+
+  VoidCallback changeConversation;
+  VoidCallback openNewChat;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +22,19 @@ class Chatbox extends StatelessWidget {
               Container(
                 child: Row(
                   children: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.history, color: Colors.blueGrey,)),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
+                    IconButton(
+                        onPressed: () async {
+                          // get conversation info here and display this conversation
+                          String result = await showModalBottomSheet(context: context, builder: (context) => HistoryBottomSheet(),);
+                          if(result == 'open') {
+                            changeConversation();
+                          }
+                        },
+                        icon: const Icon(Icons.history, color: Colors.blueGrey,)
+                    ),
+                    IconButton(onPressed: () {
+                      openNewChat();
+                    }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
                   ],
                 ),
               )
