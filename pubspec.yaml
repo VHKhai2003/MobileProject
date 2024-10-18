@@ -67,7 +67,13 @@ flutter:
     - assets/icons/gemini-15-flash.webp
     - assets/icons/gemini-15-pro.png
     - assets/icons/claude-3-haiku.jpg
-
+    - assets/icons/confused.png
+    - assets/icons/dislike.png
+    - assets/icons/fire.png
+    - assets/icons/followup.png
+    - assets/icons/like.png
+    - assets/icons/sorry.png
+    - assets/icons/thanks.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -19,24 +19,22 @@ class Chatbox extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const AiModels(),
-              Container(
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () async {
-                          // get conversation info here and display this conversation
-                          String result = await showModalBottomSheet(context: context, builder: (context) => HistoryBottomSheet(),);
-                          if(result == 'open') {
-                            changeConversation();
-                          }
-                        },
-                        icon: const Icon(Icons.history, color: Colors.blueGrey,)
-                    ),
-                    IconButton(onPressed: () {
-                      openNewChat();
-                    }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
-                  ],
-                ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () async {
+                        // get conversation info here and display this conversation
+                        String result = await showModalBottomSheet(context: context, builder: (context) => HistoryBottomSheet(),);
+                        if(result == 'open') {
+                          changeConversation();
+                        }
+                      },
+                      icon: const Icon(Icons.history, color: Colors.blueGrey,)
+                  ),
+                  IconButton(onPressed: () {
+                    openNewChat();
+                  }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
+                ],
               )
             ],
           ),
@@ -51,7 +49,7 @@ class Chatbox extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              const TextField(
                 decoration: InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
                   hintStyle: TextStyle(
@@ -59,7 +57,7 @@ class Chatbox extends StatelessWidget {
                     color: Colors.blueGrey
                   ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 ),
               ),
               Container(
@@ -121,9 +119,9 @@ class Chatbox extends StatelessWidget {
                           barrierColor: Colors.black.withOpacity(0.2)
                         );
                       },
-                      icon: Icon(Icons.add_circle_outline, color: Colors.blueGrey),
+                      icon: const Icon(Icons.add_circle_outline, color: Colors.blueGrey),
                     ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.send, color: Colors.blueGrey),)
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.send, color: Colors.blueGrey),)
                   ],
                 ),
               )
