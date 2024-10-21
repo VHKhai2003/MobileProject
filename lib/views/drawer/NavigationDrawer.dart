@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:code/views/auth/LoginPage.dart';
 import 'package:code/views/profile/ProfilePage.dart';
 import 'package:code/views/ai-action/AIAction.dart';
 import 'package:code/views/chat/ChatPage.dart';
-import 'package:flutter/material.dart';
+import 'package:code/views/bot/MainBot.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({super.key});
@@ -25,11 +26,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   };
 
   void _navigateTo(Widget page) {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionsBuilder: transitionsBuilder
+        transitionsBuilder: transitionsBuilder,
       ),
     );
   }
@@ -40,75 +41,89 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 12, 0, 12),
-              child:
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Icon(Icons.android, color: Colors.blue,),
-                      ClipOval(
-                        child: Image.asset(
-                          'assets/icons/jarvis-icon.png',
-                          width: 30,
-                          height: 30,
-                          fit: BoxFit.cover,
-                        ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 0, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipOval(
+                      child: Image.asset(
+                        'assets/icons/jarvis-icon.png',
+                        width: 30,
+                        height: 30,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'Jarvis15',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Jarvis15',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                  IconButton(onPressed: () { Navigator.of(context).pop();}, icon: const Icon(Icons.close, size: 16,))
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.close, size: 16),
+                )
+              ],
             ),
-          const Divider(height: 1, color: Colors.grey,),
+          ),
+          const Divider(height: 1, color: Colors.grey),
           ListTile(
             leading: const Icon(Icons.chat),
-            title: const Text('Chat', style: TextStyle(fontWeight: FontWeight.bold),),
+            title: const Text('Chat',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             onTap: () {
               _navigateTo(const ChatPage());
             },
           ),
           ListTile(
             leading: const Icon(Icons.explore),
-            title: const Text('Ai Action', style: TextStyle(fontWeight: FontWeight.bold),),
+            title: const Text('Ai Action',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             onTap: () {
               _navigateTo(const AIAction());
-            }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.smart_toy),
+            title: const Text('Bot',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            onTap: () {
+              _navigateTo(Mainbot());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.smart_toy),
+            title: const Text('Knownledge',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            onTap: () {
+              _navigateTo(Mainbot());
+            },
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Profile', style: TextStyle(
-              fontWeight: FontWeight.bold
-            ),),
+            title: const Text('Profile',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             onTap: () {
               _navigateTo(const ProfilePage(isAuthenticated: true));
             },
           ),
-          const Divider(height: 1, color: Colors.grey,),
-
+          const Divider(height: 1, color: Colors.grey),
           ListTile(
             leading: const Icon(Icons.account_box_outlined),
-            title: const Text('Sign in / Sign up', style: TextStyle(fontWeight: FontWeight.bold),),
+            title: const Text('Sign in / Sign up',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             onTap: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(state: "Login"),
-                  transitionsBuilder: transitionsBuilder
-                ),
-              );
+              _navigateTo(const LoginPage(state: "Login"));
             },
           ),
         ],
