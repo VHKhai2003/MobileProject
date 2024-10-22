@@ -1,8 +1,9 @@
-// screens/bot_dashboard.dart
 import 'package:flutter/material.dart';
 import '../widgets/BotCard.dart';
 
 class BotDashboard extends StatelessWidget {
+  const BotDashboard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,12 +40,12 @@ class BotDashboard extends StatelessWidget {
         child: ListView(
           children: [
             BotCard(
-              botName: 'Bot1',
+              name: 'Bot1',
               description: 'This is a first bot',
               date: '6/10/2024',
             ),
             BotCard(
-              botName: 'Bot2',
+              name: 'Bot2',
               description: '',
               date: '6/10/2024',
             ),
@@ -55,8 +56,8 @@ class BotDashboard extends StatelessWidget {
         onPressed: () {
           // Hành động tạo bot mới
         },
-        child: const Icon(Icons.add),
         tooltip: 'Create bot',
+        child: const Icon(Icons.add),
       ),
     );
   }

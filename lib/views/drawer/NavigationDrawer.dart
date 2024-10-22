@@ -1,4 +1,5 @@
 import 'package:code/views/auth/LoginPage.dart';
+import 'package:code/views/bot/MainBot.dart';
 import 'package:code/views/profile/ProfilePage.dart';
 import 'package:code/views/ai-action/AIActionPage.dart';
 import 'package:code/views/chat/ChatPage.dart';
@@ -78,6 +79,13 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('Chat', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
               _navigateTo(const ChatPage());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.smart_toy_outlined),
+            title: const Text('Bot', style: TextStyle(fontWeight: FontWeight.bold),),
+            onTap: () {
+              _navigateTo(Mainbot());
             },
           ),
           ListTile(
