@@ -1,72 +1,110 @@
 import 'package:flutter/material.dart';
 
-class BotCard extends StatelessWidget {
+class BotCard extends StatefulWidget {
   final String name;
   final String description;
   final String date;
-  final VoidCallback? onFavorite; // Callback cho nút yêu thích
-  final VoidCallback? onDelete; // Callback cho nút xóa
+  final bool
+      isFavorite; // Thêm thuộc tính isFavorite để theo dõi trạng thái ban đầu
+  final VoidCallback? onFavorite;
+  final VoidCallback? onDelete;
+  final VoidCallback? onTap; // Thêm onTap ở đây
 
   const BotCard({
     required this.name,
     required this.description,
     required this.date,
-    this.onFavorite, // Đảm bảo callback là tùy chọn (nullable)
-    this.onDelete, // Đảm bảo callback là tùy chọn (nullable)
+    this.isFavorite = false, // Mặc định không phải favorite
+    this.onFavorite,
+    this.onDelete,
+    this.onTap,
   });
 
   @override
+  _BotCardState createState() => _BotCardState();
+}
+
+class _BotCardState extends State<BotCard> {
+  late bool _isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isFavorite; // Khởi tạo trạng thái từ widget cha
+  }
+
+  void _toggleFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite; // Đổi trạng thái khi nhấn vào icon
+    });
+    if (widget.onFavorite != null) {
+      widget.onFavorite!(); // Gọi callback nếu có
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(Icons.android, size: 40, color: Colors.blue),
-            SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+    return GestureDetector(
+      // Thay Card thành GestureDetector
+      onTap: widget.onTap, // Gọi callback khi nhấn
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.android, size: 40, color: Colors.blue),
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.name,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.star_border),
-                      onPressed: onFavorite != null
-                          ? () => onFavorite!()
-                          : null, // Kiểm tra null
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: onDelete != null
-                          ? () => onDelete!()
-                          : null, // Kiểm tra null
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            if (description.isNotEmpty)
-              Text(
-                description,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          _isFavorite
+                              ? Icons.star
+                              : Icons
+                                  .star_border, // Thay đổi icon dựa trên trạng thái
+                          color: _isFavorite
+                              ? Colors.blue
+                              : null, // Đổi màu nếu đang là favorite
+                        ),
+                        onPressed:
+                            _toggleFavorite, // Thay vì gọi trực tiếp callback, gọi hàm toggle
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: widget.onDelete != null
+                            ? () => widget.onDelete!()
+                            : null,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            Spacer(),
-            Text(
-              date,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-          ],
+              SizedBox(height: 8),
+              if (widget.description.isNotEmpty)
+                Text(
+                  widget.description,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              SizedBox(height: 8),
+              Text(
+                widget.date,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
         ),
       ),
     );
