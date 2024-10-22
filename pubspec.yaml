@@ -74,6 +74,9 @@ flutter:
     - assets/icons/like.png
     - assets/icons/sorry.png
     - assets/icons/thanks.png
+    - assets/icons/basic.png
+    - assets/icons/infinity.png
+    - assets/icons/pro.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

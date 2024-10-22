@@ -2,17 +2,18 @@ import 'package:code/views/ai-action/email/components/EmailLabel.dart';
 import 'package:code/views/ai-action/email/components/JarvisReply.dart';
 import 'package:code/views/ai-action/email/components/ReceivedEmail.dart';
 import 'package:code/views/ai-action/email/components/Suggestions.dart';
+import 'package:code/views/appbar/BuildActions.dart';
 import 'package:code/views/chat/chatbox/ChatBox.dart';
 import 'package:flutter/material.dart';
 
-class Email extends StatefulWidget {
-  const Email({super.key});
+class EmailPage extends StatefulWidget {
+  const EmailPage({super.key});
 
   @override
-  State<Email> createState() => _EmailState();
+  State<EmailPage> createState() => _EmailPageState();
 }
 
-class _EmailState extends State<Email> {
+class _EmailPageState extends State<EmailPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -27,24 +28,7 @@ class _EmailState extends State<Email> {
               onPressed: () { Navigator.of(context).pop(); },
               icon: const Icon(Icons.close, size: 25, color: Colors.grey,)
           ),
-          actions: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              margin: const EdgeInsets.fromLTRB(8, 0, 4, 0),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey.shade200),
-              child: Row(
-                children: [
-                  const Text('50', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
-                  const SizedBox(width: 5),
-                  Image.asset(
-                    'assets/icons/fire.png',
-                    width: 20,
-                    height: 20,
-                  )
-                ],
-              ),
-            )
-          ],
+          actions: buildActions(context),
         ),
         body: Container(
           color: Colors.white,

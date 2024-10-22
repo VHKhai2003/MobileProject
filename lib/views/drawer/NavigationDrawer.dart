@@ -1,6 +1,6 @@
 import 'package:code/views/auth/LoginPage.dart';
 import 'package:code/views/profile/ProfilePage.dart';
-import 'package:code/views/ai-action/AIAction.dart';
+import 'package:code/views/ai-action/AIActionPage.dart';
 import 'package:code/views/chat/ChatPage.dart';
 import 'package:flutter/material.dart';
 
@@ -84,7 +84,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             leading: const Icon(Icons.explore),
             title: const Text('Ai Action', style: TextStyle(fontWeight: FontWeight.bold),),
             onTap: () {
-              _navigateTo(const AIAction());
+              _navigateTo(const AIActionPage());
             }
           ),
           ListTile(
