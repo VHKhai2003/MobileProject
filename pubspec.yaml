@@ -77,6 +77,8 @@ flutter:
     - assets/icons/basic.png
     - assets/icons/infinity.png
     - assets/icons/pro.png
+    - assets/icons/hot-pick.png
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
