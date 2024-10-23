@@ -19,10 +19,11 @@ class CategoryMenu extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         ),
       child: DropdownButton<String>(
+          menuMaxHeight: 300,
           items: _categories.map((category) =>
               DropdownMenuItem(
                 value: category,
-                child: Text(category),
+                child: Text(category, style: TextStyle(color: Colors.black87),),
               )
           ).toList(),
           onChanged: onChanged,
