@@ -7,11 +7,11 @@ class KnowledgeDropDownTable extends StatefulWidget {
 
 class _KnowledgeDropDownTableState extends State<KnowledgeDropDownTable> {
   final List<String> knowledgeList = [
-    'Knownledge 1',
-    'Knownledge 2',
-    'Knownledge 3',
-    'Knownledge 4',
-    'Knownledge 5',
+    'Knowledge 1',
+    'Knowledge 2',
+    'Knowledge 3',
+    'Knowledge 4',
+    'Knowledge 5',
   ];
 
   String? selectedKnowledge;
@@ -39,8 +39,8 @@ class _KnowledgeDropDownTableState extends State<KnowledgeDropDownTable> {
         SizedBox(height: 20),
         Text(
           selectedKnowledge != null
-              ? 'Your knownledge: $selectedKnowledge'
-              : 'Choose knownledge !! I will help you answer about it ',
+              ? 'Your knowledge: $selectedKnowledge'
+              : 'Choose knowledge !! I will help you answer about it ',
           style: TextStyle(fontSize: 16),
         ),
       ],

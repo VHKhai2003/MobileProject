@@ -1,5 +1,6 @@
 import 'package:code/views/auth/LoginPage.dart';
 import 'package:code/views/bot/MainBot.dart';
+import 'package:code/views/knownledge/KnowledgePage.dart';
 import 'package:code/views/profile/ProfilePage.dart';
 import 'package:code/views/ai-action/AIActionPage.dart';
 import 'package:code/views/chat/ChatPage.dart';
@@ -105,13 +106,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           ListTile(
             leading: const Icon(Icons.book),
             title: const Text(
-              'Knownledge',
+              'Knowledge',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onTap: () {
-              _navigateTo(Placeholder(
-                strokeWidth: 10,
-              ));
+              _navigateTo(KnowledgePage());
             },
           ),
           ListTile(

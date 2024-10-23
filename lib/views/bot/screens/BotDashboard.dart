@@ -16,18 +16,18 @@ class BotDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0), // Padding cho khung
-      decoration: BoxDecoration(
-        color: Colors.grey[200], // Màu nền khung
-        borderRadius: BorderRadius.circular(8.0), // Bo góc
-        border: Border.all(color: Colors.grey), // Đường viền
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Khung chứa cho loại bot
-          Row(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Khung chứa cho loại bot và Dropdown
+        Container(
+          padding: const EdgeInsets.all(16.0), // Padding cho khung
+          decoration: BoxDecoration(
+            color: Colors.grey[200], // Màu nền khung
+            borderRadius: BorderRadius.circular(8.0), // Bo góc
+            border: Border.all(color: Colors.grey), // Đường viền
+          ),
+          child: Row(
             children: [
               Text(
                 "Type: ",
@@ -35,10 +35,11 @@ class BotDashboard extends StatelessWidget {
               ),
               SizedBox(width: 8),
               DropdownButton<String>(
-                value: 'All',
+                value: 'All', // Giá trị mặc định
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    onBotTypeChanged(newValue);
+                    onBotTypeChanged(
+                        newValue); // Gọi callback khi thay đổi loại bot
                   }
                 },
                 items: <String>['All', 'Bot1', 'Bot2', 'Bot3']
@@ -51,37 +52,45 @@ class BotDashboard extends StatelessWidget {
               ),
             ],
           ),
-          // Khung chứa cho ô tìm kiếm
-          Expanded(
-            child: Padding(
+        ),
+
+        // Khung chứa cho ô tìm kiếm và nút "Create bot"
+        Row(
+          children: [
+            // Khung chứa cho ô tìm kiếm
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
+              child: SizedBox(
+                width: 200, // Đặt chiều rộng cho ô tìm kiếm
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    contentPadding: EdgeInsets.all(0),
                   ),
-                  filled: true,
-                  contentPadding: EdgeInsets.all(0),
+                  onChanged: onSearch, // Gọi callback khi thay đổi tìm kiếm
                 ),
-                onChanged: onSearch,
               ),
             ),
-          ),
-          // Nút để tạo bot
-          ElevatedButton.icon(
-            onPressed: onCreateBot,
-            icon: Icon(Icons.add),
-            label: Text("Create bot"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue, // Màu nền
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+
+            // Nút để tạo bot
+            ElevatedButton.icon(
+              onPressed: onCreateBot, // Gọi callback khi nhấn nút "Create bot"
+              icon: Icon(Icons.add),
+              label: Text("Create bot"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Màu nền
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }
