@@ -82,6 +82,11 @@ flutter:
     - assets/icons/knowledge-base.png
     - assets/icons/unit.png
     - assets/icons/memory.png
+    - assets/icons/local-files.png
+    - assets/icons/slack.png
+    - assets/icons/websites.png
+    - assets/icons/google-drive.png
+    - assets/icons/confluence.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,3 +1,4 @@
+import 'package:code/views/knownledge/dialog/SelectUnitTypeDialog.dart';
 import 'package:flutter/material.dart';
 import 'AddUnit.dart';
 
@@ -62,13 +63,7 @@ void showCreateKnowledgeDialog(
               if (knowledgeName.isNotEmpty) {
                 Navigator.of(context).pop();
                 // Call to show select unit dialog
-                showSelectUnitDialog(
-                    context,
-                    data,
-                    knowledgeName, // Pass the local variable
-                    selectedUnit,
-                    onUnitSelected // Call the callback with selected unit
-                    );
+                showDialog(context: context, builder: (context) => SelectUnitTypeDialog());
               }
             },
             child: Text('Confirm'),
