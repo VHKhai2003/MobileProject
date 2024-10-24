@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CreateKnowledgeButton extends StatelessWidget {
-  const CreateKnowledgeButton({super.key});
+class AddUnitButton extends StatelessWidget {
+  const AddUnitButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class CreateKnowledgeButton extends StatelessWidget {
                   Icon(Icons.add_circle_outline, size: 20),
                   SizedBox(width: 10),
                   const Text(
-                    'Create knowledge',
+                    'Add unit',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ],

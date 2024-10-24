@@ -1,4 +1,6 @@
 import 'package:code/models/UnitType.dart';
+import 'package:code/models/UnitTypeIcon.dart';
+import 'package:code/models/UnitTypeName.dart';
 import 'package:flutter/material.dart';
 
 class SelectUnitTypeDialog extends StatefulWidget {
@@ -11,11 +13,11 @@ class SelectUnitTypeDialog extends StatefulWidget {
 class _SelectUnitTypeDialogState extends State<SelectUnitTypeDialog> {
 
   final List<UnitType> listUnitTypes = [
-    UnitType(0, "Local files", "Upload pdf, docx,...", "assets/icons/local-files.png"),
-    UnitType(1, "Website", "Connect Website to get data", "assets/icons/websites.png"),
-    UnitType(2, "Google drive", "Connect Google drive to get data", "assets/icons/google-drive.png"),
-    UnitType(3, "Slack", "Connect Slack to get data", "assets/icons/slack.png"),
-    UnitType(4, "Confluence", "Connect Confluence to get data", "assets/icons/confluence.png"),
+    UnitType(0, UnitTypeName.local, "Upload pdf, docx,...", UnitTypeIcon.local),
+    UnitType(1, UnitTypeName.website, "Connect Website to get data", UnitTypeIcon.website),
+    UnitType(2, UnitTypeName.drive, "Connect Google drive to get data", UnitTypeIcon.drive),
+    UnitType(3, UnitTypeName.slack, "Connect Slack to get data", UnitTypeIcon.slack),
+    UnitType(4, UnitTypeName.confluence, "Connect Confluence to get data", UnitTypeIcon.confluence),
   ];
 
   int selectedUnitType = 0;

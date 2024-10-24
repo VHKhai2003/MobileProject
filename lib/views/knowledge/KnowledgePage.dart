@@ -1,3 +1,4 @@
+import 'package:code/models/Knowledge.dart';
 import 'package:code/views/appbar/BuildActions.dart';
 import 'package:code/views/knowledge/components/CreateKnowledgeButton.dart';
 import 'package:code/views/knowledge/components/KnowledgeElement.dart';
@@ -13,28 +14,10 @@ class KnowledgePage extends StatefulWidget {
 }
 
 class _KnowledgePageState extends State<KnowledgePage> {
-  static const List<KnowledgeElement> items = [
-    KnowledgeElement(
-      name: "Knowledge1",
-      unit: 0,
-      byte: 0,
-      date: "23/10/2024",
-      isEnable: true,
-    ),
-    KnowledgeElement(
-      name: "Knowledge2",
-      unit: 2,
-      byte: 240,
-      date: "20/10/2024",
-      isEnable: true,
-    ),
-    KnowledgeElement(
-      name: "Knowledge3",
-      unit: 1,
-      byte: 320,
-      date: "15/10/2024",
-      isEnable: false,
-    ),
+  static List<KnowledgeElement> items = [
+    KnowledgeElement(knowledge: Knowledge("Knowledge1", "", 0, 0, "23/10/2024", true)),
+    KnowledgeElement(knowledge: Knowledge("Knowledge2", "", 2, 320, "20/10/2024", true)),
+    KnowledgeElement(knowledge: Knowledge("Knowledge3", "", 1, 152, "25/10/2024", false)),
   ];
 
   @override
