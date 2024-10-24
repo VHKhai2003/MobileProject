@@ -125,6 +125,7 @@ Widget buildUnitOption(String title, String description, String imagePath,
           onChanged: (value) {
             setState(() {
               selectedUnit = value!;
+              print('Selected Unit: $selectedUnit');
             });
           },
           activeColor: Colors.blue,
