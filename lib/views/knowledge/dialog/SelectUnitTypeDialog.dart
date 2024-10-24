@@ -1,6 +1,11 @@
 import 'package:code/models/UnitType.dart';
 import 'package:code/models/UnitTypeIcon.dart';
 import 'package:code/models/UnitTypeName.dart';
+import 'package:code/views/knowledge/import-data/ImportConfluencePage.dart';
+import 'package:code/views/knowledge/import-data/ImportGoogleDriveFilePage.dart';
+import 'package:code/views/knowledge/import-data/ImportLocalFilesPage.dart';
+import 'package:code/views/knowledge/import-data/ImportSlackPage.dart';
+import 'package:code/views/knowledge/import-data/ImportWebsitePage.dart';
 import 'package:flutter/material.dart';
 
 class SelectUnitTypeDialog extends StatefulWidget {
@@ -101,6 +106,27 @@ class _SelectUnitTypeDialogState extends State<SelectUnitTypeDialog> {
         ),
         FilledButton(
             onPressed: () {
+              Navigator.of(context).pop();
+              Widget page;
+              if(selectedUnitType == 0) {
+                page = ImportLocalFilesPage();
+              }
+              else if(selectedUnitType == 1) {
+                page = ImportWebSitePage();
+              }
+              else if(selectedUnitType == 2) {
+                page = ImportGoogleDriveFilePage();
+              }
+              else if(selectedUnitType == 3) {
+                page = ImportSlackPage();
+              }
+              else {
+                page = ImportConfluencePage();
+              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => page)
+              );
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.blue.shade700,

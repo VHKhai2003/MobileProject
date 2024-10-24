@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../dialog/SelectUnitTypeDialog.dart';
+
 class AddUnitButton extends StatelessWidget {
   const AddUnitButton({super.key});
 
@@ -15,7 +17,9 @@ class AddUnitButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
           ),
           child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog(context: context, builder: (context) => SelectUnitTypeDialog());
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
