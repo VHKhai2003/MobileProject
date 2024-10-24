@@ -21,32 +21,11 @@ class ChatWithBot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(160), // Chiều cao của AppBar
-        child: Container(
-          color: const Color(0xFFEBEFFF),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () {
-                  Navigator.pop(context); // Quay về màn hình trước đó
-                },
-              ),
-              SizedBox(width: 8), // Khoảng cách giữa nút và tên bot
-              Text(
-                botName,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFEBEFFF),
+        title: Text(botName, style: TextStyle(fontWeight: FontWeight.bold)),
+        actions: buildActions(context),
       ),
-      drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
