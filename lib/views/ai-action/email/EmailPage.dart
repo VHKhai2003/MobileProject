@@ -26,7 +26,7 @@ class _EmailPageState extends State<EmailPage> {
           backgroundColor: const Color(0xFFEBEFFF),
           leading: IconButton(
               onPressed: () { Navigator.of(context).pop(); },
-              icon: const Icon(Icons.close, size: 25, color: Colors.grey,)
+              icon: const Icon(Icons.arrow_back, size: 25, color: Colors.grey,)
           ),
           actions: buildActions(context),
         ),

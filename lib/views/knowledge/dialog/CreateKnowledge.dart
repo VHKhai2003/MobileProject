@@ -1,17 +1,15 @@
-import 'package:code/views/knownledge/dialog/SelectUnitTypeDialog.dart';
+import 'package:code/views/knowledge/dialog/SelectUnitTypeDialog.dart';
 import 'package:flutter/material.dart';
-import 'AddUnit.dart';
 
 void showCreateKnowledgeDialog(
-    BuildContext context,
-    List<Map<String, dynamic>> data,
-    Function(String) onNameChanged,
-    Function(String) onDescriptionChanged,
-    Function(String) onUnitSelected,
-    String selectedUnit) {
+  BuildContext context,
+  List<Map<String, dynamic>> data,
+  Function(String) onNameChanged,
+  Function(String) onDescriptionChanged,
+  Function(String) onUnitSelected,
+  String selectedUnit) {
   String knowledgeName = ''; // Local variable to hold knowledge name
-  String knowledgeDescription =
-      ''; // Local variable to hold knowledge description
+  String knowledgeDescription = ''; // Local variable to hold knowledge description
 
   showDialog(
     context: context,
