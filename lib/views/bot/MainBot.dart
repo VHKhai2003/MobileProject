@@ -2,22 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:code/views/appbar/BuildActions.dart';
 import 'package:code/views/bot/widgets/BotCard.dart';
 import 'package:code/views/drawer/NavigationDrawer.dart' as navigation_drawer;
-import 'package:code/views/bot/screens/BotDashboard.dart'; // Đảm bảo đúng đường dẫn
+import 'package:code/views/bot/screens/BotDashboard.dart';
 import 'package:code/views/bot/screens/AddBot.dart';
-import 'package:code/views/bot/screens/ChatWithBot.dart'; // Đảm bảo đường dẫn đúng
+import 'package:code/views/bot/screens/ChatWithBot.dart';
+import 'package:code/models/Bot.dart';
 
 class MainBot extends StatelessWidget {
-  final List<Map<String, String>> bots = [
-    {
-      'name': 'Bot1',
-      'description': 'This is a first bot',
-      'date': '6/10/2024',
-    },
-    {
-      'name': 'Bot2',
-      'description': 'This is second bot',
-      'date': '6/10/2024',
-    },
+  // Danh sách các bot quản lý trong MainBot
+  final List<Bot> bots = [
+    Bot(
+      name: 'Bot1',
+      description: 'This is the first bot',
+      date: '6/10/2024',
+      knowledge: [
+        'AI Basics',
+        'Machine Learning',
+        'Deep Learning'
+      ], // Thêm dữ liệu knowledge
+    ),
+    Bot(
+      name: 'Bot2',
+      description: 'This is the second bot',
+      date: '7/10/2024',
+      knowledge: [
+        'Natural Language Processing',
+        'Computer Vision'
+      ], // Thêm dữ liệu knowledge
+    ),
+    Bot(
+      name: 'Bot3',
+      description: 'This is the third bot',
+      date: '8/10/2024',
+      knowledge: [
+        'Reinforcement Learning',
+        'AI Ethics'
+      ], // Thêm dữ liệu knowledge
+    ),
   ];
 
   @override
@@ -42,10 +62,11 @@ class MainBot extends StatelessWidget {
               onCreateBot: () {
                 showDialog(
                   context: context,
-                  builder: (context) => AddBot(), // Gọi widget AddBot
+                  builder: (context) => AddBot(),
                 );
               },
             ),
+            SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: bots.length,
@@ -53,22 +74,21 @@ class MainBot extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: BotCard(
-                      name: bots[index]['name']!,
-                      description: bots[index]['description']!,
-                      date: bots[index]['date']!,
+                      name: bots[index].name,
+                      description: bots[index].description,
+                      date: bots[index].date,
                       onFavorite: () {
                         // Xử lý khi nhấn dấu sao
                       },
-                      onDelete: () {
-                        // Xử lý khi nhấn thùng rác
-                      },
+                      onDelete: () {},
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ChatWithBot(
-                              botName: bots[index]
-                                  ['name']!, // Truyền tên bot vào đây
+                              botName: bots[index].name,
+                              listKnowledge: bots[index]
+                                  .knowledge, // Truyền danh sách knowledge
                             ),
                           ),
                         );
