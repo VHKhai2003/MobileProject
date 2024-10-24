@@ -1,6 +1,7 @@
 import 'package:code/models/Unit.dart';
 import 'package:code/models/UnitTypeIcon.dart';
 import 'package:code/models/UnitTypeName.dart';
+import 'package:code/views/knowledge/units/dialog/DeleteUnitDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +28,15 @@ class _UnitElementState extends State<UnitElement> {
   void initState() {
     super.initState();
     unit = widget.unit;
+  }
+
+  void _showDeleteUnitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteUnitDialog(unit: unit);
+      },
+    );
   }
 
   @override
@@ -155,7 +165,7 @@ class _UnitElementState extends State<UnitElement> {
                       IconButton(
                         icon: Icon(Icons.delete_outlined),
                         onPressed: () {
-
+                          _showDeleteUnitDialog(context);
                         },
                       ),
                     ],

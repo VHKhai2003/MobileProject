@@ -8,8 +8,9 @@ import 'package:code/views/knowledge/units/components/UnitElement.dart';
 import 'package:flutter/material.dart';
 
 class UnitPage extends StatefulWidget {
-  const UnitPage({super.key, required this.knowledge});
+  const UnitPage({super.key, required this.knowledge, required this.editKnowledge});
   final Knowledge knowledge;
+  final Function(Knowledge) editKnowledge;
 
   @override
   State<UnitPage> createState() => _UnitPageState();
@@ -19,11 +20,11 @@ class _UnitPageState extends State<UnitPage> {
   late Knowledge knowledge;
 
   static List<UnitElement> items = [
-    UnitElement(unit: Unit("Unit1", UnitTypeName.local, 231, "10/10/2024", true)),
-    UnitElement(unit: Unit("Unit2", UnitTypeName.slack, 123, "24/09/2024", false)),
-    UnitElement(unit: Unit("Unit3", UnitTypeName.drive, 95, "24/10/2024", false)),
-    UnitElement(unit: Unit("Unit4", UnitTypeName.website, 241, "16/10/2024", true)),
-    UnitElement(unit: Unit("Unit5", UnitTypeName.confluence, 147, "21/10/2024", true)),
+    UnitElement(unit: Unit(DateTime.now().millisecondsSinceEpoch.toString(), "Unit1", UnitTypeName.local, 231, "10/10/2024", true)),
+    UnitElement(unit: Unit(DateTime.now().millisecondsSinceEpoch.toString(), "Unit2", UnitTypeName.slack, 123, "24/09/2024", false)),
+    UnitElement(unit: Unit(DateTime.now().millisecondsSinceEpoch.toString(), "Unit3", UnitTypeName.drive, 95, "24/10/2024", false)),
+    UnitElement(unit: Unit(DateTime.now().millisecondsSinceEpoch.toString(), "Unit4", UnitTypeName.website, 241, "16/10/2024", true)),
+    UnitElement(unit: Unit(DateTime.now().millisecondsSinceEpoch.toString(), "Unit5", UnitTypeName.confluence, 147, "21/10/2024", true)),
   ];
 
   @override
@@ -49,7 +50,7 @@ class _UnitPageState extends State<UnitPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    KnowledgeInfo(knowledge: knowledge),
+                    KnowledgeInfo(knowledge: knowledge, editKnowledge: widget.editKnowledge),
                     AddUnitButton()
                   ],
                 ),

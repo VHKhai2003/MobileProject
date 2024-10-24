@@ -1,9 +1,39 @@
 import 'package:code/models/Knowledge.dart';
+import 'package:code/views/knowledge/units/dialog/EditKnowledgeDialog.dart';
 import 'package:flutter/material.dart';
 
-class KnowledgeInfo extends StatelessWidget {
-  const KnowledgeInfo({super.key, required this.knowledge});
+class KnowledgeInfo extends StatefulWidget {
+  const KnowledgeInfo({super.key, required this.knowledge, required this.editKnowledge});
   final Knowledge knowledge;
+  final Function(Knowledge) editKnowledge;
+  @override
+  State<KnowledgeInfo> createState() => _KnowledgeInfoState();
+}
+
+class _KnowledgeInfoState extends State<KnowledgeInfo> {
+  late Knowledge knowledge;
+
+  @override
+  void initState() {
+    super.initState();
+    knowledge = widget.knowledge;
+  }
+
+  void editKnowledge(Knowledge k) {
+    setState(() {
+      knowledge = k;
+    });
+    widget.editKnowledge(k);
+  }
+
+  void _showEditKnowledgeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditKnowledgeDialog(editKnowledge: editKnowledge, knowledge: knowledge);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +52,15 @@ class KnowledgeInfo extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  knowledge.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15
-                  )
+                    knowledge.name,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18
+                    )
                 ),
-                IconButton(onPressed: () {}, icon: Icon(Icons.edit, size: 20))
+                IconButton(onPressed: () {
+                  _showEditKnowledgeDialog(context);
+                }, icon: Icon(Icons.edit, size: 20))
               ],
             ),
             Row(
@@ -48,8 +80,8 @@ class KnowledgeInfo extends StatelessWidget {
                   child: Text(
                     "${knowledge.unit} ${knowledge.unit == 1 ? 'unit' : 'units'}",
                     style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blue[700]
+                        fontSize: 15,
+                        color: Colors.blue[700]
                     ),
                   ),
                 ),
@@ -67,8 +99,8 @@ class KnowledgeInfo extends StatelessWidget {
                   child: Text(
                     "${knowledge.byte} ${knowledge.byte == 1 ? 'byte' : 'bytes'}",
                     style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.red[700]
+                        fontSize: 15,
+                        color: Colors.red[700]
                     ),
                   ),
                 )

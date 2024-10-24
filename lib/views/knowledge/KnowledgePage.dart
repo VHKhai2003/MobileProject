@@ -14,11 +14,29 @@ class KnowledgePage extends StatefulWidget {
 }
 
 class _KnowledgePageState extends State<KnowledgePage> {
-  static List<KnowledgeElement> items = [
-    KnowledgeElement(knowledge: Knowledge("Knowledge1", "", 0, 0, "23/10/2024", true)),
-    KnowledgeElement(knowledge: Knowledge("Knowledge2", "", 2, 320, "20/10/2024", true)),
-    KnowledgeElement(knowledge: Knowledge("Knowledge3", "", 1, 152, "25/10/2024", false)),
-  ];
+  static List<KnowledgeElement> items = [];
+
+  void createNewKnowledge(Knowledge knowledge) {
+    setState(() {
+      items.add(KnowledgeElement(knowledge: knowledge, deleteKnowledge: deleteKnowledge, editKnowledge: editKnowledge));
+    });
+  }
+
+  void deleteKnowledge(String id) {
+    setState(() {
+      items.removeWhere((item) => item.knowledge.id == id);
+    });
+  }
+
+  void editKnowledge(Knowledge knowledge) {
+    int index = items.indexWhere((item) => item.knowledge.id == knowledge.id);
+
+    if (index != -1) {
+      setState(() {
+        items[index] = KnowledgeElement(knowledge: knowledge, deleteKnowledge: deleteKnowledge, editKnowledge: editKnowledge);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +60,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: SearchBox(),
                 ),
-                CreateKnowledgeButton(),
+                CreateKnowledgeButton(createNewKnowledge: createNewKnowledge),
                 if (items.isEmpty) ...[
                   SizedBox(height: 30),
                   Image.asset(

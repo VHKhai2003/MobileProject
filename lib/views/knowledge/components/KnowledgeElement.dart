@@ -1,11 +1,14 @@
 import 'package:code/models/Knowledge.dart';
+import 'package:code/views/knowledge/dialog/DeleteKnowledgeDialog.dart';
 import 'package:code/views/knowledge/units/UnitPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class KnowledgeElement extends StatefulWidget {
-  const KnowledgeElement({super.key, required this.knowledge});
+  const KnowledgeElement({super.key, required this.knowledge, required this.deleteKnowledge, required this.editKnowledge});
   final Knowledge knowledge;
+  final Function(String) deleteKnowledge;
+  final Function(Knowledge) editKnowledge;
 
   @override
   State<KnowledgeElement> createState() => _KnowledgeElementState();
@@ -18,6 +21,15 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
   void initState() {
     super.initState();
     knowledge = widget.knowledge;
+  }
+
+  void _showDeleteKnowledgeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteKnowledgeDialog(knowledge: knowledge, deleteKnowledge: widget.deleteKnowledge);
+      },
+    );
   }
 
   @override
@@ -49,7 +61,7 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => UnitPage(knowledge: knowledge),
+                            pageBuilder: (context, animation, secondaryAnimation) => UnitPage(knowledge: knowledge, editKnowledge: widget.editKnowledge),
                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                               const begin = Offset(1.0, 0.0); // Bắt đầu từ bên phải
                               const end = Offset.zero; // Kết thúc tại vị trí gốc
@@ -184,7 +196,7 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                     IconButton(
                       icon: Icon(Icons.delete_outlined),
                       onPressed: () {
-
+                        _showDeleteKnowledgeDialog(context);
                       },
                     ),
                   ],

@@ -1,8 +1,20 @@
+import 'package:code/models/Knowledge.dart';
+import 'package:code/views/knowledge/dialog/CreateKnowledgeDialog.dart';
 import 'package:flutter/material.dart';
 
 class CreateKnowledgeButton extends StatelessWidget {
-  const CreateKnowledgeButton({super.key});
+  const CreateKnowledgeButton({super.key, required this.createNewKnowledge});
+  final Function(Knowledge) createNewKnowledge;
 
+  void _showCreateKnowledgeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CreateKnowledgeDialog(createNewKnowledge: createNewKnowledge);
+      },
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -15,7 +27,9 @@ class CreateKnowledgeButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
           ),
           child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _showCreateKnowledgeDialog(context);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
