@@ -4,17 +4,16 @@ class BotCard extends StatefulWidget {
   final String name;
   final String description;
   final String date;
-  final bool
-      isFavorite; // Thêm thuộc tính isFavorite để theo dõi trạng thái ban đầu
+  final bool isFavorite;
   final VoidCallback? onFavorite;
   final VoidCallback? onDelete;
-  final VoidCallback? onTap; // Thêm onTap ở đây
+  final VoidCallback? onTap; // Callback onTap để hiển thị knowledge
 
   const BotCard({
     required this.name,
     required this.description,
     required this.date,
-    this.isFavorite = false, // Mặc định không phải favorite
+    this.isFavorite = false,
     this.onFavorite,
     this.onDelete,
     this.onTap,
@@ -30,23 +29,22 @@ class _BotCardState extends State<BotCard> {
   @override
   void initState() {
     super.initState();
-    _isFavorite = widget.isFavorite; // Khởi tạo trạng thái từ widget cha
+    _isFavorite = widget.isFavorite; // Lấy trạng thái từ widget cha
   }
 
   void _toggleFavorite() {
     setState(() {
-      _isFavorite = !_isFavorite; // Đổi trạng thái khi nhấn vào icon
+      _isFavorite = !_isFavorite;
     });
     if (widget.onFavorite != null) {
-      widget.onFavorite!(); // Gọi callback nếu có
+      widget.onFavorite!(); // Gọi callback khi nhấn favorite
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // Thay Card thành GestureDetector
-      onTap: widget.onTap, // Gọi callback khi nhấn
+      onTap: widget.onTap, // Gọi callback khi nhấn vào thẻ bot
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 3,
@@ -71,16 +69,10 @@ class _BotCardState extends State<BotCard> {
                     children: [
                       IconButton(
                         icon: Icon(
-                          _isFavorite
-                              ? Icons.star
-                              : Icons
-                                  .star_border, // Thay đổi icon dựa trên trạng thái
-                          color: _isFavorite
-                              ? Colors.blue
-                              : null, // Đổi màu nếu đang là favorite
+                          _isFavorite ? Icons.star : Icons.star_border,
+                          color: _isFavorite ? Colors.blue : null,
                         ),
-                        onPressed:
-                            _toggleFavorite, // Thay vì gọi trực tiếp callback, gọi hàm toggle
+                        onPressed: _toggleFavorite, // Đổi trạng thái favorite
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),

@@ -6,22 +6,24 @@ class BotDashboard extends StatelessWidget {
   final Function(String) onSearch; // Callback để xử lý tìm kiếm
   final VoidCallback onCreateBot; // Callback để xử lý khi nhấn "Create bot"
 
-  // Constructor của BotDashboard
   const BotDashboard({
     Key? key,
     required this.onBotTypeChanged,
     required this.onSearch,
     required this.onCreateBot,
-  }) : super(key: key); // Chuyển tiếp key đến lớp cha
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Căn đều các phần tử
       children: [
         // Khung chứa cho loại bot và Dropdown
         Container(
-          padding: const EdgeInsets.all(16.0), // Padding cho khung
+          width: MediaQuery.of(context).size.width *
+              0.3, // Chiếm 30% chiều rộng màn hình
+          padding: const EdgeInsets.symmetric(
+              horizontal: 12.0, vertical: 8.0), // Giảm padding cho khung
           decoration: BoxDecoration(
             color: Colors.grey[200], // Màu nền khung
             borderRadius: BorderRadius.circular(8.0), // Bo góc
@@ -31,7 +33,7 @@ class BotDashboard extends StatelessWidget {
             children: [
               Text(
                 "Type: ",
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 14), // Giảm kích thước font chữ
               ),
               SizedBox(width: 8),
               DropdownButton<String>(
@@ -55,40 +57,50 @@ class BotDashboard extends StatelessWidget {
         ),
 
         // Khung chứa cho ô tìm kiếm và nút "Create bot"
-        Row(
-          children: [
-            // Khung chứa cho ô tìm kiếm
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                width: 200, // Đặt chiều rộng cho ô tìm kiếm
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide.none,
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Khung chứa cho ô tìm kiếm
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search',
+                      prefixIcon:
+                          Icon(Icons.search, size: 20), // Giảm kích thước icon
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 8.0), // Giảm padding trong TextField
                     ),
-                    filled: true,
-                    contentPadding: EdgeInsets.all(0),
+                    onChanged: onSearch, // Gọi callback khi thay đổi tìm kiếm
                   ),
-                  onChanged: onSearch, // Gọi callback khi thay đổi tìm kiếm
                 ),
               ),
-            ),
 
-            // Nút để tạo bot
-            ElevatedButton.icon(
-              onPressed: onCreateBot, // Gọi callback khi nhấn nút "Create bot"
-              icon: Icon(Icons.add),
-              label: Text("Create bot"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Màu nền
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              // Nút để tạo bot
+              ElevatedButton.icon(
+                onPressed:
+                    onCreateBot, // Gọi callback khi nhấn nút "Create bot"
+                icon: Icon(Icons.add, size: 20), // Giảm kích thước icon
+                label: Text(
+                  "Create bot",
+                  style:
+                      TextStyle(fontSize: 14), // Giảm kích thước text của nút
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Màu nền
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12), // Giảm padding của nút
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
