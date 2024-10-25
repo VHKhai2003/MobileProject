@@ -18,7 +18,10 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
   void createNewKnowledge(Knowledge knowledge) {
     setState(() {
-      items.add(KnowledgeElement(knowledge: knowledge, deleteKnowledge: deleteKnowledge, editKnowledge: editKnowledge));
+      items.add(KnowledgeElement(
+          knowledge: knowledge,
+          deleteKnowledge: deleteKnowledge,
+          editKnowledge: editKnowledge));
     });
   }
 
@@ -33,7 +36,10 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
     if (index != -1) {
       setState(() {
-        items[index] = KnowledgeElement(knowledge: knowledge, deleteKnowledge: deleteKnowledge, editKnowledge: editKnowledge);
+        items[index] = KnowledgeElement(
+            knowledge: knowledge,
+            deleteKnowledge: deleteKnowledge,
+            editKnowledge: editKnowledge);
       });
     }
   }
@@ -46,9 +52,11 @@ class _KnowledgePageState extends State<KnowledgePage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: const Color(0xFFEBEFFF),
-          title: const Text("Knowledge", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text("Knowledge",
+              style: TextStyle(fontWeight: FontWeight.bold)),
           actions: buildActions(context),
         ),
         drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
@@ -70,7 +78,9 @@ class _KnowledgePageState extends State<KnowledgePage> {
                     fit: BoxFit.cover,
                   ),
                   SizedBox(height: 10),
-                  Text("No data", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("No data",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Text(
                     "Create a knowledge base to store your data and manage your units.",
@@ -80,7 +90,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
                 ] else ...[
                   Expanded(
                     child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 1,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
@@ -94,10 +105,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
                     ),
                   ),
                 ]
-
               ],
-            )
-        ),
+            )),
       ),
     );
   }

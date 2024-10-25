@@ -145,9 +145,7 @@ class ListKnownledge extends StatelessWidget {
                       trailing: IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          // Thực hiện hành động xóa
                           print('Xóa kiến thức: ${listKnownledge[index]}');
-                          // Cập nhật lại danh sách nếu cần thiết
                         },
                       ),
                     );
@@ -172,15 +170,15 @@ class ListKnownledge extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showKnowledgeBottomSheet(context),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8), // Thêm padding
-        constraints: BoxConstraints(maxHeight: 32), // Giới hạn chiều cao
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        constraints: BoxConstraints(maxHeight: 32),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Colors.grey.shade100,
         ),
         child: Center(
           child: Text(
-            "View Knowledge", // Thay đổi thành một nhãn hiển thị
+            "View Knowledge",
             style: TextStyle(color: Colors.black),
           ),
         ),

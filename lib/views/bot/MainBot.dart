@@ -3,46 +3,36 @@ import 'package:code/views/appbar/BuildActions.dart';
 import 'package:code/views/bot/widgets/BotCard.dart';
 import 'package:code/views/drawer/NavigationDrawer.dart' as navigation_drawer;
 import 'package:code/views/bot/screens/BotDashboard.dart';
-import 'package:code/views/bot/screens/AddBot.dart';
+import 'package:code/views/bot/screens/CreateBotDiaLog.dart';
 import 'package:code/views/bot/screens/ChatWithBot.dart';
 import 'package:code/models/Bot.dart';
 
 class MainBot extends StatelessWidget {
-  // Danh sách các bot quản lý trong MainBot
   final List<Bot> bots = [
     Bot(
       name: 'Bot1',
       description: 'This is the first bot',
       date: '6/10/2024',
-      knowledge: [
-        'AI Basics',
-        'Machine Learning',
-        'Deep Learning'
-      ], // Thêm dữ liệu knowledge
+      knowledge: ['AI Basics', 'Machine Learning', 'Deep Learning'],
     ),
     Bot(
       name: 'Bot2',
       description: 'This is the second bot',
       date: '7/10/2024',
-      knowledge: [
-        'Natural Language Processing',
-        'Computer Vision'
-      ], // Thêm dữ liệu knowledge
+      knowledge: ['Natural Language Processing', 'Computer Vision'],
     ),
     Bot(
       name: 'Bot3',
       description: 'This is the third bot',
       date: '8/10/2024',
-      knowledge: [
-        'Reinforcement Learning',
-        'AI Ethics'
-      ], // Thêm dữ liệu knowledge
+      knowledge: ['Reinforcement Learning', 'AI Ethics'],
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFEBEFFF),
         actions: buildActions(context),
@@ -61,9 +51,11 @@ class MainBot extends StatelessWidget {
               },
               onCreateBot: () {
                 showDialog(
-                  context: context,
-                  builder: (context) => AddBot(),
-                );
+                    context: context,
+                    builder: (context) {
+                      return CreateBotDialog(
+                          createNewBot: (String name, String description) {});
+                    });
               },
             ),
             SizedBox(height: 16),
@@ -77,9 +69,8 @@ class MainBot extends StatelessWidget {
                       name: bots[index].name,
                       description: bots[index].description,
                       date: bots[index].date,
-                      onFavorite: () {
-                        // Xử lý khi nhấn dấu sao
-                      },
+                      onFavorite: () {},
+                      onPublish: () {},
                       onDelete: () {},
                       onTap: () {
                         Navigator.push(
@@ -87,8 +78,7 @@ class MainBot extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => ChatWithBot(
                               botName: bots[index].name,
-                              listKnowledge: bots[index]
-                                  .knowledge, // Truyền danh sách knowledge
+                              listKnowledge: bots[index].knowledge,
                             ),
                           ),
                         );

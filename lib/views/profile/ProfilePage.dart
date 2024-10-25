@@ -25,9 +25,11 @@ class ProfilePage extends StatelessWidget {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: const Color(0xFFEBEFFF),
-          title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text("Profile",
+              style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
         body: ListView(
@@ -46,7 +48,9 @@ class ProfilePage extends StatelessWidget {
             const SupportLabel(),
             const Setting(),
             const JarvisPlayground(),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             const AboutLabel(),
             const PrivacyPolicy(),
             const Version(),
