@@ -1,16 +1,14 @@
-# code
+# MobileProject
 
 This is the Final Project of the Advanced Mobile Programming Course
 
-## Getting Started
+# Members
+20120444 - Nguyễn Chí Công
 
-This project is a starting point for a Flutter application.
+21120467 - Ngô Quốc Huy
 
-A few resources to get you started if this is your first Flutter project:
+21120477 - Vương Huỳnh Khải
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Milestone1: Construct `mock-ui` for all screens of the final project
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Link video demo: [Milestone1 - Demo](https://www.youtube.com/watch?v=uKinEXtpmDs)
