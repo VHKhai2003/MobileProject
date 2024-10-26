@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  file_picker: ^5.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,7 +46,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,9 +60,35 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/icons/jarvis-icon.png
+    - assets/icons/google-icon.png
+    - assets/icons/gpt-4o-mini.png
+    - assets/icons/gpt-4o.png
+    - assets/icons/gemini-15-flash.webp
+    - assets/icons/gemini-15-pro.png
+    - assets/icons/claude-3-haiku.jpg
+    - assets/icons/confused.png
+    - assets/icons/dislike.png
+    - assets/icons/fire.png
+    - assets/icons/followup.png
+    - assets/icons/like.png
+    - assets/icons/sorry.png
+    - assets/icons/thanks.png
+    - assets/icons/basic.png
+    - assets/icons/infinity.png
+    - assets/icons/pro.png
+    - assets/icons/hot-pick.png
+    - assets/icons/empty-box.png
+    - assets/icons/knowledge-base.png
+    - assets/icons/unit.png
+    - assets/icons/memory.png
+    - assets/icons/local-files.png
+    - assets/icons/slack.png
+    - assets/icons/websites.png
+    - assets/icons/google-drive.png
+    - assets/icons/confluence.png
+    - assets/icons/source.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
