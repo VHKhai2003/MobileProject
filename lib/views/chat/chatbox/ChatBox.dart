@@ -50,6 +50,7 @@ class Chatbox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const TextField(
+                maxLines: 3,
                 decoration: InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
                   hintStyle: TextStyle(
@@ -57,11 +58,11 @@ class Chatbox extends StatelessWidget {
                     color: Colors.blueGrey
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  contentPadding: EdgeInsets.fromLTRB(16, 10, 16, 0),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.fromLTRB(4, 2, 2, 4),
+                padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
