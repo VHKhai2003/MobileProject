@@ -37,7 +37,7 @@ class _EditDialogState extends State<EditDialog> {
   @override
   void initState() {
     super.initState();
-    promptNameController = TextEditingController(text: widget.prompt.name);
+    promptNameController = TextEditingController(text: widget.prompt.title);
     promptDescriptionController = TextEditingController();
     promptContentController = TextEditingController(text: widget.prompt.content);
   }
@@ -57,8 +57,10 @@ class _EditDialogState extends State<EditDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Edit Prompt',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+          Expanded(
+            child: const Text('Edit Prompt',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+          ),
           IconButton(onPressed: () {
             Navigator.of(context).pop();
           }, icon: const Icon(Icons.close)),

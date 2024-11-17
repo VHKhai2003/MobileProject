@@ -1,17 +1,24 @@
 class Prompt {
-  String name;
+  String id;
+  String title;
   String content;
   bool isFavorite;
-
-  Prompt(this.name, this.content, this.isFavorite);
-}
-
-class PrivatePrompt extends Prompt {
-  PrivatePrompt(super.name, super.content, super.isFavorite, );
-}
-
-class PublicPrompt extends Prompt {
+  bool isPublic;
   String description;
   String category;
-  PublicPrompt(super.name, super.content, this.category, super.isFavorite, {this.description = ''});
+  Prompt(this.id, this.title, this.content, this.isPublic, this.isFavorite, {this.description = '', this.category = 'other'});
+
+
+  // Factory method to create a Prompt from JSON
+  factory Prompt.fromJson(Map<String, dynamic> json) {
+    return Prompt(
+      json['_id'],
+      json['title'],
+      json['content'],
+      json['isPublic'],
+      json['isFavorite'],
+      description: json['description'] ?? '',
+      category: json['category'] ?? 'other',
+    );
+  }
 }

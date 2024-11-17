@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SearchPrompt extends StatelessWidget {
-  SearchPrompt({super.key, required this.controller, required this.isFavoriteChecked, required this.onTap});
+  SearchPrompt({super.key, required this.controller, required this.onSubmitted , required this.isFavoriteChecked, required this.onTap, required this.isPublic});
   TextEditingController controller;
   bool isFavoriteChecked;
   VoidCallback onTap;
-
+  Function(String) onSubmitted;
+  bool isPublic;
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +14,7 @@ class SearchPrompt extends StatelessWidget {
       children: [
         Expanded(
           child: TextField(
+            onSubmitted: onSubmitted,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.blueGrey.shade50,
@@ -31,6 +33,7 @@ class SearchPrompt extends StatelessWidget {
             ),
           ),
         ),
+        isPublic ?
         Center(
           child: GestureDetector(
             onTap: onTap,
@@ -50,7 +53,7 @@ class SearchPrompt extends StatelessWidget {
               ),
             ),
           ),
-        )
+        ) : SizedBox.shrink()
       ],
     );
   }

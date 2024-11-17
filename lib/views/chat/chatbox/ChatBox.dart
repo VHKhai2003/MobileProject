@@ -106,7 +106,7 @@ class Chatbox extends StatelessWidget {
                                             context: context,
                                             isScrollControlled: true, // lam cho chieu cao bottom sheet > 1/2 man hinh
                                             builder: (context) {
-                                              return Promptbottomsheet(context: context,);
+                                              return PromptBottomSheet();
                                             },
                                             barrierColor: Colors.black.withOpacity(0.2)
                                         );

@@ -66,7 +66,7 @@ class _UsingPromptBottomSheetState extends State<UsingPromptBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(prompt.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+              Text(prompt.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
               IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.close))
             ],
           ),

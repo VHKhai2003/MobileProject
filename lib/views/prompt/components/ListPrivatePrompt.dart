@@ -1,4 +1,5 @@
 import 'package:code/views/prompt/UsingPromptBottomSheet.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/Prompt.dart';
@@ -6,49 +7,99 @@ import '../dialog/DeleteDialog.dart';
 import '../dialog/EditDialog.dart';
 
 class ListPrivatePrompt extends StatefulWidget {
-  const ListPrivatePrompt({super.key});
+  ListPrivatePrompt({super.key, required this.keyword});
+
+  String keyword;
 
   @override
   State<ListPrivatePrompt> createState() => _ListPrivatePromptState();
 }
 
+final dio = Dio();
+
 class _ListPrivatePromptState extends State<ListPrivatePrompt> {
 
-  final List<PrivatePrompt> prompts = [
-    PrivatePrompt('Recognize Language', 'Tell me what language is this and translate it into [language]', false),
-    PrivatePrompt('Fixy', "Check and correct grammar and spells, but before doing that do not use something like [don't] instead of that, [use do not]. Make the sentence short and formal.",  true),
-    PrivatePrompt('Translate RU', 'Fix grammar and translate into russian: [sentence]', true),
-    PrivatePrompt('Translate russian', 'Translate text into russian', false),
-    PrivatePrompt('Give information about a topic', 'Give me some information about the [TOPIC], contains [KEYWORDS]', false),
-    PrivatePrompt('Translate russian', 'Translate text into russian', false),
-    PrivatePrompt('Translate chinese', 'Translate text into chinese', true)
-  ];
+  bool hasNext = false;
+  int offset = 0;
+  List<Prompt> prompts = [];
+
+  void _loadPrompts() async {
+    String apiUrl = "https://api.jarvis.cx/api/v1/prompts";
+    String accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5NjYzYTY0LTZiOTYtNGQwMC1hNzM2LTJhYTg4MTEyNDdiNSIsImVtYWlsIjoid2FuZ2thaTE3MjAwMkBnbWFpbC5jb20iLCJpYXQiOjE3MzE4MzAzODQsImV4cCI6MTczMTgzMjE4NH0.clfNN7Ieg9MR-PWXTNWPXJiitAneEX4mpwhFYG4siy8";
+    // call api
+    try {
+      final response = await dio.get(
+          apiUrl,
+          queryParameters: {
+            "query": widget.keyword,
+            "offset": 0,
+            "limit": 20,
+            "isPublic": false
+          },
+          options: Options(
+              headers: {
+                "Authorization": "Bearer $accessToken"
+              },
+          )
+      );
+
+      // update state
+      setState(() {
+        prompts = List<Prompt>.from(
+            response.data["items"].map((item) => Prompt.fromJson(item))
+        );
+      });
+    } catch (e) {
+      print('Error when fetching prompt!\n$e');
+    }
+
+  }
+
+  @override
+  void didUpdateWidget(covariant ListPrivatePrompt oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.keyword != widget.keyword) {
+      setState(() {
+        prompts.clear();
+        hasNext = false;
+      });
+      _loadPrompts();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadPrompts();
+  }
 
   @override
   Widget build(BuildContext context) {
+    int numberOfPrompts = prompts.length;
     return Expanded(
         child: ListView.separated(
-          itemCount: prompts.length,
+          itemCount: numberOfPrompts + 1,
           itemBuilder: (context, index) {
+            if(index == numberOfPrompts) {
+              return hasNext ? TextButton(
+                onPressed: () {
+                  setState(() {
+                    offset = offset + 20;
+                  });
+                  _loadPrompts();
+                },
+                child: Text("More...", style: TextStyle(color: Colors.blue),),
+              ) : SizedBox.shrink();
+            }
             final prompt = prompts[index];
             return ListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(prompt.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+              title: Text(prompt.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      prompt.isFavorite ? Icons.star : Icons.star_border,
-                      color: prompt.isFavorite ? Colors.yellow : null,
-                      size: 18,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        prompt.isFavorite = !prompt.isFavorite;
-                      });
-                    },
-                  ),
                   IconButton(
                       onPressed: () {
                         showDialog(context: context, builder: (context) => EditDialog(prompt: prompt));

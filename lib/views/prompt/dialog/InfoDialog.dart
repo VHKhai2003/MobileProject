@@ -4,7 +4,7 @@ import '../../../models/Prompt.dart';
 class InfoDialog extends StatelessWidget {
   InfoDialog({super.key, required this.prompt});
   
-  PublicPrompt prompt;
+  Prompt prompt;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,9 @@ class InfoDialog extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(prompt.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+          Expanded(
+              child: Text(prompt.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
+          ),
           IconButton(onPressed: () {
             Navigator.of(context).pop();
           }, icon: const Icon(Icons.close)),

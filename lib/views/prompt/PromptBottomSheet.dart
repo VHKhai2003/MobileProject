@@ -5,23 +5,26 @@ import 'package:code/views/prompt/components/SearchPrompt.dart';
 import 'package:code/views/prompt/dialog/AddDialog.dart';
 import 'package:flutter/material.dart';
 
-class Promptbottomsheet extends StatefulWidget {
+class PromptBottomSheet extends StatefulWidget {
 
-  final BuildContext? context;
-
-  const Promptbottomsheet({super.key, this.context});
+  const PromptBottomSheet({super.key});
 
   @override
-  State<Promptbottomsheet> createState() => _PromptbottomsheetState();
+  State<PromptBottomSheet> createState() => _PromptBottomSheetState();
 }
 
-class _PromptbottomsheetState extends State<Promptbottomsheet> {
+class _PromptBottomSheetState extends State<PromptBottomSheet> {
   final List<bool> _selections = [true, false];
   void _handleUpdateSelections(int index) {
     setState(() {
       _selections[index] = true;
       _selections[1 - index] = false;
+      keyword = '';
     });
+
+    // some bug here
+    // fix later... :>
+    searchController.text = '';
   }
 
   bool _isFavoriteChecked = false;
@@ -31,14 +34,22 @@ class _PromptbottomsheetState extends State<Promptbottomsheet> {
     });
   }
   TextEditingController searchController = TextEditingController();
+  String keyword = '';
+  void _handleSearch(String value) {
+    setState(() {
+      keyword = value;
+    });
+    print('search $keyword');
+  }
+
 
   bool _isShowAllCategories = false;
 
   final List<String> _categories = [
-    "All", "Marketing", "Business", "SEO", "Writing", "Coding",
-    "Career", "Chatbot", "Education", "Fun", "Productivity", "Other"
+    "all", "marketing", "business", "seo", "writing", "coding",
+    "career", "chatbot", "education", "fun", "productivity", "other"
   ];
-  String _selectedCategory = "All"; // default value
+  String _selectedCategory = "all"; // default value
 
 
   @override
@@ -81,7 +92,7 @@ class _PromptbottomsheetState extends State<Promptbottomsheet> {
               const SizedBox(height: 10,),
               NavigationTab(selections: _selections, onPressed: _handleUpdateSelections),
               const SizedBox(height: 10,),
-              SearchPrompt(controller: searchController, isFavoriteChecked: _isFavoriteChecked, onTap: _toggleIsFavoriteCheck),
+              SearchPrompt(controller: searchController, onSubmitted: _handleSearch ,isFavoriteChecked: _isFavoriteChecked, onTap: _toggleIsFavoriteCheck, isPublic: _selections.last,),
               const SizedBox(height: 10,),
               _selections.last ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +131,7 @@ class _PromptbottomsheetState extends State<Promptbottomsheet> {
                   }, icon: const Icon(Icons.arrow_drop_down_outlined))
                 ],
               ) : const SizedBox.shrink(),
-              _selections.first ? ListPrivatePrompt() : ListPublicPrompt()
+              _selections.first ? ListPrivatePrompt(keyword: keyword,) : ListPublicPrompt(keyword: keyword, category: _selectedCategory, isFavorite: _isFavoriteChecked,)
             ],
           ),
     );
