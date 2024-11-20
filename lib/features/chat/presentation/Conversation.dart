@@ -1,8 +1,16 @@
 import 'package:code/features/chat/models/AiAgent.dart';
+import 'package:code/features/chat/providers/ConversationsProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Conversation extends StatelessWidget {
+class Conversation extends StatefulWidget {
   const Conversation({super.key});
+
+  @override
+  State<Conversation> createState() => _ConversationState();
+}
+
+class _ConversationState extends State<Conversation> {
 
   Widget _buildResponse(AiAgent agent, String content) {
     return Row(
@@ -58,21 +66,40 @@ class Conversation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildQuestion("hello assistant"),
-          const SizedBox(height: 20,),
-          _buildResponse(AiAgent('GPT-4o mini', 'assets/icons/gpt-4o-mini.png', 1), "Hello! How can I assist you today?"),
-          const SizedBox(height: 20,),
-          _buildQuestion("Can you tell me about javascript"),
-          const SizedBox(height: 20,),
-          _buildResponse(AiAgent('GPT-4o mini', 'assets/icons/gpt-4o-mini.png', 1), 'Absolutely! JavaScript is a versatile, high-level programming language primarily used for creating interactive and dynamic content on the web. Here are some key points about JavaScript:'
-              "\n\nClient-Side Scripting: JavaScript is mostly known for its role in client-side development, where it runs in the user's browser. This allows for real-time updates and interactions without needing to reload the page."
-              "\n\nInteractivity: With JavaScript, developers can create rich user interfaces that respond to user actions, such as clicks and keyboard input, enhancing the overall user experience."
-              "\n\nCompatibility: It is supported by all modern web browsers, making it a universal tool for web development. Whether you're using Chrome, Firefox, Safari, or Edge, JavaScript will work seamlessly."
-              "\n\nEvent-Driven: JavaScript uses an event-driven programming model, meaning it can respond to events like mouse clicks, form submissions, and other actions.")
-        ],
+    final conversationsProvider = Provider.of<ConversationsProvider>(context, listen: false);
+
+    return ChangeNotifierProvider.value(
+      value: conversationsProvider,
+      child: Consumer<ConversationsProvider>(
+        builder: (context, conversationsProvider, child) {
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (conversationsProvider.isLoadingConversationHistory) ...[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height/1.5,
+                    child: Center(child: CircularProgressIndicator())
+                  )
+                ] else if (conversationsProvider.errorConversationHistory != null) ...[
+                  Center(child: Text('Error: ${conversationsProvider.errorConversationHistory}'))
+                ] else if (conversationsProvider.conversationHistory == null) ...[
+                  Center(child: Text('No conversation history found.'))
+                ] else ...[
+                  for (var message in conversationsProvider.conversationHistory!.items) ...[
+                    _buildQuestion(message.query),
+                    const SizedBox(height: 20),
+                    _buildResponse(
+                      AiAgent('GPT-4o mini', 'assets/icons/gpt-4o-mini.png', 1),
+                      message.answer,
+                    ),
+                    const SizedBox(height: 20),
+                  ]
+                ],
+              ],
+            ),
+          );
+        }
       ),
     );
   }

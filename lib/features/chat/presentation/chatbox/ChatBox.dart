@@ -1,7 +1,9 @@
 import 'package:code/features/chat/presentation/history/HistoryBottomSheet.dart';
+import 'package:code/features/chat/providers/ConversationsProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/chat/presentation/chatbox/AiModels.dart';
 import 'package:code/features/prompt/presentation/PromptBottomSheet.dart';
+import 'package:provider/provider.dart';
 
 class Chatbox extends StatelessWidget {
   Chatbox({super.key, required this.changeConversation, required this.openNewChat});
@@ -11,6 +13,8 @@ class Chatbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ConversationsProvider>(context, listen: false);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -23,7 +27,11 @@ class Chatbox extends StatelessWidget {
                 IconButton(
                     onPressed: () async {
                       // get conversation info here and display this conversation
-                      String? result = await showModalBottomSheet(context: context, builder: (context) => HistoryBottomSheet(),);
+                      provider.getConversations('gpt-4o-mini', 'dify');
+                      String? result = await showModalBottomSheet(
+                          context: context,
+                          builder: (context) => HistoryBottomSheet(conversationsProvider: provider)
+                      );
                       if(result == 'open') {
                         changeConversation();
                       }
@@ -31,6 +39,7 @@ class Chatbox extends StatelessWidget {
                     icon: const Icon(Icons.history, color: Colors.blueGrey,)
                 ),
                 IconButton(onPressed: () {
+                  provider.setSelectedIndex(-1);
                   openNewChat();
                 }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
               ],

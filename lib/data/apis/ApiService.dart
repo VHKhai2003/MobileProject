@@ -17,9 +17,7 @@ class ApiService {
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        print(_refreshToken);
         final requireToken = options.extra['requireToken'] ?? false;
-        print(requireToken);
 
         if (requireToken) {
           if (_accessToken == null || await _isTokenExpired()) {
@@ -68,7 +66,6 @@ class ApiService {
   }
 
   Future<void> _refreshAccessToken() async {
-    print('refresh token!!!');
     try {
       final response = await _dio.get(
         ApiConstants.refreshToken,
@@ -80,7 +77,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final newAccessToken = response.data['token']['accessToken'];
         _accessToken = newAccessToken;
-        print('new token: $_accessToken');
         await _saveTokens(newAccessToken, _refreshToken!);
       } else {
         throw Exception('Failed to refresh token');
