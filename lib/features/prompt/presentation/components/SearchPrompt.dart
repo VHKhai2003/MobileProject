@@ -14,6 +14,11 @@ class SearchPrompt extends StatelessWidget {
       children: [
         Expanded(
           child: TextField(
+            onChanged: (value) {
+              if(value.isEmpty) {
+                onSubmitted(value);
+              }
+            },
             onSubmitted: onSubmitted,
             decoration: InputDecoration(
               filled: true,

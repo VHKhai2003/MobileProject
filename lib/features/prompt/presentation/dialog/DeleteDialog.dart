@@ -21,8 +21,8 @@ class _DeleteDialogState extends State<DeleteDialog> {
       showProgressIndicator = true;
     });
     PromptApiService promptApiService = PromptApiService();
-    await promptApiService.deletePrompt(widget.prompt);
-    Navigator.of(context).pop(true);
+    bool deleteStatus = await promptApiService.deletePrompt(widget.prompt);
+    Navigator.of(context).pop(deleteStatus);
   }
 
   @override

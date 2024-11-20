@@ -1,7 +1,9 @@
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/dialog/radio-button/PrivatePublicOption.dart';
 import 'package:code/features/prompt/presentation/dialog/text-field/CustomTextField.dart';
+import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'dropdown-menu/CategoryMenu.dart';
 
@@ -16,14 +18,14 @@ class EditDialog extends StatefulWidget {
 
 class _EditDialogState extends State<EditDialog> {
 
-  bool isPrivate = true;
+  late bool isPrivate;
   void _updateIsPrivate(bool? value) {
     setState(() {
       isPrivate = value ?? true;
     });
   }
 
-  String selectedCategory = 'other';
+  late String selectedCategory;
   void _handleChangeCategory(String? category) {
     setState(() {
       selectedCategory = category ?? 'other';
@@ -34,12 +36,43 @@ class _EditDialogState extends State<EditDialog> {
   late TextEditingController promptDescriptionController;
   late TextEditingController promptContentController;
 
+  bool showProgressIndicator = false;
+
+  void handleSubmit() async {
+
+    // validate
+    String title = promptNameController.text;
+    String content = promptContentController.text;
+    if(title.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Title must not be empty',
+      );
+      return;
+    }
+    if(content.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Prompt content must not be empty',
+      );
+      return;
+    }
+    setState(() {
+      showProgressIndicator = true;
+    });
+
+    Prompt updatedPrompt = Prompt(widget.prompt.id, title, content, !isPrivate, widget.prompt.isFavorite, description: promptDescriptionController.text, category: selectedCategory);
+    PromptApiService promptApiService = PromptApiService();
+    bool updateStatus = await promptApiService.updatePrompt(updatedPrompt);
+    Navigator.of(context).pop(updateStatus);
+  }
+
   @override
   void initState() {
     super.initState();
     promptNameController = TextEditingController(text: widget.prompt.title);
-    promptDescriptionController = TextEditingController();
+    promptDescriptionController = TextEditingController(text: widget.prompt.description);
     promptContentController = TextEditingController(text: widget.prompt.content);
+    selectedCategory = widget.prompt.category;
+    isPrivate = !widget.prompt.isPublic;
   }
 
   @override
@@ -62,7 +95,7 @@ class _EditDialogState extends State<EditDialog> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
           ),
           IconButton(onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           }, icon: const Icon(Icons.close)),
         ],
       ),
@@ -160,19 +193,30 @@ class _EditDialogState extends State<EditDialog> {
       actions: [
         OutlinedButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           },
           child: const Text('Cancel'),
         ),
         FilledButton(
-            onPressed: () {
-              // Handle the create action
-              Navigator.of(context).pop();
-            },
+            onPressed: handleSubmit,
             style: FilledButton.styleFrom(
               backgroundColor: Colors.blue.shade700,
             ),
-            child: const Text('Save',)
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                showProgressIndicator ? SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ) : SizedBox.shrink(),
+                SizedBox(width: 4,),
+                const Text('Save',),
+              ],
+            ),
         ),
       ],
     );

@@ -1,10 +1,8 @@
-import 'package:code/core/constants/ApiConstants.dart';
-import 'package:code/data/apis/ApiService.dart';
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:code/features/prompt/presentation/dialog/DeleteDialog.dart';
 import 'package:code/features/prompt/presentation/dialog/EditDialog.dart';
-import 'package:dio/dio.dart';
+import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
 
 class ListPrivatePrompt extends StatefulWidget {
@@ -22,31 +20,23 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
   bool hasNext = false;
   int offset = 0;
   List<Prompt> prompts = [];
-  final ApiService apiService = ApiService();
 
   void _loadPrompts() async {
-    // call api
     try {
-      final response = await apiService.dio.get(
-          ApiConstants.crudPrompts,
-          queryParameters: {
-            "query": widget.keyword,
-            "offset": offset,
-            "limit": 20,
-            "isPublic": false
-          },
-          options: Options(
-              extra: {
-                "requireToken": true,
-              }
-          )
-      );
+      PromptApiService promptApiService = PromptApiService();
+      Map<String, dynamic> params = {
+        "query": widget.keyword,
+        "offset": offset,
+        "limit": 20,
+        "isPublic": false
+      };
+      Map<String, dynamic> data = await promptApiService.getPrompts(params);
 
       // update state
       setState(() {
-        hasNext = response.data["hasNext"];
+        hasNext = data["hasNext"];
         prompts.addAll(List<Prompt>.from(
-            response.data["items"].map((item) => Prompt.fromJson(item))
+            data["items"].map((item) => Prompt.fromJson(item))
         ));
       });
     } catch (e) {
@@ -100,8 +90,14 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                      onPressed: () {
-                        showDialog(context: context, builder: (context) => EditDialog(prompt: prompt));
+                      onPressed: () async {
+                        bool? updateStatus = await showDialog(context: context, builder: (context) => EditDialog(prompt: prompt));
+                        if(updateStatus != null && updateStatus!) {
+                          prompts.clear();
+                          offset = 0;
+                          hasNext = false;
+                          _loadPrompts();
+                        }
                       },
                       icon: const Icon(Icons.mode_edit_outline_outlined, color: Colors.blueGrey, size: 18,)
                   ),
