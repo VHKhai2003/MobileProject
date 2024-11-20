@@ -1,5 +1,6 @@
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
+import 'package:code/features/prompt/presentation/components/EmptyList.dart';
 import 'package:code/features/prompt/presentation/dialog/InfoDialog.dart';
 import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
   bool hasNext = false;
   int offset = 0;
   List<Prompt> prompts = [];
+  bool isNotFound = false;
 
   void _loadPrompts() async {
     Map<String, dynamic> params = {
@@ -47,6 +49,7 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
             data["items"].map((item) => Prompt.fromJson(item))
           )
         );
+        isNotFound = prompts.isEmpty;
       });
     } catch (e) {
       print('Error when fetching prompt!\n$e');
@@ -66,6 +69,7 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
       });
     }
   }
+
 
   // when changing keyword, category, isfavorite
   @override
@@ -96,6 +100,10 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
 
   @override
   Widget build(BuildContext context) {
+    if(isNotFound) {
+      return EmptyList();
+    }
+
     int numberOfPrompts = prompts.length;
     return Expanded(
         child: ListView.separated(
@@ -140,14 +148,23 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
                     },
                   ),
                   IconButton(
-                      onPressed: () {
-                        showDialog(context: context, builder: (context) => InfoDialog(prompt: prompt));
+                      onPressed: () async {
+                        bool? status = await showDialog(context: context, builder: (context) => InfoDialog(prompt: prompt));
+                        if(status != null && status!) {
+                          String? data = await showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
+                          if(data != null && data.trim().isNotEmpty) {
+                            Navigator.of(context).pop(data!);
+                          }
+                        }
                       },
                       icon: const Icon(Icons.info_outline_rounded, color: Colors.blueGrey, size: 18)
                   ),
                   IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(context: context, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
+                    onPressed: () async {
+                      String? data = await showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
+                      if(data != null && data.trim().isNotEmpty) {
+                        Navigator.of(context).pop(data!);
+                      }
                     },
                     icon: const Icon(Icons.arrow_forward, color: Colors.blue, size: 18),
                   )
