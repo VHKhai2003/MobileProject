@@ -1,3 +1,4 @@
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/bot/presentation/widgets/BotCard.dart';
@@ -6,6 +7,7 @@ import 'package:code/features/bot/presentation/screens/BotDashboard.dart';
 import 'package:code/features/bot/presentation/screens/CreateBotDiaLog.dart';
 import 'package:code/features/bot/presentation/screens/ChatWithBot.dart';
 import 'package:code/features/bot/models/Bot.dart';
+import 'package:provider/provider.dart';
 
 class MainBot extends StatelessWidget {
   final List<Bot> bots = [
@@ -31,11 +33,13 @@ class MainBot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFEBEFFF),
-        actions: buildActions(context),
+        actions: buildActions(context, tokenUsageProvider.tokenUsage),
       ),
       drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
       body: Padding(

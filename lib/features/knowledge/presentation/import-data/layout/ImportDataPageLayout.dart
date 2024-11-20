@@ -1,5 +1,7 @@
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ImportDataPageLayout extends StatelessWidget {
   const ImportDataPageLayout({super.key, required this.child});
@@ -8,11 +10,13 @@ class ImportDataPageLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFEBEFFF),
         title: const Text("Add unit", style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: buildActions(context),
+        actions: buildActions(context, tokenUsageProvider.tokenUsage),
       ),
       body: Center(
         child: Container(

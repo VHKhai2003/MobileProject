@@ -1,14 +1,16 @@
+import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/chat/models/AiAgent.dart';
+import 'package:provider/provider.dart';
 
 List<AiAgent> agents = [
-  AiAgent("GPT-4o mini", 'assets/icons/gpt-4o-mini.png', 1),
-  AiAgent("GPT-4o", 'assets/icons/gpt-4o.png', 5),
-  AiAgent("Gemini 1.5 Flash", 'assets/icons/gemini-15-flash.webp', 1),
-  AiAgent("Gemini 1.5 Pro", 'assets/icons/gemini-15-pro.png', 2),
-  AiAgent("Clause 3 Haiku", 'assets/icons/claude-3-haiku.jpg', 3),
+  AiAgent.gpt_4o_mini,
+  AiAgent.gpt_4o,
+  AiAgent.gemini_15_flash,
+  AiAgent.gemini_15_pro,
+  AiAgent.claude_3_haiku,
+  AiAgent.claude_35_sonnet,
 ];
-
 
 class AiModels extends StatefulWidget {
   const AiModels({super.key});
@@ -56,6 +58,8 @@ class _AiModelsState extends State<AiModels> {
 
   @override
   Widget build(BuildContext context) {
+    final aiModelProvider = Provider.of<AiModelProvider>(context, listen: false);
+
     return Container(
       height: 32,
       decoration: BoxDecoration(
@@ -64,9 +68,10 @@ class _AiModelsState extends State<AiModels> {
       ),
       child: DropdownButton<String>(
           items: agents.map((agent) {
-              return DropdownMenuItem<String>(child: _buildDropdownItem(agent), value: agent.name);
+              return DropdownMenuItem<String>(value: agent.name, child: _buildDropdownItem(agent));
             }).toList(),
           onChanged: (String? value) {
+            aiModelProvider.setAiAgent(AiAgent.findByName(value!)!);
             setState(() {
               selectedValue = value;
             });

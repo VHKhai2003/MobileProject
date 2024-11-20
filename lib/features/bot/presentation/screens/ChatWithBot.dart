@@ -1,7 +1,8 @@
 import 'package:code/features/bot/presentation/screens/InputBotBox.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
-import 'package:code/shared/widgets/drawer/NavigationDrawer.dart' as navigation_drawer;
+import 'package:provider/provider.dart';
 
 class ChatWithBot extends StatelessWidget {
   final String botName;
@@ -21,12 +22,14 @@ class ChatWithBot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFEBEFFF),
         title: Text(botName, style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: buildActions(context),
+        actions: buildActions(context, tokenUsageProvider.tokenUsage),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

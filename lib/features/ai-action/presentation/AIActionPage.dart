@@ -1,9 +1,11 @@
 import 'package:code/features/ai-action/presentation/components/ActionWithName.dart';
 import 'package:code/features/ai-action/presentation/components/SearchBox.dart';
 import 'package:code/features/ai-action/presentation/email/EmailPage.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
 import 'package:code/shared/widgets/drawer/NavigationDrawer.dart' as navigation_drawer;
+import 'package:provider/provider.dart';
 
 class AIActionPage extends StatelessWidget {
   const AIActionPage({super.key});
@@ -18,6 +20,8 @@ class AIActionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -29,7 +33,7 @@ class AIActionPage extends StatelessWidget {
           backgroundColor: const Color(0xFFEBEFFF),
           title: const Text("AI Action",
               style: TextStyle(fontWeight: FontWeight.bold)),
-          actions: buildActions(context),
+          actions: buildActions(context, tokenUsageProvider.tokenUsage),
         ),
         drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
         body: Container(

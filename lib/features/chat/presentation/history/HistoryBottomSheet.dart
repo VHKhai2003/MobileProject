@@ -1,13 +1,14 @@
 import 'package:code/features/chat/models/ChatHistoryInfo.dart';
+import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class HistoryBottomSheet extends StatefulWidget {
-  const HistoryBottomSheet({super.key, required this.conversationsProvider});
+  const HistoryBottomSheet({super.key, required this.conversationsProvider, required this.aiModelProvider});
   final ConversationsProvider conversationsProvider;
-
+  final AiModelProvider aiModelProvider;
   @override
   State<HistoryBottomSheet> createState() => _HistoryBottomSheetState();
 }
@@ -34,10 +35,13 @@ class _HistoryBottomSheetState extends State<HistoryBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: widget.conversationsProvider,
-      child: Consumer<ConversationsProvider>(
-        builder: (context, conversationsProvider, child) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: widget.conversationsProvider),
+        ChangeNotifierProvider.value(value: widget.aiModelProvider)
+      ],
+      child: Consumer2<ConversationsProvider, AiModelProvider>(
+        builder: (context, conversationsProvider, aiModelProvider, child) {
           return Container(
             padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
             decoration: const BoxDecoration(
@@ -78,7 +82,7 @@ class _HistoryBottomSheetState extends State<HistoryBottomSheet> {
                           child: ListTile(
                             onTap: () {
                               conversationsProvider.setSelectedIndex(index);
-                              conversationsProvider.getConversationHistory(chatHistoryInfo.id, 'gpt-4o-mini', 'dify');
+                              conversationsProvider.getConversationHistory(chatHistoryInfo.id, aiModelProvider.aiAgent.id);
                               Navigator.of(context).pop("open");
                             },
                             title: Row(

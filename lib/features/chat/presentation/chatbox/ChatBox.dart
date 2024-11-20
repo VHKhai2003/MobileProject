@@ -1,4 +1,6 @@
 import 'package:code/features/chat/presentation/history/HistoryBottomSheet.dart';
+import 'package:code/features/chat/providers/AiModelProvider.dart';
+import 'package:code/features/chat/providers/ChatProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/chat/presentation/chatbox/AiModels.dart';
@@ -6,14 +8,20 @@ import 'package:code/features/prompt/presentation/PromptBottomSheet.dart';
 import 'package:provider/provider.dart';
 
 class Chatbox extends StatelessWidget {
-  Chatbox({super.key, required this.changeConversation, required this.openNewChat});
+  const Chatbox({super.key, required this.changeConversation, required this.openNewChat, required this.promptFocusNode, required this.isNewChat});
 
-  VoidCallback changeConversation;
-  VoidCallback openNewChat;
+  final FocusNode promptFocusNode;
+  final bool isNewChat;
+  final VoidCallback changeConversation;
+  final VoidCallback openNewChat;
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ConversationsProvider>(context, listen: false);
+    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final aiModelProvider = Provider.of<AiModelProvider>(context, listen: false);
+
+    final TextEditingController promptController = TextEditingController();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -27,10 +35,14 @@ class Chatbox extends StatelessWidget {
                 IconButton(
                     onPressed: () async {
                       // get conversation info here and display this conversation
-                      provider.getConversations('gpt-4o-mini', 'dify');
+                      promptFocusNode.unfocus();
+                      conversationProvider.getConversations(aiModelProvider.aiAgent.id);
                       String? result = await showModalBottomSheet(
                           context: context,
-                          builder: (context) => HistoryBottomSheet(conversationsProvider: provider)
+                          builder: (context) => HistoryBottomSheet(
+                            conversationsProvider: conversationProvider,
+                            aiModelProvider: aiModelProvider,
+                          )
                       );
                       if(result == 'open') {
                         changeConversation();
@@ -39,7 +51,8 @@ class Chatbox extends StatelessWidget {
                     icon: const Icon(Icons.history, color: Colors.blueGrey,)
                 ),
                 IconButton(onPressed: () {
-                  provider.setSelectedIndex(-1);
+                  promptFocusNode.unfocus();
+                  conversationProvider.setSelectedIndex(-1);
                   openNewChat();
                 }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
               ],
@@ -56,9 +69,11 @@ class Chatbox extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const TextField(
+              TextField(
+                controller: promptController,
+                focusNode: promptFocusNode,
                 maxLines: 3,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
                   hintStyle: TextStyle(
                     fontSize: 14,
@@ -66,7 +81,7 @@ class Chatbox extends StatelessWidget {
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.fromLTRB(16, 10, 16, 0),
-                ),
+                )
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
@@ -75,6 +90,7 @@ class Chatbox extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
+                        promptFocusNode.unfocus();
                         showModalBottomSheet(
                           context: context,
                           builder: (context) {
@@ -129,7 +145,42 @@ class Chatbox extends StatelessWidget {
                       },
                       icon: const Icon(Icons.add_circle_outline, color: Colors.blueGrey),
                     ),
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.send, color: Colors.blueGrey),)
+                    IconButton(
+                      onPressed: () {
+                        if (isNewChat) {
+                          conversationProvider.setConversationHistory(null);
+                          conversationProvider.setConversations(null);
+                          chatProvider.setMessages(
+                            [
+                              Column(
+                                children: [
+                                  chatProvider.buildQuestion(promptController.text),
+                                  const SizedBox(height: 20),
+                                  chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
+                                  const SizedBox(height: 20),
+                                ],
+                              )
+                            ]
+                          );
+                          chatProvider.newThreadChat(aiModelProvider.aiAgent.id, promptController.text);
+                          conversationProvider.setSelectedIndex(0);
+                          changeConversation();
+                          promptController.clear();
+                        } else {
+                          chatProvider.addMessage(
+                              Column(
+                                children: [
+                                  chatProvider.buildQuestion(promptController.text),
+                                  const SizedBox(height: 20),
+                                  chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
+                                  const SizedBox(height: 20),
+                                ],
+                              )
+                          );
+                          promptController.clear();
+                        }
+                      },
+                      icon: Icon(Icons.send, color: promptController.text == "" ? Colors.blueGrey : Colors.blue),)
                   ],
                 ),
               )
