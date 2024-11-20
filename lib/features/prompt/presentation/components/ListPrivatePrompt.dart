@@ -1,3 +1,5 @@
+import 'package:code/core/constants/ApiConstants.dart';
+import 'package:code/data/apis/ApiService.dart';
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:code/features/prompt/presentation/dialog/DeleteDialog.dart';
@@ -6,47 +8,46 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class ListPrivatePrompt extends StatefulWidget {
-  ListPrivatePrompt({super.key, required this.keyword});
+  ListPrivatePrompt({super.key, required this.keyword, required this.current});
 
   String keyword;
+  DateTime current;
 
   @override
   State<ListPrivatePrompt> createState() => _ListPrivatePromptState();
 }
-
-final dio = Dio();
 
 class _ListPrivatePromptState extends State<ListPrivatePrompt> {
 
   bool hasNext = false;
   int offset = 0;
   List<Prompt> prompts = [];
+  final ApiService apiService = ApiService();
 
   void _loadPrompts() async {
-    String apiUrl = "https://api.jarvis.cx/api/v1/prompts";
-    String accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5NjYzYTY0LTZiOTYtNGQwMC1hNzM2LTJhYTg4MTEyNDdiNSIsImVtYWlsIjoid2FuZ2thaTE3MjAwMkBnbWFpbC5jb20iLCJpYXQiOjE3MzE4MzAzODQsImV4cCI6MTczMTgzMjE4NH0.clfNN7Ieg9MR-PWXTNWPXJiitAneEX4mpwhFYG4siy8";
     // call api
     try {
-      final response = await dio.get(
-          apiUrl,
+      final response = await apiService.dio.get(
+          ApiConstants.crudPrompts,
           queryParameters: {
             "query": widget.keyword,
-            "offset": 0,
+            "offset": offset,
             "limit": 20,
             "isPublic": false
           },
           options: Options(
-              headers: {
-                "Authorization": "Bearer $accessToken"
-              },
+              extra: {
+                "requireToken": true,
+              }
           )
       );
 
       // update state
       setState(() {
-        prompts = List<Prompt>.from(
+        hasNext = response.data["hasNext"];
+        prompts.addAll(List<Prompt>.from(
             response.data["items"].map((item) => Prompt.fromJson(item))
-        );
+        ));
       });
     } catch (e) {
       print('Error when fetching prompt!\n$e');
@@ -58,10 +59,11 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
   void didUpdateWidget(covariant ListPrivatePrompt oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.keyword != widget.keyword) {
+    if (oldWidget.keyword != widget.keyword || !oldWidget.current.isAtSameMomentAs(widget.current)) {
       setState(() {
         prompts.clear();
         hasNext = false;
+        offset = 0;
       });
       _loadPrompts();
     }
@@ -84,9 +86,7 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
             if(index == numberOfPrompts) {
               return hasNext ? TextButton(
                 onPressed: () {
-                  setState(() {
-                    offset = offset + 20;
-                  });
+                  offset = offset + 20;
                   _loadPrompts();
                 },
                 child: Text("More...", style: TextStyle(color: Colors.blue),),
@@ -106,8 +106,14 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
                       icon: const Icon(Icons.mode_edit_outline_outlined, color: Colors.blueGrey, size: 18,)
                   ),
                   IconButton(
-                      onPressed: () {
-                        showDialog(context: context, builder: (context) => const DeleteDialog());
+                      onPressed: () async {
+                        bool? deleteStatus = await showDialog(context: context, builder: (context) => DeleteDialog(prompt: prompt,));
+                        if(deleteStatus != null && deleteStatus!) {
+                          prompts.clear();
+                          offset = 0;
+                          hasNext = false;
+                          _loadPrompts();
+                        }
                       },
                       icon: const Icon(Icons.delete_outline, color: Colors.blueGrey, size: 18,)
                   ),

@@ -23,10 +23,10 @@ class _EditDialogState extends State<EditDialog> {
     });
   }
 
-  String selectedCategory = 'Other';
+  String selectedCategory = 'other';
   void _handleChangeCategory(String? category) {
     setState(() {
-      selectedCategory = category ?? 'Other';
+      selectedCategory = category ?? 'other';
     });
   }
 

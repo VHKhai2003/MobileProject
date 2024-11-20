@@ -1,7 +1,29 @@
+import 'package:code/data/apis/ApiService.dart';
+import 'package:code/features/prompt/models/Prompt.dart';
+import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
 
-class DeleteDialog extends StatelessWidget {
-  const DeleteDialog({super.key});
+class DeleteDialog extends StatefulWidget {
+  const DeleteDialog({super.key, required this.prompt,});
+
+  final Prompt prompt;
+
+  @override
+  State<DeleteDialog> createState() => _DeleteDialogState();
+}
+
+class _DeleteDialogState extends State<DeleteDialog> {
+
+  bool showProgressIndicator = false;
+
+  void handleDelete() async {
+    setState(() {
+      showProgressIndicator = true;
+    });
+    PromptApiService promptApiService = PromptApiService();
+    await promptApiService.deletePrompt(widget.prompt);
+    Navigator.of(context).pop(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +34,7 @@ class DeleteDialog extends StatelessWidget {
         children: [
           const Text('Delete Prompt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
           IconButton(onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           }, icon: const Icon(Icons.close)),
         ],
       ),
@@ -20,19 +42,30 @@ class DeleteDialog extends StatelessWidget {
       actions: [
         OutlinedButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           },
           child: const Text('Cancel'),
         ),
         FilledButton(
-            onPressed: () {
-              // Handle the create action
-              Navigator.of(context).pop();
-            },
+            onPressed: handleDelete,
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('Delete',)
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                showProgressIndicator ? SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ) : SizedBox.shrink(),
+                SizedBox(width: 4,),
+                const Text('Delete',),
+              ],
+            )
         ),
       ],
     );

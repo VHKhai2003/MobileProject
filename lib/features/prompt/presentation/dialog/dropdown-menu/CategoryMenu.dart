@@ -1,11 +1,8 @@
+import 'package:code/features/prompt/models/PromptCategory.dart';
 import 'package:flutter/material.dart';
 
 class CategoryMenu extends StatelessWidget {
-  CategoryMenu({super.key, required this.selectedCategory, required this.onChanged});
-  final List<String> _categories = [
-    "Marketing", "Business", "SEO", "Writing", "Coding",
-    "Career", "Chatbot", "Education", "Fun", "Productivity", "Other"
-  ];
+  const CategoryMenu({super.key, required this.selectedCategory, required this.onChanged});
   final String selectedCategory;
   final Function(String?) onChanged;
 
@@ -20,7 +17,7 @@ class CategoryMenu extends StatelessWidget {
         ),
       child: DropdownButton<String>(
           menuMaxHeight: 300,
-          items: _categories.map((category) =>
+          items: PromptCategory.categories.map((category) =>
               DropdownMenuItem(
                 value: category,
                 child: Text(category, style: TextStyle(color: Colors.black87),),

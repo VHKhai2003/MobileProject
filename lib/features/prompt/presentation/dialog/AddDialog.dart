@@ -1,7 +1,10 @@
+import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/dialog/dropdown-menu/CategoryMenu.dart';
 import 'package:code/features/prompt/presentation/dialog/radio-button/PrivatePublicOption.dart';
 import 'package:code/features/prompt/presentation/dialog/text-field/CustomTextField.dart';
+import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddDialog extends StatefulWidget {
   const AddDialog({super.key});
@@ -19,16 +22,45 @@ class _AddDialogState extends State<AddDialog> {
     });
   }
 
-  String selectedCategory = 'Other';
+  String selectedCategory = 'other';
   void _handleChangeCategory(String? category) {
     setState(() {
-      selectedCategory = category ?? 'Other';
+      selectedCategory = category ?? 'other';
     });
   }
+
+  bool showProgressIndicator = false;
 
   final TextEditingController promptNameController = TextEditingController();
   final TextEditingController promptDescriptionController = TextEditingController();
   final TextEditingController promptContentController = TextEditingController();
+
+  void handleSubmit() async {
+    // validate
+    String title = promptNameController.text;
+    String content = promptContentController.text;
+    if(title.trim().isEmpty) {
+      Fluttertoast.showToast(
+          msg: 'Title must not be empty',
+      );
+      return;
+    }
+    if(content.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Prompt content must not be empty',
+      );
+      return;
+    }
+    setState(() {
+      showProgressIndicator = true;
+    });
+
+    Prompt newPrompt = Prompt('', promptNameController.text, promptContentController.text, !isPrivate, false, category: selectedCategory, description: promptDescriptionController.text);
+    PromptApiService promptApiService = PromptApiService();
+    bool createStatus = await promptApiService.createPrompt(newPrompt);
+
+    Navigator.of(context).pop(createStatus);
+  }
 
   @override
   void initState() {
@@ -51,9 +83,12 @@ class _AddDialogState extends State<AddDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text('New Prompt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-          IconButton(onPressed: () {
-            Navigator.of(context).pop();
-          }, icon: const Icon(Icons.close)),
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              icon: const Icon(Icons.close)
+          ),
         ],
       ),
       content: SingleChildScrollView(
@@ -68,13 +103,13 @@ class _AddDialogState extends State<AddDialog> {
               margin: const EdgeInsets.fromLTRB(0, 12, 0, 6),
               child: const Row(
                 children: [
-                  Text('Name '),
+                  Text('Title '),
                   Text('*', style: TextStyle(color: Colors.red),)
                 ],
               ),
             ),
             // TextField for Name
-            CustomTextField(controller: promptNameController, hinText: 'Name of the prompt'),
+            CustomTextField(controller: promptNameController, hinText: 'Title of the prompt'),
         
         
             !isPrivate ? Container(
@@ -136,12 +171,12 @@ class _AddDialogState extends State<AddDialog> {
                 ],
               ),
             ),
-            // TextField for Prompt
+            // TextField for Prompt content
             CustomTextField(
               controller: promptContentController,
               hinText: 'e.g. Write an article about [TOPIC], make sure to include these keywords: [KEYWORDS]',
               maxLines: 3,
-            )
+            ),
           ],
         ),
       ),
@@ -149,19 +184,30 @@ class _AddDialogState extends State<AddDialog> {
       actions: [
         OutlinedButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           },
           child: const Text('Cancel'),
         ),
         FilledButton(
-          onPressed: () {
-            // Handle the create action
-            Navigator.of(context).pop();
-          },
+          onPressed: handleSubmit,
           style: FilledButton.styleFrom(
             backgroundColor: Colors.blue.shade700,
           ),
-          child: const Text('Create',)
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              showProgressIndicator ? SizedBox(
+                width: 10,
+                height: 10,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ) : SizedBox.shrink(),
+              SizedBox(width: 4,),
+              const Text('Create',),
+            ],
+          )
         ),
       ],
     );

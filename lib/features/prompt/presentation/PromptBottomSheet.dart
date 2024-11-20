@@ -1,3 +1,4 @@
+import 'package:code/features/prompt/models/PromptCategory.dart';
 import 'package:code/features/prompt/presentation/components/ListPrivatePrompt.dart';
 import 'package:code/features/prompt/presentation/components/ListPublicPrompt.dart';
 import 'package:code/features/prompt/presentation/components/NavigationTab.dart';
@@ -44,22 +45,26 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
 
 
   bool _isShowAllCategories = false;
-
-  final List<String> _categories = [
-    "all", "marketing", "business", "seo", "writing", "coding",
-    "career", "chatbot", "education", "fun", "productivity", "other"
-  ];
   String _selectedCategory = "all"; // default value
+
+  DateTime current = DateTime.now();
+  void updateCurrent(bool? status) {
+    if(status != null && status!) {
+      setState(() {
+        current = DateTime.now();
+      });
+    }
+  }
 
 
   @override
   Widget build(BuildContext context) {
     List<String> categoriesList;
     if(_isShowAllCategories) {
-      categoriesList = _categories;
+      categoriesList = PromptCategory.categories;
     }
     else {
-      categoriesList = _categories.sublist(0, 4);
+      categoriesList = PromptCategory.categories.sublist(0, 4);
     }
 
     return Container(
@@ -81,9 +86,13 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
                   const Text("Prompt library", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                   Row(
                     children: [
-                      IconButton(onPressed: () {
-                        showDialog(context: context, builder: (context) => AddDialog());
-                      }, icon: Icon(Icons.add_box_rounded, color: Colors.blue.shade700,)),
+                      IconButton(
+                          onPressed: () async{
+                            bool? createStatus = await showDialog(context: context, builder: (context) => AddDialog());
+                            updateCurrent(createStatus);
+                          },
+                          icon: Icon(Icons.add_box_rounded, color: Colors.blue.shade700,)
+                      ),
                       IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.close))
                     ],
                   )
@@ -131,7 +140,7 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
                   }, icon: const Icon(Icons.arrow_drop_down_outlined))
                 ],
               ) : const SizedBox.shrink(),
-              _selections.first ? ListPrivatePrompt(keyword: keyword,) : ListPublicPrompt(keyword: keyword, category: _selectedCategory, isFavorite: _isFavoriteChecked,)
+              _selections.first ? ListPrivatePrompt(keyword: keyword, current: current,) : ListPublicPrompt(keyword: keyword, category: _selectedCategory, isFavorite: _isFavoriteChecked, current: current,)
             ],
           ),
     );

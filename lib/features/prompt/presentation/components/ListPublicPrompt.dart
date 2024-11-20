@@ -1,3 +1,5 @@
+import 'package:code/core/constants/ApiConstants.dart';
+import 'package:code/data/apis/ApiService.dart';
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:code/features/prompt/presentation/dialog/InfoDialog.dart';
@@ -5,14 +7,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 
-final dio = Dio();
-
 class ListPublicPrompt extends StatefulWidget {
-  ListPublicPrompt({super.key, required this.keyword, required this.category, required this.isFavorite});
+  ListPublicPrompt({super.key, required this.keyword, required this.category, required this.isFavorite, required this.current});
 
   String keyword;
   bool isFavorite;
   String category;
+  DateTime current;
 
   @override
   State<ListPublicPrompt> createState() => _ListPublicPromptState();
@@ -23,10 +24,10 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
   bool hasNext = false;
   int offset = 0;
   List<Prompt> prompts = [];
+  final ApiService apiService = ApiService();
 
   void _loadPrompts() async {
-    String apiUrl = "https://api.jarvis.cx/api/v1/prompts";
-    String accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5NjYzYTY0LTZiOTYtNGQwMC1hNzM2LTJhYTg4MTEyNDdiNSIsImVtYWlsIjoid2FuZ2thaTE3MjAwMkBnbWFpbC5jb20iLCJpYXQiOjE3MzE4MzAzODQsImV4cCI6MTczMTgzMjE4NH0.clfNN7Ieg9MR-PWXTNWPXJiitAneEX4mpwhFYG4siy8";
+    String apiUrl = "/api/v1/prompts";
     Map<String, dynamic> params = widget.category == 'all'
         ? {
           "query": widget.keyword,
@@ -45,13 +46,13 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
         };
     // call api
     try {
-      final response = await dio.get(
-          apiUrl,
+      final response = await apiService.dio.get(
+          ApiConstants.crudPrompts,
           queryParameters: params,
           options: Options(
-            headers: {
-              "Authorization": "Bearer $accessToken"
-            },
+              extra: {
+                "requireToken": true,
+              }
           )
       );
 
@@ -74,10 +75,15 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
   void didUpdateWidget(covariant ListPublicPrompt oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.keyword != widget.keyword || oldWidget.category != widget.category || oldWidget.isFavorite != widget.isFavorite) {
+    if (oldWidget.keyword != widget.keyword
+        || oldWidget.category != widget.category
+        || oldWidget.isFavorite != widget.isFavorite
+        || !oldWidget.current.isAtSameMomentAs(widget.current)
+    ) {
       setState(() {
         prompts.clear();
         hasNext = false;
+        offset = 0;
       });
       _loadPrompts();
     }
@@ -101,9 +107,7 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
             if(index == numberOfPrompts) {
               return hasNext ? TextButton(
                   onPressed: () {
-                    setState(() {
-                      offset = offset + 20;
-                    });
+                    offset = offset + 20;
                     _loadPrompts();
                   },
                   child: Text("More...", style: TextStyle(color: Colors.blue),),
