@@ -1,9 +1,7 @@
-import 'package:code/core/constants/ApiConstants.dart';
-import 'package:code/data/apis/ApiService.dart';
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:code/features/prompt/presentation/dialog/InfoDialog.dart';
-import 'package:dio/dio.dart';
+import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
 
 
@@ -24,49 +22,48 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
   bool hasNext = false;
   int offset = 0;
   List<Prompt> prompts = [];
-  final ApiService apiService = ApiService();
 
   void _loadPrompts() async {
-    String apiUrl = "/api/v1/prompts";
-    Map<String, dynamic> params = widget.category == 'all'
-        ? {
-          "query": widget.keyword,
-          "offset": offset,
-          "limit": 20,
-          "isPublic": true,
-          "isFavorite": widget.isFavorite,
-        }
-        : {
-          "query": widget.keyword,
-          "offset": offset,
-          "limit": 20,
-          "isPublic": true,
-          "isFavorite": widget.isFavorite,
-          "category": widget.category,
-        };
+    Map<String, dynamic> params = {
+      "query": widget.keyword,
+      "offset": offset,
+      "limit": 20,
+      "isPublic": true,
+      "isFavorite": widget.isFavorite,
+    };
+    if(widget.category != 'all') {
+      params["category"] = widget.category;
+    }
     // call api
     try {
-      final response = await apiService.dio.get(
-          ApiConstants.crudPrompts,
-          queryParameters: params,
-          options: Options(
-              extra: {
-                "requireToken": true,
-              }
-          )
-      );
+      PromptApiService promptApiService = PromptApiService();
+      Map<String, dynamic> data = await promptApiService.getPrompts(params);
 
       // update state
       setState(() {
-        hasNext = response.data["hasNext"];
+        hasNext = data["hasNext"];
         prompts.addAll(
             List<Prompt>.from(
-            response.data["items"].map((item) => Prompt.fromJson(item))
+            data["items"].map((item) => Prompt.fromJson(item))
           )
         );
       });
     } catch (e) {
       print('Error when fetching prompt!\n$e');
+    }
+  }
+  void toggleFavorite(Prompt prompt) async {
+    // for user experience
+    setState(() {
+      prompt.isFavorite = !prompt.isFavorite;
+    });
+    PromptApiService promptApiService = PromptApiService();
+    bool status = await promptApiService.toggleFavorite(prompt);
+    if(!status) {
+      // rollback if fail
+      setState(() {
+        prompt.isFavorite = !prompt.isFavorite;
+      });
     }
   }
 
@@ -139,9 +136,7 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
                       size: 18,
                     ),
                     onPressed: () {
-                      setState(() {
-                        prompt.isFavorite = !prompt.isFavorite;
-                      });
+                      toggleFavorite(prompt);
                     },
                   ),
                   IconButton(
