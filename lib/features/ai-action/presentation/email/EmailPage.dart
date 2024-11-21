@@ -3,8 +3,10 @@ import 'package:code/features/ai-action/presentation/email/components/JarvisRepl
 import 'package:code/features/ai-action/presentation/email/components/ReceivedEmail.dart';
 import 'package:code/features/ai-action/presentation/email/components/Suggestions.dart';
 import 'package:code/features/chat/presentation/chatbox/ChatBox.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EmailPage extends StatefulWidget {
   const EmailPage({super.key});
@@ -16,6 +18,8 @@ class EmailPage extends StatefulWidget {
 class _EmailPageState extends State<EmailPage> {
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -28,7 +32,7 @@ class _EmailPageState extends State<EmailPage> {
               onPressed: () { Navigator.of(context).pop(); },
               icon: const Icon(Icons.arrow_back, size: 25, color: Colors.grey,)
           ),
-          actions: buildActions(context),
+          actions: buildActions(context, tokenUsageProvider.tokenUsage),
         ),
         body: Container(
           color: Colors.white,
@@ -93,7 +97,7 @@ class _EmailPageState extends State<EmailPage> {
                 //     )
                 //   ],
                 // ),
-                child: Chatbox(openNewChat: () {}, changeConversation: (){},),
+                child: Chatbox(isNewChat: false, openNewChat: () {}, changeConversation: (){}, promptFocusNode: FocusNode(),),
               )
             ],
           ),

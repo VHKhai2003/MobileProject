@@ -1,7 +1,7 @@
 import 'package:code/features/upgrade/presentation/UpgradePage.dart';
 import 'package:flutter/material.dart';
 
-List<Widget> buildActions(BuildContext context) {
+List<Widget> buildActions(BuildContext context, int tokenUsage) {
   return [
     TextButton(
       onPressed: () {
@@ -43,9 +43,9 @@ List<Widget> buildActions(BuildContext context) {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10), color: Colors.grey.shade200),
       child: Row(
-        children: const [
+        children: [
           Text(
-            '50',
+            '$tokenUsage',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
           ),
           SizedBox(width: 5),

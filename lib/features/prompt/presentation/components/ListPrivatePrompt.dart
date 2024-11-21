@@ -1,5 +1,6 @@
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
+import 'package:code/features/prompt/presentation/components/EmptyList.dart';
 import 'package:code/features/prompt/presentation/dialog/DeleteDialog.dart';
 import 'package:code/features/prompt/presentation/dialog/EditDialog.dart';
 import 'package:code/features/prompt/services/PromptApiService.dart';
@@ -20,6 +21,7 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
   bool hasNext = false;
   int offset = 0;
   List<Prompt> prompts = [];
+  bool isNotFound = false;
 
   void _loadPrompts() async {
     try {
@@ -38,6 +40,7 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
         prompts.addAll(List<Prompt>.from(
             data["items"].map((item) => Prompt.fromJson(item))
         ));
+        isNotFound = prompts.isEmpty;
       });
     } catch (e) {
       print('Error when fetching prompt!\n$e');
@@ -68,6 +71,10 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
 
   @override
   Widget build(BuildContext context) {
+    if(isNotFound) {
+      return EmptyList();
+    }
+
     int numberOfPrompts = prompts.length;
     return Expanded(
         child: ListView.separated(
@@ -114,8 +121,11 @@ class _ListPrivatePromptState extends State<ListPrivatePrompt> {
                       icon: const Icon(Icons.delete_outline, color: Colors.blueGrey, size: 18,)
                   ),
                   IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
+                    onPressed: () async {
+                      String? data = await showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
+                      if(data != null && data.trim().isNotEmpty) {
+                        Navigator.of(context).pop(data!);
+                      }
                     },
                     icon: const Icon(Icons.arrow_forward, color: Colors.blue, size: 18,),
                   )

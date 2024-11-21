@@ -1,4 +1,5 @@
 import 'package:code/features/prompt/models/Prompt.dart';
+import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:flutter/material.dart';
 
 class InfoDialog extends StatelessWidget {
@@ -17,7 +18,7 @@ class InfoDialog extends StatelessWidget {
               child: Text(prompt.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
           ),
           IconButton(onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           }, icon: const Icon(Icons.close)),
         ],
       ),
@@ -25,7 +26,7 @@ class InfoDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(prompt.category, style: const TextStyle(fontSize: 14),),
+          Text(prompt.category, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
           const SizedBox(height: 6,),
           Text(prompt.description, style: const TextStyle(fontSize: 12, color: Colors.blueGrey),),
           const SizedBox(height: 10,),
@@ -42,14 +43,13 @@ class InfoDialog extends StatelessWidget {
       actions: [
         OutlinedButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           },
           child: const Text('Cancel'),
         ),
         FilledButton(
             onPressed: () {
-              // Handle the create action
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(true);
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.blue.shade700,

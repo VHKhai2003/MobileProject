@@ -1,11 +1,13 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/models/Unit.dart';
 import 'package:code/features/knowledge/models/UnitTypeName.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:code/features/knowledge/presentation/units/components/AddUnitButton.dart';
 import 'package:code/features/knowledge/presentation/units/components/KnowledgeInfo.dart';
 import 'package:code/features/knowledge/presentation/units/components/UnitElement.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UnitPage extends StatefulWidget {
   const UnitPage({super.key, required this.knowledge, required this.editKnowledge});
@@ -35,11 +37,13 @@ class _UnitPageState extends State<UnitPage> {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFEBEFFF),
         title: const Text("Units", style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: buildActions(context),
+        actions: buildActions(context, tokenUsageProvider.tokenUsage),
       ),
       body: Container(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
