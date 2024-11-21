@@ -1,3 +1,5 @@
+import 'package:code/features/chat/models/Assistant.dart';
+import 'package:code/features/chat/models/Message.dart';
 import 'package:code/features/chat/presentation/history/HistoryBottomSheet.dart';
 import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:code/features/chat/providers/ChatProvider.dart';
@@ -162,6 +164,19 @@ class Chatbox extends StatelessWidget {
                               )
                             ]
                           );
+                          chatProvider.setMessagesRequest(
+                            [
+                              Message(
+                                  role: 'user',
+                                  content: promptController.text,
+                                  assistant: Assistant(
+                                      id: aiModelProvider.aiAgent.id,
+                                      model: 'dify',
+                                      name: aiModelProvider.aiAgent.name
+                                  )
+                              )
+                            ]
+                          );
                           chatProvider.newThreadChat(aiModelProvider.aiAgent.id, promptController.text);
                           conversationProvider.setSelectedIndex(0);
                           changeConversation();
@@ -175,6 +190,22 @@ class Chatbox extends StatelessWidget {
                                   chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
                                   const SizedBox(height: 20),
                                 ],
+                              )
+                          );
+                          chatProvider.sendMessage(
+                              promptController.text,
+                              chatProvider.conversationId!,
+                              aiModelProvider.aiAgent
+                          );
+                          chatProvider.addMessageRequest(
+                              Message(
+                                  role: 'user',
+                                  content: promptController.text,
+                                  assistant: Assistant(
+                                      id: aiModelProvider.aiAgent.id,
+                                      model: 'dify',
+                                      name: aiModelProvider.aiAgent.name
+                                  )
                               )
                           );
                           promptController.clear();

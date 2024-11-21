@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:code/core/constants/ApiConstants.dart';
 import 'package:code/data/apis/ApiService.dart';
 import 'package:code/features/chat/models/AiAgent.dart';
+import 'package:code/features/chat/models/Message.dart';
 import 'package:code/features/chat/models/MessageResponse.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:dio/dio.dart';
@@ -18,9 +19,12 @@ class ChatProvider with ChangeNotifier {
   List<Widget> _messages = [];
   String? _errorMessage;
   MessageResponse? _messageResponse;
-
+  List<Message> _messagesRequest = [];
+  String? _conversationId;
 
   List<Widget> get messages => _messages;
+  List<Message> get messagesRequest => _messagesRequest;
+  String? get conversationId => _conversationId;
 
   Widget buildResponse(AiAgent agent, String content) {
     return Row(
@@ -108,6 +112,10 @@ class ChatProvider with ChangeNotifier {
     );
   }
 
+  void setConversationId(String id) {
+    _conversationId = id;
+  }
+
   void addMessage(Widget widget) {
     _messages.add(widget);
     notifyListeners();
@@ -115,6 +123,22 @@ class ChatProvider with ChangeNotifier {
 
   void setMessages(List<Widget> widgets) {
     _messages = widgets;
+    notifyListeners();
+  }
+
+  void printMessage() {
+    for (var i in _messagesRequest) {
+      print(i.toJson());
+    }
+  }
+
+  void addMessageRequest(Message message) {
+    _messagesRequest.add(message);
+    notifyListeners();
+  }
+
+  void setMessagesRequest(List<Message> messages) {
+    _messagesRequest = messages;
     notifyListeners();
   }
 
@@ -138,7 +162,7 @@ class ChatProvider with ChangeNotifier {
       );
       if (response.statusCode == 200) {
         _messageResponse = MessageResponse.fromJson(response.data);
-        print(response.data);
+        setConversationId(_messageResponse!.conversationId);
         _messages.removeLast();
         addMessage(
             Column(
@@ -153,6 +177,7 @@ class ChatProvider with ChangeNotifier {
               ],
             )
         );
+
         tokenUsageProvider.setTokenUsage(_messageResponse!.remainingUsage);
         _errorMessage = null;
       } else {
@@ -166,4 +191,58 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
+  Future<void> sendMessage(String content, String conversationId, AiAgent model) async {
+    try {
+      final response = await _apiService.dio.post(
+          ApiConstants.sendMessage,
+          data: {
+            "content": content,
+            "metadata": {
+              "conversation": {
+                "id": conversationId,
+                "messages": _messagesRequest
+              }
+            },
+            "assistant": {
+              "id": model.id,
+              "model": "dify",
+              "name": model.name
+            }
+          },
+          options: Options(
+            headers: {
+              HttpHeaders.contentTypeHeader: "application/json",
+            },
+            extra: {'requireToken': true},
+          )
+      );
+      if (response.statusCode == 200) {
+        _messageResponse = MessageResponse.fromJson(response.data);
+        print(response.data);
+        _messages.removeLast();
+        addMessage(
+            Column(
+              children: [
+                buildQuestion(content),
+                const SizedBox(height: 20),
+                buildResponse(
+                    AiAgent.findById(model.id)!,
+                    _messageResponse!.message
+                ),
+                const SizedBox(height: 20),
+              ],
+            )
+        );
+        tokenUsageProvider.setTokenUsage(_messageResponse!.remainingUsage);
+        _errorMessage = null;
+      } else {
+        _errorMessage = 'Failed to send message';
+        _messageResponse = null;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      _messageResponse = null;
+      print(_errorMessage);
+    }
+  }
 }

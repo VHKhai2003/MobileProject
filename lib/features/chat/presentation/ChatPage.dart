@@ -40,7 +40,7 @@ class _ChatPageState extends State<ChatPage> {
       providers: [
         ChangeNotifierProvider(create: (_) => AiModelProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider(context.read<TokenUsageProvider>())),
-        ChangeNotifierProvider(create: (context) => ConversationsProvider(context.read<ChatProvider>())),
+        ChangeNotifierProvider(create: (context) => ConversationsProvider(context.read<ChatProvider>(), context.read<AiModelProvider>())),
       ],
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
