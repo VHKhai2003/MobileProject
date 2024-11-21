@@ -8,7 +8,13 @@ class ApiService {
   static const _storage = FlutterSecureStorage();
 
   String? _accessToken;
-  String? _refreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI2NzA3ZTdmLWU0NWItNGNkNS1hYTkwLTllMDU5ZjA0MmQyNiIsImVtYWlsIjoibnFoQGdtYWlsLmNvbSIsImlhdCI6MTczMjIwNTI1MCwiZXhwIjoxNzYzNzQxMjUwfQ.R3mIyCwm3AWI-WlRxSyCNr0R38ZpcvpCZwb8t1bFUO4";
+  String? _refreshToken;
+
+  String? get token => _accessToken;
+
+  Future<void> init() async {
+    await loadTokens();
+  }
 
   ApiService() {
     _dio.options.baseUrl = ApiConstants.baseUrl;
@@ -35,15 +41,15 @@ class ApiService {
       },
     ));
 
-    // _loadTokens();
+    loadTokens();
   }
 
-  Future<void> _loadTokens() async {
+  Future<void> loadTokens() async {
     _accessToken = await _storage.read(key: 'accessToken');
     _refreshToken = await _storage.read(key: 'refreshToken');
   }
 
-  Future<void> _saveTokens(String accessToken, String refreshToken) async {
+  Future<void> saveTokens(String accessToken, String refreshToken) async {
     await _storage.write(key: 'accessToken', value: accessToken);
     await _storage.write(key: 'refreshToken', value: refreshToken);
   }
@@ -77,7 +83,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final newAccessToken = response.data['token']['accessToken'];
         _accessToken = newAccessToken;
-        await _saveTokens(newAccessToken, _refreshToken!);
+        await saveTokens(newAccessToken, _refreshToken!);
       } else {
         throw Exception('Failed to refresh token');
       }
