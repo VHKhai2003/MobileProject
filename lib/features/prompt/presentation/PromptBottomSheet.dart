@@ -49,7 +49,7 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
 
   DateTime current = DateTime.now();
   void updateCurrent(bool? status) {
-    if(status != null && status!) {
+    if(status != null && status) {
       setState(() {
         current = DateTime.now();
       });
@@ -72,7 +72,7 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom, // space for virtual keyboard
       ),
       child: Container(
-        height: 550,
+        height: 530,
         padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
         decoration: const BoxDecoration(
           color: Colors.white,

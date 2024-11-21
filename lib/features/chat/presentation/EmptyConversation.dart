@@ -2,7 +2,9 @@ import 'package:code/features/chat/presentation/suggestion/SuggestionPrompt.dart
 import 'package:flutter/material.dart';
 
 class EmptyConversation extends StatelessWidget {
-  const EmptyConversation({super.key});
+  const EmptyConversation({super.key, required this.promptController, required this.changeConversation});
+  final TextEditingController promptController;
+  final VoidCallback changeConversation;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,10 @@ class EmptyConversation extends StatelessWidget {
             const Text("Hello, Good morning", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),),
             const Text("I'm Jarvis, your personal assistant"),
             const SizedBox(height: 32,),
-            SuggestionPrompt(),
+            SuggestionPrompt(
+              promptController: promptController,
+              changeConversation: changeConversation,
+            ),
           ],
         ),
       ),

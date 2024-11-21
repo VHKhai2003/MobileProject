@@ -2,7 +2,6 @@ import 'package:code/features/ai-action/presentation/email/components/EmailLabel
 import 'package:code/features/ai-action/presentation/email/components/JarvisReply.dart';
 import 'package:code/features/ai-action/presentation/email/components/ReceivedEmail.dart';
 import 'package:code/features/ai-action/presentation/email/components/Suggestions.dart';
-import 'package:code/features/chat/presentation/chatbox/ChatBox.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +96,6 @@ class _EmailPageState extends State<EmailPage> {
                 //     )
                 //   ],
                 // ),
-                child: Chatbox(isNewChat: false, openNewChat: () {}, changeConversation: (){}, promptFocusNode: FocusNode(),),
               )
             ],
           ),

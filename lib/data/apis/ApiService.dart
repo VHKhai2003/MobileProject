@@ -8,7 +8,7 @@ class ApiService {
   static const _storage = FlutterSecureStorage();
 
   String? _accessToken;
-  String? _refreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI2NzA3ZTdmLWU0NWItNGNkNS1hYTkwLTllMDU5ZjA0MmQyNiIsImVtYWlsIjoibnFoQGdtYWlsLmNvbSIsImlhdCI6MTczMTgxNjQxMywiZXhwIjoxNzYzMzUyNDEzfQ.yygiY5ewZ8qyMisP4C33wfKxeVLiI-QCcKzlakluN_U";
+  String? _refreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI2NzA3ZTdmLWU0NWItNGNkNS1hYTkwLTllMDU5ZjA0MmQyNiIsImVtYWlsIjoibnFoQGdtYWlsLmNvbSIsImlhdCI6MTczMjIwNTI1MCwiZXhwIjoxNzYzNzQxMjUwfQ.R3mIyCwm3AWI-WlRxSyCNr0R38ZpcvpCZwb8t1bFUO4";
 
   ApiService() {
     _dio.options.baseUrl = ApiConstants.baseUrl;

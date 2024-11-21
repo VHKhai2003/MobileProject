@@ -101,11 +101,14 @@ class _HistoryBottomSheetState extends State<HistoryBottomSheet> {
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),),
                                 ) : const SizedBox.shrink(),
-                                Text(
-                                  chatHistoryInfo.title,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                                Flexible(
+                                  child: Text(
+                                    chatHistoryInfo.title,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis
                                   ),
                                 ),
                               ],

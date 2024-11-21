@@ -1,11 +1,16 @@
+import 'package:code/features/chat/providers/ConversationsProvider.dart';
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/presentation/PromptBottomSheet.dart';
 import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SuggestionPrompt extends StatefulWidget {
-  const SuggestionPrompt({super.key});
+  const SuggestionPrompt({super.key, required this.promptController, required this.changeConversation});
+
+  final TextEditingController promptController;
+  final VoidCallback changeConversation;
 
   @override
   State<SuggestionPrompt> createState() => _SuggestionPromptState();
@@ -16,6 +21,8 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
   List<Prompt> prompts = [];
 
   Widget _buildPromptItem(Prompt prompt) {
+    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 2, 12, 2),
       margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
@@ -34,7 +41,15 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
                     isScrollControlled: true,
                     builder: (context) => UsingPromptBottomSheet(prompt: prompt)
                 );
-                print('data: $data');
+                if(data != null) {
+                  final regex = RegExp(r'\[.*?\]');
+                  if (regex.hasMatch(data)) {
+                    widget.promptController.text = data.toString();
+                  } else {
+                    conversationProvider.createNewThreadChat(data);
+                    widget.changeConversation();
+                  }
+                }
               },
               icon: const Icon(Icons.arrow_forward, color: Colors.blue, size: 16,)
           ),
@@ -43,13 +58,13 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
     );
   }
 
-
   void loadPrompt() async {
     // get some prompts
     Map<String, dynamic> params = {
       "offset": 0,
       "limit": 3,
       "isPublic": true,
+      "category": "writing"
     };
     try {
       PromptApiService promptApiService = PromptApiService();
@@ -74,8 +89,10 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
 
   @override
   Widget build(BuildContext context) {
-    return prompts.isNotEmpty
-        ? Column(
+    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+
+    return prompts.isNotEmpty ?
+    Column(
             children: [
               Container(
                 padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
@@ -93,8 +110,15 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
                               },
                               barrierColor: Colors.black.withOpacity(0.2)
                           );
-
-                          print('data: $data');
+                          if(data != null) {
+                            final regex = RegExp(r'\[.*?\]');
+                            if (regex.hasMatch(data)) {
+                              widget.promptController.text = data.toString();
+                            } else {
+                              conversationProvider.createNewThreadChat(data);
+                              widget.changeConversation();
+                            }
+                          }
                         },
                         child: Text("View all...", style: TextStyle(fontSize: 13, color: Colors.blue),),
                     ),
@@ -106,7 +130,10 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
                 children: prompts.map((prompt) => _buildPromptItem(prompt)).toList(),
               )
             ],
-          )
-        : Column();
+          ) :
+    SizedBox(
+      height: MediaQuery.of(context).size.height/3,
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 }

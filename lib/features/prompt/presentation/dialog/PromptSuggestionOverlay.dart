@@ -4,9 +4,9 @@ import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
 
 class ListPrompt extends StatefulWidget {
-  ListPrompt({super.key, required this.onClose, required this.onUsePrompt});
-  VoidCallback onClose;
-  Function(String?) onUsePrompt;
+  const ListPrompt({super.key, required this.onClose, required this.onUsePrompt});
+  final VoidCallback onClose;
+  final Function(String?) onUsePrompt;
   @override
   State<ListPrompt> createState() => _ListPromptState();
 }
@@ -51,7 +51,9 @@ class _ListPromptState extends State<ListPrompt> {
   @override
   Widget build(BuildContext context) {
     int numberOfPrompts = prompts.length;
-    return ListView.builder(
+    return numberOfPrompts == 0 ?
+    Center(child: CircularProgressIndicator()) :
+    ListView.builder(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
       shrinkWrap: true,
       itemCount: numberOfPrompts + 1,
@@ -112,7 +114,7 @@ class PromptSuggestionOverlay {
           // Overlay thực tế
           Positioned(
             left: offset.dx,
-            bottom: offset.dy,
+            bottom: 200,
             width: 300,
             height: 300,
             child: Material(
