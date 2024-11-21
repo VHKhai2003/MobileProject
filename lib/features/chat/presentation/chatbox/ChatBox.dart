@@ -4,12 +4,15 @@ import 'package:code/features/chat/presentation/history/HistoryBottomSheet.dart'
 import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:code/features/chat/providers/ChatProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
+import 'package:code/features/prompt/models/Prompt.dart';
+import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
+import 'package:code/features/prompt/presentation/dialog/PromptSuggestionOverlay.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/chat/presentation/chatbox/AiModels.dart';
 import 'package:code/features/prompt/presentation/PromptBottomSheet.dart';
 import 'package:provider/provider.dart';
 
-class Chatbox extends StatelessWidget {
+class Chatbox extends StatefulWidget {
   const Chatbox({super.key, required this.changeConversation, required this.openNewChat, required this.promptFocusNode, required this.isNewChat});
 
   final FocusNode promptFocusNode;
@@ -18,12 +21,42 @@ class Chatbox extends StatelessWidget {
   final VoidCallback openNewChat;
 
   @override
+  State<Chatbox> createState() => _ChatboxState();
+}
+
+class _ChatboxState extends State<Chatbox> {
+  final TextEditingController promptController = TextEditingController();
+  OverlayEntry? _overlayEntry;
+
+  void _onTextChanged(text) {
+    if (text.endsWith('/')) {
+      widget.promptFocusNode.unfocus();
+      _overlayEntry = PromptSuggestionOverlay(context, _closeSuggestion, _handleUsePrompt).createOverlayEntry();
+      Overlay.of(context)?.insert(_overlayEntry!);
+    } else if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+  }
+
+  void _closeSuggestion() async {
+    if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+  }
+  void _handleUsePrompt(String? data) {
+      if(data != null) {
+        String currentStr = promptController.text;
+        promptController.text = currentStr.substring(0, currentStr.length - 1) + data.toString();
+      }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     final aiModelProvider = Provider.of<AiModelProvider>(context, listen: false);
-
-    final TextEditingController promptController = TextEditingController();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -37,7 +70,7 @@ class Chatbox extends StatelessWidget {
                 IconButton(
                     onPressed: () async {
                       // get conversation info here and display this conversation
-                      promptFocusNode.unfocus();
+                      widget.promptFocusNode.unfocus();
                       conversationProvider.getConversations(aiModelProvider.aiAgent.id);
                       String? result = await showModalBottomSheet(
                           context: context,
@@ -47,15 +80,15 @@ class Chatbox extends StatelessWidget {
                           )
                       );
                       if(result == 'open') {
-                        changeConversation();
+                        widget.changeConversation();
                       }
                     },
                     icon: const Icon(Icons.history, color: Colors.blueGrey,)
                 ),
                 IconButton(onPressed: () {
-                  promptFocusNode.unfocus();
+                  widget.promptFocusNode.unfocus();
                   conversationProvider.setSelectedIndex(-1);
-                  openNewChat();
+                  widget.openNewChat();
                 }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
               ],
             )
@@ -72,8 +105,9 @@ class Chatbox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                onChanged: _onTextChanged,
                 controller: promptController,
-                focusNode: promptFocusNode,
+                focusNode: widget.promptFocusNode,
                 maxLines: 3,
                 decoration: const InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
@@ -92,7 +126,7 @@ class Chatbox extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        promptFocusNode.unfocus();
+                        widget.promptFocusNode.unfocus();
                         showModalBottomSheet(
                           context: context,
                           builder: (context) {
@@ -126,8 +160,8 @@ class Chatbox extends StatelessWidget {
                                     ListTile(
                                       leading: const Icon(Icons.terminal),
                                       title: const Text('Prompt'),
-                                      onTap: () {
-                                        showModalBottomSheet(
+                                      onTap: () async {
+                                        String? data = await showModalBottomSheet(
                                             context: context,
                                             isScrollControlled: true, // lam cho chieu cao bottom sheet > 1/2 man hinh
                                             builder: (context) {
@@ -135,6 +169,10 @@ class Chatbox extends StatelessWidget {
                                             },
                                             barrierColor: Colors.black.withOpacity(0.2)
                                         );
+                                        if(data != null) {
+                                          promptController.text = promptController.text + data.toString();
+                                        }
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                   ],
@@ -149,7 +187,7 @@ class Chatbox extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        if (isNewChat) {
+                        if (widget.isNewChat) {
                           conversationProvider.setConversationHistory(null);
                           conversationProvider.setConversations(null);
                           chatProvider.setMessages(
@@ -179,7 +217,7 @@ class Chatbox extends StatelessWidget {
                           );
                           chatProvider.newThreadChat(aiModelProvider.aiAgent.id, promptController.text);
                           conversationProvider.setSelectedIndex(0);
-                          changeConversation();
+                          widget.changeConversation();
                           promptController.clear();
                         } else {
                           chatProvider.addMessage(
