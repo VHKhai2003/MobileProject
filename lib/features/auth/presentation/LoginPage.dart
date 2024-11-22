@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     if (result != "success") {
       setState(() {
         isLoading = false;
-        errorMessage = null;
+        errorMessage = result;
       });
     } else {
       setState(() {
