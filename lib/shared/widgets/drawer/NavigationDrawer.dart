@@ -197,11 +197,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                           ),
                         ],
                       ),
-                      TokenUsageWidget(totalTokens: tokenUsageProvider.tokenUsageModel.totalTokens, usedTokens: tokenUsageProvider.tokenUsageModel.availableTokens),
+                      TokenUsageWidget(totalTokens: tokenUsageProvider.tokenUsageModel.totalTokens, usedTokens: tokenUsageProvider.tokenUsage),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("${tokenUsageProvider.tokenUsageModel.availableTokens}"),
+                          Text("${tokenUsageProvider.tokenUsage}"),
                           Text("${tokenUsageProvider.tokenUsageModel.totalTokens}")
                         ],
                       ),

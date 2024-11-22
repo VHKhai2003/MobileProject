@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    final email = usernameController.text.trim();
+    final email = emailController.text.trim();
     final password = passwordController.text;
 
     final emailRegex = RegExp(r'^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.][a-zA-Z]{2,3})+$');
@@ -183,17 +183,7 @@ class _LoginPageState extends State<LoginPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          // leading: IconButton(
-          //     onPressed: () {
-          //       Navigator.of(context).pop();
-          //     },
-          //     icon: const Icon(
-          //       Icons.arrow_back,
-          //       size: 25,
-          //       color: Colors.grey,
-          //     )),
-        ),
+        appBar: AppBar(),
         body: ListView(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom + 30),
@@ -226,15 +216,13 @@ class _LoginPageState extends State<LoginPage> {
                                   currentState == 'Login' ? true : false,
                               onMessageChange: _updateState),
                           const SizedBox(height: 15),
-                          Field(
-                              fieldName: 'Username',
-                              controller: usernameController,
-                              focusNode: usernameFocusNode,
-                              focusNodeNext: currentState == "Register"
-                                  ? emailFocusNode
-                                  : passwordFocusNode),
-                          const SizedBox(height: 15),
                           if (currentState == "Register") ...[
+                            Field(
+                                fieldName: 'Username',
+                                controller: usernameController,
+                                focusNode: usernameFocusNode,
+                                focusNodeNext: emailFocusNode),
+                            const SizedBox(height: 15),
                             Field(
                                 fieldName: 'Email',
                                 controller: emailController,
@@ -250,6 +238,12 @@ class _LoginPageState extends State<LoginPage> {
                             const SizedBox(height: 15),
                           ],
                           if (currentState == "Login") ...[
+                            Field(
+                                fieldName: 'Email',
+                                controller: emailController,
+                                focusNode: emailFocusNode,
+                                focusNodeNext: passwordFocusNode),
+                            const SizedBox(height: 15),
                             PasswordField(
                               controller: passwordController,
                               focusNode: passwordFocusNode,

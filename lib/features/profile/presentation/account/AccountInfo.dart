@@ -1,8 +1,10 @@
 import 'package:code/features/profile/presentation/account/CancelButton.dart';
 import 'package:code/features/profile/presentation/account/SaveChangeButton.dart';
 import 'package:code/features/profile/presentation/account/fields/PasswordField.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/profile/presentation/account/ChangePasswordButton.dart';
+import 'package:provider/provider.dart';
 
 class AccountInfo extends StatefulWidget {
   const AccountInfo({super.key});
@@ -74,6 +76,8 @@ class _AccountInfoState extends State<AccountInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
+
     return Card(
       color: const Color(0xFFEBEFFF),
       shape: RoundedRectangleBorder(
@@ -85,7 +89,7 @@ class _AccountInfoState extends State<AccountInfo> {
           children: [
             TextField(
               readOnly: true,
-              controller: TextEditingController(text: 'nqhuy'),
+              controller: TextEditingController(text: tokenUsageProvider.currentUserModel.username),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -105,7 +109,7 @@ class _AccountInfoState extends State<AccountInfo> {
             const SizedBox(height: 5),
             TextField(
               readOnly: true,
-              controller: TextEditingController(text: 'ngoquochuy9g@gmail.com'),
+              controller: TextEditingController(text: tokenUsageProvider.currentUserModel.email),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
