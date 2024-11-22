@@ -36,16 +36,13 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode confirmPasswordFocusNode = FocusNode();
 
   Future<void> _login() async {
-    final String apiUrl =
-        'https://api.jarvis.cx/api/v1/auth/sign-in'; // Thay bằng URL API của bạn
+    final String apiUrl = 'https://api.jarvis.cx/api/v1/auth/sign-in';
 
-    // Kiểm tra input
     if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
-      _showErrorDialog("Username và Password không được để trống.");
+      _showErrorDialog("Username và Password is not empty.");
       return;
     }
 
-    // Tạo payload
     final Map<String, dynamic> payload = {
       'email': usernameController.text,
       'password': passwordController.text,
@@ -67,12 +64,53 @@ class _LoginPageState extends State<LoginPage> {
         _showSuccessDialog("Đăng nhập thành công!");
         print("Response Data: $data");
       } else {
-        _showErrorDialog(
-            "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+        _showErrorDialog("User name or password is incorrect");
       }
     } catch (e) {
       print("Request failed: $e");
-      _showErrorDialog("Có lỗi xảy ra khi gửi yêu cầu.");
+      _showErrorDialog("Please try again !!");
+    }
+  }
+
+  Future<void> _register() async {
+    final String apiUrl = 'https://api.jarvis.cx/api/v1/auth/sign-up';
+
+    // Kiểm tra các trường bắt buộc
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        usernameController.text.isEmpty) {
+      _showErrorDialog("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    final Map<String, dynamic> payload = {
+      'email': emailController.text,
+      'password': passwordController.text,
+      'username': usernameController.text,
+    };
+
+    try {
+      final dio = Dio();
+      final response = await dio.post(
+        apiUrl,
+        data: jsonEncode(payload),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+        }),
+      );
+
+      // Kiểm tra mã trạng thái phản hồi
+      if (response.statusCode == 200) {
+        // Đăng ký thành công
+        _showSuccessDialog("Đăng ký thành công!");
+      } else {
+        // Đăng ký thất bại
+        _showErrorDialog("Đăng ký thất bại. Vui lòng thử lại.");
+      }
+    } catch (e) {
+      // Lỗi khi gửi yêu cầu
+      print("Lỗi khi đăng ký: $e");
+      _showErrorDialog("Có lỗi xảy ra. Vui lòng thử lại.");
     }
   }
 
@@ -80,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Lỗi"),
+        title: const Text("Error"),
         content: Text(message),
         actions: [
           TextButton(
@@ -279,7 +317,9 @@ class _LoginPageState extends State<LoginPage> {
                               isConfirmPassword: true,
                             ),
                             const SizedBox(height: 15),
-                            const RegisterButton(),
+                            RegisterButton(
+                              onPressed: _register,
+                            ),
                             const SizedBox(height: 15),
                             const PrivacyPolicy(),
                           ]

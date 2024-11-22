@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class RegisterButton extends StatelessWidget {
-  const RegisterButton({super.key});
-
+  final VoidCallback? onPressed;
+  const RegisterButton({super.key, this.onPressed});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -12,7 +12,10 @@ class RegisterButton extends StatelessWidget {
             margin: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color.fromRGBO(147, 144, 248, 1), Color.fromRGBO(57, 120, 209, 1)],
+                colors: [
+                  Color.fromRGBO(147, 144, 248, 1),
+                  Color.fromRGBO(57, 120, 209, 1)
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -27,11 +30,8 @@ class RegisterButton extends StatelessWidget {
                 ),
                 child: const Text(
                   'Register',
-                  style: TextStyle(
-                      fontSize: 15
-                  ),
-                )
-            ),
+                  style: TextStyle(fontSize: 15),
+                )),
           ),
         ),
       ],
