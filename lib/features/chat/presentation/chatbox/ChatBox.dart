@@ -1,29 +1,71 @@
-import 'package:code/features/chat/models/Assistant.dart';
-import 'package:code/features/chat/models/Message.dart';
 import 'package:code/features/chat/presentation/history/HistoryBottomSheet.dart';
 import 'package:code/features/chat/providers/AiModelProvider.dart';
-import 'package:code/features/chat/providers/ChatProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
+import 'package:code/features/prompt/presentation/dialog/PromptSuggestionOverlay.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/chat/presentation/chatbox/AiModels.dart';
 import 'package:code/features/prompt/presentation/PromptBottomSheet.dart';
 import 'package:provider/provider.dart';
 
-class Chatbox extends StatelessWidget {
-  const Chatbox({super.key, required this.changeConversation, required this.openNewChat, required this.promptFocusNode, required this.isNewChat});
+class Chatbox extends StatefulWidget {
+  const Chatbox({super.key, required this.changeConversation, required this.openNewChat, required this.promptFocusNode, required this.isNewChat, required this.promptController});
 
   final FocusNode promptFocusNode;
+  final TextEditingController promptController;
   final bool isNewChat;
   final VoidCallback changeConversation;
   final VoidCallback openNewChat;
 
   @override
+  State<Chatbox> createState() => _ChatboxState();
+}
+
+class _ChatboxState extends State<Chatbox> {
+  OverlayEntry? _overlayEntry;
+
+  void _onTextChanged(text) {
+    if (text.endsWith('/')) {
+      widget.promptFocusNode.unfocus();
+      _overlayEntry = PromptSuggestionOverlay(context, _closeSuggestion, _handleUsePrompt).createOverlayEntry();
+      Overlay.of(context).insert(_overlayEntry!);
+    } else if (_overlayEntry != null) {
+      setState(() {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      });
+    }
+  }
+
+  void _closeSuggestion() async {
+    if (_overlayEntry != null) {
+      setState(() {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      });
+    }
+  }
+  void _handleUsePrompt(String? data) {
+    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+    if(data != null) {
+      final regex = RegExp(r'\[.*?\]');
+      if (regex.hasMatch(data)) {
+        widget.promptController.text = data.toString();
+      } else {
+        if (widget.isNewChat) {
+          conversationProvider.createNewThreadChat(data);
+          widget.changeConversation();
+        } else {
+          conversationProvider.sendMessage(data);
+        }
+        widget.promptController.clear();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     final aiModelProvider = Provider.of<AiModelProvider>(context, listen: false);
-
-    final TextEditingController promptController = TextEditingController();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -37,7 +79,7 @@ class Chatbox extends StatelessWidget {
                 IconButton(
                     onPressed: () async {
                       // get conversation info here and display this conversation
-                      promptFocusNode.unfocus();
+                      widget.promptFocusNode.unfocus();
                       conversationProvider.getConversations(aiModelProvider.aiAgent.id);
                       String? result = await showModalBottomSheet(
                           context: context,
@@ -47,15 +89,15 @@ class Chatbox extends StatelessWidget {
                           )
                       );
                       if(result == 'open') {
-                        changeConversation();
+                        widget.changeConversation();
                       }
                     },
                     icon: const Icon(Icons.history, color: Colors.blueGrey,)
                 ),
                 IconButton(onPressed: () {
-                  promptFocusNode.unfocus();
+                  widget.promptFocusNode.unfocus();
                   conversationProvider.setSelectedIndex(-1);
-                  openNewChat();
+                  widget.openNewChat();
                 }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
               ],
             )
@@ -72,8 +114,9 @@ class Chatbox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: promptController,
-                focusNode: promptFocusNode,
+                onChanged: _onTextChanged,
+                controller: widget.promptController,
+                focusNode: widget.promptFocusNode,
                 maxLines: 3,
                 decoration: const InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
@@ -92,7 +135,7 @@ class Chatbox extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        promptFocusNode.unfocus();
+                        widget.promptFocusNode.unfocus();
                         showModalBottomSheet(
                           context: context,
                           builder: (context) {
@@ -126,8 +169,8 @@ class Chatbox extends StatelessWidget {
                                     ListTile(
                                       leading: const Icon(Icons.terminal),
                                       title: const Text('Prompt'),
-                                      onTap: () {
-                                        showModalBottomSheet(
+                                      onTap: () async {
+                                        String? data = await showModalBottomSheet(
                                             context: context,
                                             isScrollControlled: true, // lam cho chieu cao bottom sheet > 1/2 man hinh
                                             builder: (context) {
@@ -135,6 +178,20 @@ class Chatbox extends StatelessWidget {
                                             },
                                             barrierColor: Colors.black.withOpacity(0.2)
                                         );
+                                        if(data != null) {
+                                          final regex = RegExp(r'\[.*?\]');
+                                          if (regex.hasMatch(data)) {
+                                            widget.promptController.text = data.toString();
+                                          } else {
+                                            if (widget.isNewChat) {
+                                              conversationProvider.createNewThreadChat(data);
+                                              widget.changeConversation();
+                                            } else {
+                                              conversationProvider.sendMessage(data);
+                                            }
+                                          }
+                                        }
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                   ],
@@ -149,69 +206,15 @@ class Chatbox extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        if (isNewChat) {
-                          conversationProvider.setConversationHistory(null);
-                          conversationProvider.setConversations(null);
-                          chatProvider.setMessages(
-                            [
-                              Column(
-                                children: [
-                                  chatProvider.buildQuestion(promptController.text),
-                                  const SizedBox(height: 20),
-                                  chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
-                                  const SizedBox(height: 20),
-                                ],
-                              )
-                            ]
-                          );
-                          chatProvider.setMessagesRequest(
-                            [
-                              Message(
-                                  role: 'user',
-                                  content: promptController.text,
-                                  assistant: Assistant(
-                                      id: aiModelProvider.aiAgent.id,
-                                      model: 'dify',
-                                      name: aiModelProvider.aiAgent.name
-                                  )
-                              )
-                            ]
-                          );
-                          chatProvider.newThreadChat(aiModelProvider.aiAgent.id, promptController.text);
-                          conversationProvider.setSelectedIndex(0);
-                          changeConversation();
-                          promptController.clear();
+                        if (widget.isNewChat) {
+                          conversationProvider.createNewThreadChat(widget.promptController.text);
+                          widget.changeConversation();
                         } else {
-                          chatProvider.addMessage(
-                              Column(
-                                children: [
-                                  chatProvider.buildQuestion(promptController.text),
-                                  const SizedBox(height: 20),
-                                  chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
-                                  const SizedBox(height: 20),
-                                ],
-                              )
-                          );
-                          chatProvider.sendMessage(
-                              promptController.text,
-                              chatProvider.conversationId!,
-                              aiModelProvider.aiAgent
-                          );
-                          chatProvider.addMessageRequest(
-                              Message(
-                                  role: 'user',
-                                  content: promptController.text,
-                                  assistant: Assistant(
-                                      id: aiModelProvider.aiAgent.id,
-                                      model: 'dify',
-                                      name: aiModelProvider.aiAgent.name
-                                  )
-                              )
-                          );
-                          promptController.clear();
+                          conversationProvider.sendMessage(widget.promptController.text);
                         }
+                        widget.promptController.clear();
                       },
-                      icon: Icon(Icons.send, color: promptController.text == "" ? Colors.blueGrey : Colors.blue),)
+                      icon: Icon(Icons.send, color: widget.promptController.text == "" ? Colors.blueGrey : Colors.blue),)
                   ],
                 ),
               )

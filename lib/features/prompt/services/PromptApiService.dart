@@ -20,6 +20,7 @@ class PromptApiService {
 
 
   Future<Map<String, dynamic>> getPrompts(Map<String, dynamic> params) async {
+    await _apiService.loadTokens();
     final response = await _apiService.dio.get(
         ApiConstants.crudPrompts,
         queryParameters: params,

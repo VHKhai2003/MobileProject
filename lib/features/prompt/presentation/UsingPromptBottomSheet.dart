@@ -3,8 +3,8 @@ import 'package:code/features/prompt/presentation/dialog/text-field/CustomTextFi
 import 'package:flutter/material.dart';
 
 class UsingPromptBottomSheet extends StatefulWidget {
-  UsingPromptBottomSheet({super.key, required this.prompt});
-  Prompt prompt;
+  const UsingPromptBottomSheet({super.key, required this.prompt});
+  final Prompt prompt;
 
   @override
   State<UsingPromptBottomSheet> createState() => _UsingPromptBottomSheetState();

@@ -1,6 +1,8 @@
 import 'package:code/features/upgrade/presentation/UpgradePage.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/profile/presentation/token-usage/TokenUsageIndicator.dart';
+import 'package:provider/provider.dart';
 
 
 class TokenUsage extends StatelessWidget {
@@ -8,6 +10,8 @@ class TokenUsage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
+
     return Card(
       color: const Color(0xFFEBEFFF),
       shape: RoundedRectangleBorder(
@@ -73,12 +77,12 @@ class TokenUsage extends StatelessWidget {
                 Text("Total", style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
-            const TokenUsageWidget(totalTokens: 30, usedTokens: 10),
-            const Row(
+            TokenUsageWidget(totalTokens: tokenUsageProvider.tokenUsageModel.totalTokens, usedTokens: tokenUsageProvider.tokenUsageModel.availableTokens),
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("10"),
-                Text("30")
+                Text("${tokenUsageProvider.tokenUsageModel.availableTokens}"),
+                Text("${tokenUsageProvider.tokenUsageModel.totalTokens}")
               ],
             ),
           ],

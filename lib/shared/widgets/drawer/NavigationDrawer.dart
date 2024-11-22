@@ -1,10 +1,13 @@
 import 'package:code/features/ai-action/presentation/AIActionPage.dart';
-import 'package:code/features/auth/presentation/LoginPage.dart';
 import 'package:code/features/bot/presentation/MainBot.dart';
 import 'package:code/features/chat/presentation/ChatPage.dart';
 import 'package:code/features/knowledge/presentation/KnowledgePage.dart';
 import 'package:code/features/profile/presentation/ProfilePage.dart';
+import 'package:code/features/profile/presentation/buttons/LogoutButton.dart';
+import 'package:code/features/profile/presentation/token-usage/TokenUsageIndicator.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({super.key});
@@ -37,6 +40,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -136,22 +141,76 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             height: 1,
             color: Colors.grey,
           ),
-          ListTile(
-            leading: const Icon(Icons.account_box_outlined),
-            title: const Text(
-              'Sign in / Sign up',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const LoginPage(state: "Login"),
-                    transitionsBuilder: transitionsBuilder),
-              );
-            },
+          // ListTile(
+          //   leading: const Icon(Icons.account_box_outlined),
+          //   title: const Text(
+          //     'Sign in / Sign up',
+          //     style: TextStyle(fontWeight: FontWeight.bold),
+          //   ),
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       PageRouteBuilder(
+          //           pageBuilder: (context, animation, secondaryAnimation) =>
+          //               const LoginPage(state: "Login"),
+          //           transitionsBuilder: transitionsBuilder),
+          //     );
+          //   },
+          // ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              child: Container(
+                color: Color(0xFFEBEFFF),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.account_circle_outlined, size: 40,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(tokenUsageProvider.currentUserModel.username, style: TextStyle(fontWeight: FontWeight.bold),),
+                              Text(tokenUsageProvider.currentUserModel.email, style: TextStyle(),),
+                            ],
+                          )
+                        ],
+                      ),
+                      const Divider(
+                        color: Colors.grey,
+                        indent: 10,
+                        endIndent: 10,
+                        thickness: 0.5,
+                      ),
+                      Row(
+                        children: [
+                          const Text("Token Usage", style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          )),
+                          const SizedBox(width: 5),
+                          Image.asset(
+                            'assets/icons/fire.png',
+                            width: 15,
+                            height: 15,
+                          ),
+                        ],
+                      ),
+                      TokenUsageWidget(totalTokens: tokenUsageProvider.tokenUsageModel.totalTokens, usedTokens: tokenUsageProvider.tokenUsageModel.availableTokens),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("${tokenUsageProvider.tokenUsageModel.availableTokens}"),
+                          Text("${tokenUsageProvider.tokenUsageModel.totalTokens}")
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
           ),
+          LogoutButton()
         ],
       ),
     );

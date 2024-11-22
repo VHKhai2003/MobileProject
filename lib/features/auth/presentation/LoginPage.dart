@@ -3,6 +3,8 @@ import 'package:code/features/auth/presentation/components/JarvisLogoAndLabel.da
 import 'package:code/features/auth/presentation/components/PrivacyPolicy.dart';
 import 'package:code/features/auth/presentation/components/RichTextLogin.dart';
 import 'package:code/features/auth/presentation/components/RichTextRegister.dart';
+import 'package:code/features/auth/providers/AuthProvider.dart';
+import 'package:code/features/chat/presentation/ChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:code/features/auth/presentation/buttons/LoginButton.dart';
 import 'package:code/features/auth/presentation/buttons/RegisterButton.dart';
@@ -12,8 +14,7 @@ import 'package:code/features/auth/presentation/buttons/SwitchLoginButton.dart';
 import 'package:code/features/auth/presentation/buttons/ForgotPasswordButton.dart';
 import 'package:code/features/auth/presentation/fields/Field.dart';
 import 'package:code/features/auth/presentation/fields/PasswordField.dart';
-import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.state});
@@ -34,116 +35,75 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode passwordFocusNode = FocusNode();
   final FocusNode emailFocusNode = FocusNode();
   final FocusNode confirmPasswordFocusNode = FocusNode();
+  String? errorMessage;
+  bool isLoading = false;
 
-  Future<void> _login() async {
-    final String apiUrl = 'https://api.jarvis.cx/api/v1/auth/sign-in';
+  void _login() async {
+    setState(() {
+      errorMessage = null;
+    });
 
-    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
-      _showErrorDialog("Username và Password is not empty.");
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    final email = usernameController.text.trim();
+    final password = passwordController.text;
+
+    final emailRegex = RegExp(
+        r'^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.][a-zA-Z]{2,3})+$');
+
+    if (email.isEmpty) {
+      setState(() {
+        errorMessage = "Email cannot be empty.";
+      });
+      return;
+    }
+    if (password.isEmpty) {
+      setState(() {
+        errorMessage = "Password cannot be empty.";
+      });
+      return;
+    }
+    if (!emailRegex.hasMatch(email)) {
+      setState(() {
+        errorMessage = "Email is not in correct format.";
+      });
       return;
     }
 
-    final Map<String, dynamic> payload = {
-      'email': usernameController.text,
-      'password': passwordController.text,
-    };
+    setState(() {
+      isLoading = true;
+    });
 
-    try {
-      final dio = Dio();
-      final response = await dio.post(
-        apiUrl,
-        data: jsonEncode(payload),
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-        }),
+    String? result = await authProvider.login(email, password);
+    if (result != "success") {
+      setState(() {
+        isLoading = false;
+        errorMessage = result;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+        errorMessage = null;
+      });
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => ChatPage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0); // Bắt đầu từ bên phải
+              const end = Offset.zero; // Kết thúc tại vị trí gốc
+              const curve = Curves.easeInOut; // Hiệu ứng chuyển cảnh
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            }),
       );
-
-      if (response.statusCode == 200) {
-        // Xử lý phản hồi
-        final data = response.data;
-        _showSuccessDialog("Đăng nhập thành công!");
-        print("Response Data: $data");
-      } else {
-        _showErrorDialog("User name or password is incorrect");
-      }
-    } catch (e) {
-      print("Request failed: $e");
-      _showErrorDialog("Please try again !!");
     }
-  }
-
-  Future<void> _register() async {
-    final String apiUrl = 'https://api.jarvis.cx/api/v1/auth/sign-up';
-
-    // Kiểm tra các trường bắt buộc
-    if (emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        usernameController.text.isEmpty) {
-      _showErrorDialog("Vui lòng điền đầy đủ thông tin.");
-      return;
-    }
-
-    final Map<String, dynamic> payload = {
-      'email': emailController.text,
-      'password': passwordController.text,
-      'username': usernameController.text,
-    };
-
-    try {
-      final dio = Dio();
-      final response = await dio.post(
-        apiUrl,
-        data: jsonEncode(payload),
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-        }),
-      );
-
-      // Kiểm tra mã trạng thái phản hồi
-      if (response.statusCode == 200) {
-        // Đăng ký thành công
-        _showSuccessDialog("Đăng ký thành công!");
-      } else {
-        // Đăng ký thất bại
-        _showErrorDialog("Đăng ký thất bại. Vui lòng thử lại.");
-      }
-    } catch (e) {
-      // Lỗi khi gửi yêu cầu
-      print("Lỗi khi đăng ký: $e");
-      _showErrorDialog("Có lỗi xảy ra. Vui lòng thử lại.");
-    }
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Error"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Thành công"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -227,16 +187,16 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(
-                Icons.arrow_back,
-                size: 25,
-                color: Colors.grey,
-              )),
-        ),
+            // leading: IconButton(
+            //     onPressed: () {
+            //       Navigator.of(context).pop();
+            //     },
+            //     icon: const Icon(
+            //       Icons.arrow_back,
+            //       size: 25,
+            //       color: Colors.grey,
+            //     )),
+            ),
         body: ListView(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom + 30),
@@ -299,6 +259,22 @@ class _LoginPageState extends State<LoginPage> {
                               focusNodeNext: null,
                               isConfirmPassword: false,
                             ),
+                            if (errorMessage != null) ...[
+                              const SizedBox(height: 15),
+                              Text(
+                                errorMessage!,
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 15),
+                              ),
+                            ],
+                            if (isLoading) ...[
+                              const SizedBox(height: 15),
+                              Center(
+                                  child: SizedBox(
+                                      width: 15,
+                                      height: 15,
+                                      child: CircularProgressIndicator())),
+                            ],
                             const SizedBox(height: 15),
                             ForgotPasswordButton(
                               onMessageChange: _updateState,
@@ -317,9 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                               isConfirmPassword: true,
                             ),
                             const SizedBox(height: 15),
-                            RegisterButton(
-                              onPressed: _register,
-                            ),
+                            const RegisterButton(),
                             const SizedBox(height: 15),
                             const PrivacyPolicy(),
                           ]

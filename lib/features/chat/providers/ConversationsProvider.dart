@@ -150,4 +150,66 @@ class ConversationsProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void createNewThreadChat(String content) {
+    setConversationHistory(null);
+    setConversations(null);
+    chatProvider.setMessages(
+        [
+          Column(
+            children: [
+              chatProvider.buildQuestion(content),
+              const SizedBox(height: 20),
+              chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
+              const SizedBox(height: 20),
+            ],
+          )
+        ]
+    );
+    chatProvider.setMessagesRequest(
+        [
+          Message(
+              role: 'user',
+              content: content,
+              assistant: Assistant(
+                  id: aiModelProvider.aiAgent.id,
+                  model: 'dify',
+                  name: aiModelProvider.aiAgent.name
+              )
+          )
+        ]
+    );
+    chatProvider.newThreadChat(aiModelProvider.aiAgent.id, content);
+    setSelectedIndex(0);
+  }
+
+  void sendMessage(String content) {
+    chatProvider.addMessage(
+        Column(
+          children: [
+            chatProvider.buildQuestion(content),
+            const SizedBox(height: 20),
+            chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
+            const SizedBox(height: 20),
+          ],
+        )
+    );
+    chatProvider.sendMessage(
+        content,
+        chatProvider.conversationId!,
+        aiModelProvider.aiAgent
+    );
+    chatProvider.addMessageRequest(
+        Message(
+            role: 'user',
+            content: content,
+            assistant: Assistant(
+                id: aiModelProvider.aiAgent.id,
+                model: 'dify',
+                name: aiModelProvider.aiAgent.name
+            )
+        )
+    );
+  }
+
 }

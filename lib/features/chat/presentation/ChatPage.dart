@@ -19,6 +19,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final FocusNode promptFocusNode = FocusNode();
+  final TextEditingController promptController = TextEditingController();
 
   bool isEmpty = true;
   void _handleNewChat() {
@@ -57,12 +58,18 @@ class _ChatPageState extends State<ChatPage> {
             color: Colors.white,
             child: Column(
               children: [
-                isEmpty ? EmptyConversation() : Expanded(child: Conversation(isConversationHistory: isEmpty)),
+                isEmpty ?
+                EmptyConversation(
+                  changeConversation: _handleOpenConversation,
+                  promptController: promptController,
+                ) :
+                Expanded(child: Conversation(isConversationHistory: isEmpty)),
                 Chatbox(
                   isNewChat: isEmpty,
                   changeConversation: _handleOpenConversation,
                   openNewChat: _handleNewChat,
-                  promptFocusNode: promptFocusNode
+                  promptFocusNode: promptFocusNode,
+                  promptController: promptController,
                 ),
               ],
             ),
