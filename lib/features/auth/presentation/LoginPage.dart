@@ -294,15 +294,15 @@ class _LoginPageState extends State<LoginPage> {
                                   currentState == 'Login' ? true : false,
                               onMessageChange: _updateState),
                           const SizedBox(height: 15),
+                          Field(
+                              fieldName: 'Username',
+                              controller: usernameController,
+                              focusNode: usernameFocusNode,
+                              focusNodeNext: currentState == "Register"
+                                  ? emailFocusNode
+                                  : passwordFocusNode),
+                          const SizedBox(height: 15),
                           if (currentState == "Register") ...[
-                            Field(
-                                fieldName: 'Username',
-                                controller: usernameController,
-                                focusNode: usernameFocusNode,
-                                focusNodeNext: currentState == "Register"
-                                    ? emailFocusNode
-                                    : passwordFocusNode),
-                            const SizedBox(height: 15),
                             Field(
                                 fieldName: 'Email',
                                 controller: emailController,
