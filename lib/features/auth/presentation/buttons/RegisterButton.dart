@@ -22,7 +22,7 @@ class RegisterButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: ElevatedButton(
-                onPressed: () {},
+                onPressed: onPressed,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,

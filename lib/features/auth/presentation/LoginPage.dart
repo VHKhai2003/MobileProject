@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode emailFocusNode = FocusNode();
   final FocusNode confirmPasswordFocusNode = FocusNode();
   String? errorMessage;
+  String? successMessage;
   bool isLoading = false;
 
   void _login() async {
@@ -45,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    final email = usernameController.text.trim();
+    final email = emailController.text.trim();
     final password = passwordController.text;
 
     final emailRegex = RegExp(
@@ -78,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     if (result != "success") {
       setState(() {
         isLoading = false;
-        errorMessage = result;
+        errorMessage = null;
       });
     } else {
       setState(() {
@@ -103,6 +104,78 @@ class _LoginPageState extends State<LoginPage> {
               );
             }),
       );
+    }
+  }
+
+  void _register() async {
+    setState(() {
+      errorMessage = null;
+    });
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    final username = usernameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    final emailRegex = RegExp(
+        r'^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.][a-zA-Z]{2,3})+$');
+
+    if (username.isEmpty) {
+      setState(() {
+        errorMessage = "Username cannot be empty.";
+      });
+      return;
+    }
+    if (email.isEmpty) {
+      setState(() {
+        errorMessage = "Email cannot be empty.";
+      });
+      return;
+    }
+    if (password.isEmpty) {
+      setState(() {
+        errorMessage = "Password cannot be empty.";
+      });
+      return;
+    }
+    if (confirmPassword.isEmpty) {
+      setState(() {
+        errorMessage = "Confirm password cannot be empty.";
+      });
+      return;
+    }
+    if (!emailRegex.hasMatch(email)) {
+      setState(() {
+        errorMessage = "Email is not in correct format.";
+      });
+      return;
+    }
+    if (password != confirmPassword) {
+      setState(() {
+        errorMessage = "Passwords do not match.";
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    String? result = await authProvider.register(email, password, username);
+    if (result == "success") {
+      setState(() {
+        isLoading = false;
+        errorMessage = null;
+        successMessage = "Registration successful!";
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+        successMessage = null;
+        errorMessage = result;
+      });
     }
   }
 
@@ -158,6 +231,8 @@ class _LoginPageState extends State<LoginPage> {
     FocusScope.of(context).unfocus();
     setState(() {
       currentState = newState;
+      errorMessage = null;
+      successMessage = null;
     });
     usernameController.clear();
     passwordController.clear();
@@ -186,17 +261,7 @@ class _LoginPageState extends State<LoginPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-            // leading: IconButton(
-            //     onPressed: () {
-            //       Navigator.of(context).pop();
-            //     },
-            //     icon: const Icon(
-            //       Icons.arrow_back,
-            //       size: 25,
-            //       color: Colors.grey,
-            //     )),
-            ),
+        appBar: AppBar(),
         body: ListView(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom + 30),
@@ -229,15 +294,15 @@ class _LoginPageState extends State<LoginPage> {
                                   currentState == 'Login' ? true : false,
                               onMessageChange: _updateState),
                           const SizedBox(height: 15),
-                          Field(
-                              fieldName: 'Username',
-                              controller: usernameController,
-                              focusNode: usernameFocusNode,
-                              focusNodeNext: currentState == "Register"
-                                  ? emailFocusNode
-                                  : passwordFocusNode),
-                          const SizedBox(height: 15),
                           if (currentState == "Register") ...[
+                            Field(
+                                fieldName: 'Username',
+                                controller: usernameController,
+                                focusNode: usernameFocusNode,
+                                focusNodeNext: currentState == "Register"
+                                    ? emailFocusNode
+                                    : passwordFocusNode),
+                            const SizedBox(height: 15),
                             Field(
                                 fieldName: 'Email',
                                 controller: emailController,
@@ -253,6 +318,12 @@ class _LoginPageState extends State<LoginPage> {
                             const SizedBox(height: 15),
                           ],
                           if (currentState == "Login") ...[
+                            Field(
+                                fieldName: 'Email',
+                                controller: emailController,
+                                focusNode: emailFocusNode,
+                                focusNodeNext: passwordFocusNode),
+                            const SizedBox(height: 15),
                             PasswordField(
                               controller: passwordController,
                               focusNode: passwordFocusNode,
@@ -292,8 +363,34 @@ class _LoginPageState extends State<LoginPage> {
                               focusNodeNext: null,
                               isConfirmPassword: true,
                             ),
+                            if (errorMessage != null) ...[
+                              const SizedBox(height: 15),
+                              Text(
+                                errorMessage!,
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 15),
+                              ),
+                            ],
+                            if (isLoading) ...[
+                              const SizedBox(height: 15),
+                              Center(
+                                  child: SizedBox(
+                                      width: 15,
+                                      height: 15,
+                                      child: CircularProgressIndicator())),
+                            ],
+                            if (successMessage != null) ...[
+                              const SizedBox(height: 15),
+                              Text(
+                                successMessage!,
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 15),
+                              ),
+                            ],
                             const SizedBox(height: 15),
-                            const RegisterButton(),
+                            RegisterButton(
+                              onPressed: _register,
+                            ),
                             const SizedBox(height: 15),
                             const PrivacyPolicy(),
                           ]

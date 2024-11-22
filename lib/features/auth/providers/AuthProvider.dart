@@ -12,13 +12,8 @@ class AuthProvider with ChangeNotifier {
 
   Future<String?> login(String email, String password) async {
     try {
-      final response = await _apiService.dio.post(
-          ApiConstants.login,
-          data: {
-            "email": email,
-            "password": password
-          }
-      );
+      final response = await _apiService.dio.post(ApiConstants.login,
+          data: {"email": email, "password": password});
       if (response.statusCode == 200) {
         final accessToken = response.data['token']['accessToken'];
         final refreshToken = response.data['token']['refreshToken'];
@@ -42,4 +37,30 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<String?> register(
+      String email, String password, String username) async {
+    try {
+      final response = await _apiService.dio.post(ApiConstants.register,
+          data: {"email": email, "password": password, "username": username});
+
+      if (response.statusCode == 201) {
+        final user = response.data['user'];
+        if (user != null) {
+          return "success";
+        }
+        return "Invalid response format";
+      }
+      return "fail";
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response != null) {
+          print("Status code: ${e.response?.statusCode}");
+          print("Response data: ${e.response?.data}");
+          return e.response?.data["details"][0]["issue"];
+        }
+        return "Network error: ${e.message}";
+      }
+      return "Unknown error: $e";
+    }
+  }
 }
