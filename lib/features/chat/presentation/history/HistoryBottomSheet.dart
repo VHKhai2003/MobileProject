@@ -65,11 +65,14 @@ class _HistoryBottomSheetState extends State<HistoryBottomSheet> {
                 ),
                 if (conversationsProvider.isLoadingConversations) ...[
                   Expanded(child: Center(child: CircularProgressIndicator()))
-                ] else if (conversationsProvider.errorConversations != null) ...[
-                  Expanded(child: Center(child: Text('Error: ${conversationsProvider.errorConversations}')))
-                ] else if (conversationsProvider.conversations == null) ...[
+                ]
+                else if (conversationsProvider.conversations == null) ...[
                   Expanded(child: Center(child: Text('No conversations found.')))
-                ] else ...[
+                ]
+                else if (conversationsProvider.errorConversations != null) ...[
+                  Expanded(child: Center(child: Text('Error: ${conversationsProvider.errorConversations}')))
+                ]
+                else ...[
                   Expanded(
                     child: ListView.separated(
                       itemCount: conversationsProvider.conversations!.items.length,

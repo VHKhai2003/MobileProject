@@ -72,6 +72,7 @@ class ApiService {
   }
 
   Future<void> _refreshAccessToken() async {
+    await loadTokens();
     try {
       final response = await _dio.get(
         ApiConstants.refreshToken,

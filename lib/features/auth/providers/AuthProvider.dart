@@ -19,6 +19,7 @@ class AuthProvider with ChangeNotifier {
         final refreshToken = response.data['token']['refreshToken'];
         await _apiService.saveTokens(accessToken, refreshToken!);
         await _tokenUsageProvider.getUsage();
+        await _tokenUsageProvider.getUser();
         return "success";
       }
       return "fail";
@@ -37,8 +38,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<String?> register(
-      String email, String password, String username) async {
+  Future<String?> register(String email, String password, String username) async {
     try {
       final response = await _apiService.dio.post(ApiConstants.register,
           data: {"email": email, "password": password, "username": username});
@@ -49,6 +49,32 @@ class AuthProvider with ChangeNotifier {
           return "success";
         }
         return "Invalid response format";
+      }
+      return "fail";
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response != null) {
+          print("Status code: ${e.response?.statusCode}");
+          print("Response data: ${e.response?.data}");
+          return e.response?.data["details"][0]["issue"];
+        }
+        return "Network error: ${e.message}";
+      }
+      return "Unknown error: $e";
+    }
+  }
+
+  Future<String?> logout() async {
+    try {
+      final response = await _apiService.dio.get(
+        ApiConstants.logout,
+        options: Options(
+          extra: {'requireToken': true},
+        )
+      );
+
+      if (response.statusCode == 200) {
+        return "success";
       }
       return "fail";
     } catch (e) {

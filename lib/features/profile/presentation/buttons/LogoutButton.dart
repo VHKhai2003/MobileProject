@@ -1,6 +1,8 @@
 import 'package:code/features/auth/presentation/LoginPage.dart';
+import 'package:code/features/auth/providers/AuthProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
@@ -13,6 +15,8 @@ class LogoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10)
@@ -22,8 +26,7 @@ class LogoutButton extends StatelessWidget {
         leading: const Icon(Icons.logout, color: Colors.redAccent),
         title: const Text('Log out', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),),
         trailing: const Icon(Icons.chevron_right, color: Colors.redAccent,),
-        onTap: () {
-          clearAllTokens();
+        onTap: () async {
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
@@ -41,6 +44,8 @@ class LogoutButton extends StatelessWidget {
               }
             ),
           );
+          await authProvider.logout();
+          clearAllTokens();
         },
       ),
     );

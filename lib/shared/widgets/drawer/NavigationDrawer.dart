@@ -141,22 +141,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             height: 1,
             color: Colors.grey,
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.account_box_outlined),
-          //   title: const Text(
-          //     'Sign in / Sign up',
-          //     style: TextStyle(fontWeight: FontWeight.bold),
-          //   ),
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       PageRouteBuilder(
-          //           pageBuilder: (context, animation, secondaryAnimation) =>
-          //               const LoginPage(state: "Login"),
-          //           transitionsBuilder: transitionsBuilder),
-          //     );
-          //   },
-          // ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               child: Container(
@@ -166,17 +150,17 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   child: Column(
                     children: [
                       Row(
-                        children: [
-                          Icon(Icons.account_circle_outlined, size: 40,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(tokenUsageProvider.currentUserModel.username, style: TextStyle(fontWeight: FontWeight.bold),),
-                              Text(tokenUsageProvider.currentUserModel.email, style: TextStyle(),),
-                            ],
-                          )
-                        ],
-                      ),
+                      children: [
+                        Icon(Icons.account_circle_outlined, size: 40,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(tokenUsageProvider.currentUserModel.username, style: TextStyle(fontWeight: FontWeight.bold),),
+                            Text(tokenUsageProvider.currentUserModel.email, style: TextStyle(),),
+                          ],
+                        )
+                      ],
+                    ),
                       const Divider(
                         color: Colors.grey,
                         indent: 10,

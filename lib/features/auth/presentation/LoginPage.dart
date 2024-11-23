@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
     }
     if (password != confirmPassword) {
       setState(() {
-        errorMessage = "Passwords do not match.";
+        errorMessage = "Confirm password is different from password.";
       });
       return;
     }
