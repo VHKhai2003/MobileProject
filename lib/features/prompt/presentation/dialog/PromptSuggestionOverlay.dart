@@ -76,7 +76,11 @@ class _ListPromptState extends State<ListPrompt> {
             title: Text(prompts[index].title),
             onTap: () async {
               widget.onClose();
-              String? data = await showModalBottomSheet(context: context, builder: (context) => UsingPromptBottomSheet(prompt: prompts[index]));
+              String? data = await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => UsingPromptBottomSheet(prompt: prompts[index])
+              );
               widget.onUsePrompt(data);
             }
         );

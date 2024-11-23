@@ -6,6 +6,17 @@ class EmptyConversation extends StatelessWidget {
   final TextEditingController promptController;
   final VoidCallback changeConversation;
 
+  String getPartOfDay() {
+    int currentHour = DateTime.now().hour;
+    if(currentHour > 5 && currentHour < 11) {
+      return "morning";
+    }
+    else if(currentHour >= 11 && currentHour < 18) {
+      return "afternoon";
+    }
+    return "evening";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -13,7 +24,7 @@ class EmptyConversation extends StatelessWidget {
         child: ListView(
           children: [
             const Text("👋", style: TextStyle(fontSize: 36, color: Colors.yellow),),
-            const Text("Hello, Good morning", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),),
+            Text("Hello, Good ${getPartOfDay()}", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),),
             const Text("I'm Jarvis, your personal assistant"),
             const SizedBox(height: 32,),
             SuggestionPrompt(
