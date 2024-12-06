@@ -1,40 +1,48 @@
-import 'package:code/views/chat/ChatPage.dart';
+import 'package:code/data/apis/ApiService.dart';
+import 'package:code/features/auth/presentation/LoginPage.dart';
+import 'package:code/features/auth/providers/AuthProvider.dart';
+import 'package:code/features/chat/presentation/ChatPage.dart';
+import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final ApiService apiService = ApiService();
+  await apiService.init();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TokenUsageProvider(apiService)),
+        ChangeNotifierProvider(create: (context) => AuthProvider(context.read<TokenUsageProvider>())),
+      ],
+      child: const MyApp(),
+    )
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent, // Đặt màu nền trong suốt
+          backgroundColor: Colors.transparent,
           elevation: 0, // Xóa bóng đổ
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color.fromARGB(255, 25, 118, 210), // Màu nền status bar
@@ -42,7 +50,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const ChatPage(),
+      home: tokenUsageProvider.isAuthenticated ? ChatPage() : LoginPage(state: "Login"),
       debugShowCheckedModeBanner: false,
     );
   }
