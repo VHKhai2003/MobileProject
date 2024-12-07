@@ -86,24 +86,21 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                   TextField(
                       controller: knowledgeNameController,
                       focusNode: knowledgeNameFocusNode,
-                      cursorColor: Colors.indigoAccent,
+                      cursorColor: Colors.blue.shade700,
                       style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
                       decoration: InputDecoration(
                         hintStyle: const TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.grey, width: 1),
+                          borderSide: const BorderSide(color: Colors.grey, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.grey, width: 1),
+                          borderSide: const BorderSide(color: Colors.grey, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Colors.indigoAccent, width: 2),
+                          borderSide: BorderSide(color: Colors.blue.shade700, width: 1),
                         ),
                       ),
                       onSubmitted: (value) {
@@ -133,7 +130,7 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                       focusNode: knowledgeDescriptionFocusNode,
                       maxLines: 5,
                       minLines: 3,
-                      cursorColor: Colors.indigoAccent,
+                      cursorColor: Colors.blue.shade700,
                       style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -143,13 +140,11 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.grey, width: 1),
+                          borderSide: const BorderSide(color: Colors.grey, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Colors.indigoAccent, width: 2),
+                          borderSide: BorderSide(color: Colors.blue.shade700, width: 1),
                         ),
                       ),
                       scrollController: ScrollController(),
@@ -175,20 +170,16 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
           ),
           FilledButton(
               onPressed: () {
-                DateTime now = DateTime.now();
-                int day = now.day;
-                int month = now.month;
-                int year = now.year;
-                String formattedDate =
-                    "$day/${month < 10 ? '0$month' : month}/$year";
-                widget.createNewKnowledge(Knowledge(
-                    DateTime.now().millisecondsSinceEpoch.toString(),
-                    knowledgeNameController.text,
-                    knowledgeDescriptionController.text,
-                    0,
-                    0,
-                    formattedDate,
-                    true));
+                widget.createNewKnowledge(
+                    Knowledge(
+                      DateTime.now().millisecondsSinceEpoch.toString(),
+                      knowledgeNameController.text,
+                      knowledgeDescriptionController.text,
+                      0,
+                      0,
+                      DateTime.now()
+                    )
+                );
                 Navigator.of(context).pop();
               },
               style: FilledButton.styleFrom(

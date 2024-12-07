@@ -25,9 +25,9 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
   void initState() {
     super.initState();
     knowledge = widget.knowledge;
-    knowledgeNameController.text = widget.knowledge.name;
+    knowledgeNameController.text = widget.knowledge.knowledgeName;
     knowledgeDescriptionController.text = widget.knowledge.description;
-    knowledgeNameCharacterCount = widget.knowledge.name.length;
+    knowledgeNameCharacterCount = widget.knowledge.knowledgeName.length;
     knowledgeDescriptionCharacterCount = widget.knowledge.description.length;
   }
 
@@ -185,7 +185,7 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
           ),
           FilledButton(
               onPressed: () {
-                knowledge.name = knowledgeNameController.text;
+                knowledge.knowledgeName = knowledgeNameController.text;
                 knowledge.description = knowledgeDescriptionController.text;
                 widget.editKnowledge(knowledge);
                 Navigator.of(context).pop();

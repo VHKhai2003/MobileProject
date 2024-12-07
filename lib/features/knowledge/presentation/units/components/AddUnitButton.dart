@@ -12,7 +12,7 @@ class AddUnitButton extends StatelessWidget {
         Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.blueAccent,
+            color: Colors.blue.shade700,
             borderRadius: BorderRadius.circular(10),
           ),
           child: ElevatedButton(

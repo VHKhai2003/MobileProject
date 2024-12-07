@@ -10,9 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UnitPage extends StatefulWidget {
-  const UnitPage({super.key, required this.knowledge, required this.editKnowledge});
+  const UnitPage({super.key, required this.knowledge});
   final Knowledge knowledge;
-  final Function(Knowledge) editKnowledge;
 
   @override
   State<UnitPage> createState() => _UnitPageState();
@@ -54,7 +53,6 @@ class _UnitPageState extends State<UnitPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    KnowledgeInfo(knowledge: knowledge, editKnowledge: widget.editKnowledge),
                     AddUnitButton()
                   ],
                 ),

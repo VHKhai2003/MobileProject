@@ -1,14 +1,14 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/presentation/dialog/DeleteKnowledgeDialog.dart';
 import 'package:code/features/knowledge/presentation/units/UnitPage.dart';
+import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class KnowledgeElement extends StatefulWidget {
-  const KnowledgeElement({super.key, required this.knowledge, required this.deleteKnowledge, required this.editKnowledge});
+  const KnowledgeElement({super.key, required this.knowledge});
   final Knowledge knowledge;
-  final Function(String) deleteKnowledge;
-  final Function(Knowledge) editKnowledge;
 
   @override
   State<KnowledgeElement> createState() => _KnowledgeElementState();
@@ -23,17 +23,18 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
     knowledge = widget.knowledge;
   }
 
-  void _showDeleteKnowledgeDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return DeleteKnowledgeDialog(knowledge: knowledge, deleteKnowledge: widget.deleteKnowledge);
-      },
-    );
-  }
+  // void _showDeleteKnowledgeDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return DeleteKnowledgeDialog(knowledge: knowledge, deleteKnowledge: widget.deleteKnowledge);
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
+    KnowledgeProvider provider = Provider.of<KnowledgeProvider>(context, listen: false);
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -57,11 +58,11 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                       ),
                       padding: const EdgeInsets.all(10),
                     ),
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      await Navigator.push(
                         context,
                         PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => UnitPage(knowledge: knowledge, editKnowledge: widget.editKnowledge),
+                            pageBuilder: (context, animation, secondaryAnimation) => UnitPage(knowledge: knowledge),
                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                               const begin = Offset(1.0, 0.0); // Bắt đầu từ bên phải
                               const end = Offset.zero; // Kết thúc tại vị trí gốc
@@ -75,6 +76,10 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                             }
                         ),
                       );
+                      provider.setLoading(true);
+                      provider.clearListKnowledge();
+                      await provider.loadKnowledge('');
+                      provider.setLoading(false);
                     },
                     child: Column(
                       children: [
@@ -95,12 +100,23 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                                   ),
                                 ),
                                 Expanded(
-                                  child: Text(
-                                    knowledge.name,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20
-                                    ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        knowledge.knowledgeName,
+                                        style: TextStyle( color: Colors.black, fontSize: 20),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            knowledge.description,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(color: Colors.blue.shade900, fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 )
                               ],
@@ -124,7 +140,7 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                        "${knowledge.unit} ${knowledge.unit == 1 ? 'unit' : 'units'}",
+                                        "${knowledge.numUnits} ${knowledge.numUnits == 1 ? 'unit' : 'units'}",
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: Colors.grey
@@ -142,7 +158,7 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                        "${knowledge.byte} ${knowledge.byte == 1 ? 'byte' : 'bytes'}",
+                                        "${(knowledge.totalSize / 1024).toStringAsFixed(2)} KB",
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: Colors.grey
@@ -155,7 +171,7 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
                                     Icon(CupertinoIcons.time, color: Colors.grey, size: 20),
                                     SizedBox(width: 5),
                                     Text(
-                                      knowledge.date,
+                                      knowledge.updatedAt.toIso8601String().substring(0, 10),
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.grey
@@ -175,31 +191,11 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
               Positioned(
                 top: 5,
                 right: 5,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Transform.scale(
-                      scale: 0.6, // Giảm kích thước của Switch
-                      child: Switch(
-                        value: knowledge.isEnable,
-                        onChanged: (bool value) {
-                          setState(() {
-                            knowledge.isEnable = value;
-                          });
-                        },
-                        activeColor: Colors.blueAccent,
-                        inactiveThumbColor: Colors.grey,
-                        inactiveTrackColor: Colors.grey.shade300,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete_outlined),
-                      onPressed: () {
-                        _showDeleteKnowledgeDialog(context);
-                      },
-                    ),
-                  ],
+                child:IconButton(
+                  icon: Icon(Icons.delete_outlined),
+                  onPressed: () {
+                    // _showDeleteKnowledgeDialog(context);
+                  },
                 ),
               ),
             ]

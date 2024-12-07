@@ -1,5 +1,4 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
-import 'package:code/features/knowledge/presentation/units/dialog/EditKnowledgeDialog.dart';
 import 'package:flutter/material.dart';
 
 class KnowledgeInfo extends StatefulWidget {
@@ -19,21 +18,6 @@ class _KnowledgeInfoState extends State<KnowledgeInfo> {
     knowledge = widget.knowledge;
   }
 
-  void editKnowledge(Knowledge k) {
-    setState(() {
-      knowledge = k;
-    });
-    widget.editKnowledge(k);
-  }
-
-  void _showEditKnowledgeDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EditKnowledgeDialog(editKnowledge: editKnowledge, knowledge: knowledge);
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +31,14 @@ class _KnowledgeInfoState extends State<KnowledgeInfo> {
         ),
         SizedBox(width: 10),
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                    knowledge.name,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18
-                    )
-                ),
-                IconButton(onPressed: () {
-                  _showEditKnowledgeDialog(context);
-                }, icon: Icon(Icons.edit, size: 20))
-              ],
+            Text(
+                knowledge.knowledgeName,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18
+                )
             ),
             Row(
               mainAxisSize: MainAxisSize.max,
@@ -78,7 +55,7 @@ class _KnowledgeInfoState extends State<KnowledgeInfo> {
                     borderRadius: BorderRadius.circular(10), // Bo góc của viền
                   ),
                   child: Text(
-                    "${knowledge.unit} ${knowledge.unit == 1 ? 'unit' : 'units'}",
+                    "${knowledge.numUnits} ${knowledge.numUnits == 1 ? 'unit' : 'units'}",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.blue[700]
@@ -97,7 +74,7 @@ class _KnowledgeInfoState extends State<KnowledgeInfo> {
                     borderRadius: BorderRadius.circular(10), // Bo góc của viền
                   ),
                   child: Text(
-                    "${knowledge.byte} ${knowledge.byte == 1 ? 'byte' : 'bytes'}",
+                    "${(knowledge.totalSize / 1024).toStringAsFixed(2)} KB",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.red[700]
