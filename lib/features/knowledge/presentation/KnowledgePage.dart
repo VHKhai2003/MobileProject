@@ -48,7 +48,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
   @override
   Widget build(BuildContext context) {
-    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
 
     return ChangeNotifierProvider(
         create: (context) => KnowledgeProvider(),

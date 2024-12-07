@@ -8,9 +8,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dropdown-menu/CategoryMenu.dart';
 
 class EditDialog extends StatefulWidget {
-  EditDialog({super.key, required this.prompt});
+  const EditDialog({super.key, required this.prompt});
 
-  Prompt prompt;
+  final Prompt prompt;
 
   @override
   State<EditDialog> createState() => _EditDialogState();

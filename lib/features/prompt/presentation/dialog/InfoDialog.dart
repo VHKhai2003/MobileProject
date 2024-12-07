@@ -1,11 +1,10 @@
 import 'package:code/features/prompt/models/Prompt.dart';
-import 'package:code/features/prompt/presentation/UsingPromptBottomSheet.dart';
 import 'package:flutter/material.dart';
 
 class InfoDialog extends StatelessWidget {
-  InfoDialog({super.key, required this.prompt});
+  const InfoDialog({super.key, required this.prompt});
   
-  Prompt prompt;
+  final Prompt prompt;
 
   @override
   Widget build(BuildContext context) {
