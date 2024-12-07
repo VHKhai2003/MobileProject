@@ -1,4 +1,3 @@
-import 'package:code/data/apis/ApiService.dart';
 import 'package:code/features/prompt/models/Prompt.dart';
 import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';

@@ -1,11 +1,19 @@
+import 'package:code/features/ai-action/providers/EmailProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class JarvisReply extends StatelessWidget {
   const JarvisReply({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final emailProvider = Provider.of<EmailProvider>(context);
+
+    return emailProvider.isDisplayReply ?
+    Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         side: const BorderSide(
@@ -44,41 +52,44 @@ class JarvisReply extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             const Divider(height: 1),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(10),
-              child: Text("""Kính gửi [Họ và tên ứng viên],
-
-Cảm ơn bạn đã quan tâm và gửi đơn ứng tuyển vào vị trí [Tên vị trí] tại [Tên công ty]. Sau khi xem xét kỹ lưỡng hồ sơ của bạn, chúng tôi rất tiếc phải thông báo rằng hiện tại chúng tôi đã tìm được ứng viên phù hợp hơn cho vị trí này.
-
-Chúng tôi đánh giá cao những kinh nghiệm và kỹ năng của bạn, và hy vọng bạn sẽ tiếp tục thành công trong sự nghiệp. Nếu có cơ hội phù hợp trong tương lai, chúng tôi rất mong có thể xem xét hồ sơ của bạn một lần nữa.
-
-Một lần nữa xin cảm ơn bạn đã dành thời gian ứng tuyển và chúc bạn nhiều thành công trong các cơ hội tiếp theo.
-
-Trân trọng,
-[Tên người gửi]
-[Chức vụ]
-[Tên công ty]
-[Số điện thoại liên hệ]
-[Địa chỉ email]""", style: TextStyle(fontSize: 15, letterSpacing: 0.5),),
+              child: emailProvider.emailResponse == null ? SpinKitThreeBounce(
+                color: Colors.grey,
+                size: 15,
+              ) : Text(emailProvider.emailResponse!.email, style: TextStyle(fontSize: 15, letterSpacing: 0.5),),
             ),
-            const SizedBox(height: 5),
-            const Divider(height: 1),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.copy)
-                  ),
-                )
-              ],
-            )
+            if (emailProvider.emailResponse != null) ...[
+              const SizedBox(height: 5),
+              const Divider(height: 1),
+              const SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: IconButton(
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: emailProvider.emailResponse!.email));
+                          Fluttertoast.showToast(
+                            msg: "Copied to clipboard!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16.0,
+                          );
+                        },
+                        icon: const Icon(Icons.copy)
+                    ),
+                  )
+                ],
+              )
+            ]
           ],
         ),
       ),
-    );
+    ) :
+    Container();
   }
 }

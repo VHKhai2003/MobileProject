@@ -5,14 +5,12 @@ import 'package:code/features/prompt/presentation/dialog/InfoDialog.dart';
 import 'package:code/features/prompt/services/PromptApiService.dart';
 import 'package:flutter/material.dart';
 
-
 class ListPublicPrompt extends StatefulWidget {
-  ListPublicPrompt({super.key, required this.keyword, required this.category, required this.isFavorite, required this.current});
-
-  String keyword;
-  bool isFavorite;
-  String category;
-  DateTime current;
+  const ListPublicPrompt({super.key, required this.keyword, required this.category, required this.isFavorite, required this.current});
+  final String keyword;
+  final bool isFavorite;
+  final String category;
+  final DateTime current;
 
   @override
   State<ListPublicPrompt> createState() => _ListPublicPromptState();
@@ -150,10 +148,10 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
                   IconButton(
                       onPressed: () async {
                         bool? status = await showDialog(context: context, builder: (context) => InfoDialog(prompt: prompt));
-                        if(status != null && status!) {
+                        if(status != null && status) {
                           String? data = await showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
                           if(data != null && data.trim().isNotEmpty) {
-                            Navigator.of(context).pop(data!);
+                            Navigator.of(context).pop(data);
                           }
                         }
                       },
@@ -163,7 +161,7 @@ class _ListPublicPromptState extends State<ListPublicPrompt> {
                     onPressed: () async {
                       String? data = await showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => UsingPromptBottomSheet(prompt: prompt));
                       if(data != null && data.trim().isNotEmpty) {
-                        Navigator.of(context).pop(data!);
+                        Navigator.of(context).pop(data);
                       }
                     },
                     icon: const Icon(Icons.arrow_forward, color: Colors.blue, size: 18),

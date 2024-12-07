@@ -37,7 +37,7 @@ class _UnitPageState extends State<UnitPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
 
     return Scaffold(
       appBar: AppBar(

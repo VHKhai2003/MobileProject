@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SearchPrompt extends StatelessWidget {
-  SearchPrompt({super.key, required this.controller, required this.onSubmitted , required this.isFavoriteChecked, required this.onTap, required this.isPublic});
-  TextEditingController controller;
-  bool isFavoriteChecked;
-  VoidCallback onTap;
-  Function(String) onSubmitted;
-  bool isPublic;
+  const SearchPrompt({super.key, required this.controller, required this.onSubmitted , required this.isFavoriteChecked, required this.onTap, required this.isPublic});
+  final TextEditingController controller;
+  final bool isFavoriteChecked;
+  final VoidCallback onTap;
+  final Function(String) onSubmitted;
+  final bool isPublic;
 
   @override
   Widget build(BuildContext context) {
