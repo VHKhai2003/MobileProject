@@ -1,23 +1,24 @@
-import 'package:code/core/constants/ApiConstants.dart';
+import 'package:code/core/constants/KBApiConstants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-class ApiService {
+class KBApiService {
   final Dio _dio = Dio();
   static const _storage = FlutterSecureStorage();
 
   String? _accessToken;
   String? _refreshToken;
 
+  Dio get dio => _dio;
   String? get token => _accessToken;
 
   Future<void> init() async {
     await loadTokens();
   }
 
-  ApiService() {
-    _dio.options.baseUrl = ApiConstants.baseUrl;
+  KBApiService() {
+    _dio.options.baseUrl = KBApiConstants.baseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 20);
     _dio.options.receiveTimeout = const Duration(seconds: 20);
 
@@ -26,8 +27,8 @@ class ApiService {
         final requireToken = options.extra['requireToken'] ?? false;
 
         if (requireToken) {
-          if (_accessToken == null || await isTokenExpired()) {
-            await refreshAccessToken();
+          if (_accessToken == null || await _isTokenExpired()) {
+            await _refreshAccessToken();
           }
           options.headers['Authorization'] = 'Bearer $_accessToken';
         }
@@ -45,16 +46,16 @@ class ApiService {
   }
 
   Future<void> loadTokens() async {
-    _accessToken = await _storage.read(key: 'accessToken');
-    _refreshToken = await _storage.read(key: 'refreshToken');
+    _accessToken = await _storage.read(key: 'KBAccessToken');
+    _refreshToken = await _storage.read(key: 'KBRefreshToken');
   }
 
   Future<void> saveTokens(String accessToken, String refreshToken) async {
-    await _storage.write(key: 'accessToken', value: accessToken);
-    await _storage.write(key: 'refreshToken', value: refreshToken);
+    await _storage.write(key: 'KBAaccessToken', value: accessToken);
+    await _storage.write(key: 'KBRefreshToken', value: refreshToken);
   }
 
-  Future<bool> isTokenExpired() async {
+  Future<bool> _isTokenExpired() async {
     if (_accessToken == null) return true;
     try {
       final parts = _accessToken!.split('.');
@@ -71,11 +72,11 @@ class ApiService {
     }
   }
 
-  Future<void> refreshAccessToken() async {
+  Future<void> _refreshAccessToken() async {
     await loadTokens();
     try {
       final response = await _dio.get(
-        ApiConstants.refreshToken,
+        KBApiConstants.refreshToken,
         queryParameters: {
           'refreshToken': _refreshToken,
         },
@@ -92,6 +93,4 @@ class ApiService {
       throw Exception('Error refreshing token: $e');
     }
   }
-
-  Dio get dio => _dio;
 }
