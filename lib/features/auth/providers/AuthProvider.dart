@@ -1,5 +1,7 @@
 import 'package:code/core/constants/ApiConstants.dart';
+import 'package:code/core/constants/KBApiConstants.dart';
 import 'package:code/data/apis/ApiService.dart';
+import 'package:code/data/apis/KBApiService.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
+  final KBApiService _kbApiService = KBApiService();
   final TokenUsageProvider _tokenUsageProvider;
 
   AuthProvider(this._tokenUsageProvider);
@@ -71,6 +74,7 @@ class AuthProvider with ChangeNotifier {
         await _apiService.saveTokens(accessToken, refreshToken!);
         await _tokenUsageProvider.getUsage();
         await _tokenUsageProvider.getUser();
+        await signInKnowledgeBase(accessToken);
         return "success";
       }
       return "fail";
@@ -86,6 +90,30 @@ class AuthProvider with ChangeNotifier {
         }
       }
       return "Unknown error: $e";
+    }
+  }
+
+  Future<void> signInKnowledgeBase(String accessToken) async {
+    try {
+      final response = await _kbApiService.dio.post(
+          KBApiConstants.login,
+          data: {
+            "token": accessToken,
+          }
+      );
+      if(response.statusCode == 200) {
+        final accessToken = response.data['token']['accessToken'];
+        final refreshToken = response.data['token']['refreshToken'];
+        await _kbApiService.saveTokens(accessToken, refreshToken);
+        print('kb access: $accessToken');
+        print('kb refresh: $refreshToken');
+      }
+      else {
+        print('Error when sign in knowledge base');
+      }
+    }
+    catch(e) {
+      print('Catch Exception: Error when sign in knowledge base');
     }
   }
 
