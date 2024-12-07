@@ -1,18 +1,26 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/presentation/dialog/CreateKnowledgeDialog.dart';
+import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreateKnowledgeButton extends StatelessWidget {
-  const CreateKnowledgeButton({super.key, required this.createNewKnowledge});
-  final Function(Knowledge) createNewKnowledge;
+  const CreateKnowledgeButton({super.key});
 
-  void _showCreateKnowledgeDialog(BuildContext context) {
-    showDialog(
+  void _showCreateKnowledgeDialog(BuildContext context) async {
+    KnowledgeProvider knowledgeProvider = Provider.of<KnowledgeProvider>(context, listen: false);
+    bool? status = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CreateKnowledgeDialog(createNewKnowledge: createNewKnowledge);
+        return CreateKnowledgeDialog(knowledgeProvider: knowledgeProvider,);
       },
     );
+    if(status != null && status!) {
+      knowledgeProvider.setLoading(true);
+      knowledgeProvider.clearListKnowledge();
+      await knowledgeProvider.loadKnowledge('');
+      knowledgeProvider.setLoading(false);
+    }
   }
   
   @override

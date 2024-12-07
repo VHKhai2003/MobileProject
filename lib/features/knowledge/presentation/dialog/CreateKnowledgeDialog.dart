@@ -1,9 +1,11 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
+import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateKnowledgeDialog extends StatefulWidget {
-  const CreateKnowledgeDialog({super.key, required this.createNewKnowledge});
-  final Function(Knowledge) createNewKnowledge;
+  CreateKnowledgeDialog({super.key, required this.knowledgeProvider});
+  KnowledgeProvider knowledgeProvider;
 
   @override
   State<CreateKnowledgeDialog> createState() => _CreateKnowledgeDialogState();
@@ -19,6 +21,8 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
 
   late int knowledgeNameCharacterCount = 0;
   late int knowledgeDescriptionCharacterCount = 0;
+  
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -169,23 +173,44 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
             child: const Text('Cancel'),
           ),
           FilledButton(
-              onPressed: () {
-                widget.createNewKnowledge(
-                    Knowledge(
-                      DateTime.now().millisecondsSinceEpoch.toString(),
-                      knowledgeNameController.text,
-                      knowledgeDescriptionController.text,
-                      0,
-                      0,
-                      DateTime.now()
-                    )
-                );
-                Navigator.of(context).pop();
+              onPressed: () async {
+                String name = knowledgeNameController.text;
+                if(name.trim().isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: 'Knowledge name must not be empty',
+                  );
+                  return;
+                }
+                setState(() {
+                  isLoading = true;
+                });
+                bool status = await widget.knowledgeProvider.createKnowledge(name, knowledgeDescriptionController.text);
+                setState(() {
+                  isLoading = false;
+                });
+                Fluttertoast.showToast(msg: status ? "Create knowledge successfully" : "Failed to create knowledge");
+                if(status) {
+                  Navigator.of(context).pop(status);
+                }
               },
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.blue.shade700,
               ),
-              child: const Text('Confirm')),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  isLoading ? SizedBox(
+                    width: 10,
+                    height: 10,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ) : SizedBox.shrink(),
+                  SizedBox(width: 4,),
+                  const Text('Confirm'),
+                ],
+              )),
         ],
       ),
     );

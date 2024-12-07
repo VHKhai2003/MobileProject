@@ -24,22 +24,9 @@ class _ListKnowledgeState extends State<ListKnowledge> {
   }
 
   Future<void> initData() async {
-    KnowledgeProvider provider =
-        Provider.of<KnowledgeProvider>(context, listen: false);
+    KnowledgeProvider provider = Provider.of<KnowledgeProvider>(context, listen: false);
     provider.setLoading(true);
     provider.clearListKnowledge();
-    try {
-      await provider.loadKnowledge('');
-    } catch (e) {
-    } finally {
-      provider.setLoading(false);
-    }
-  }
-
-  Future<void> fetchData() async {
-    KnowledgeProvider provider =
-        Provider.of<KnowledgeProvider>(context, listen: false);
-    provider.setLoading(true);
     try {
       await provider.loadKnowledge('');
     } catch (e) {
@@ -62,33 +49,36 @@ class _ListKnowledgeState extends State<ListKnowledge> {
               padding: EdgeInsets.symmetric(vertical: 10),
               child: SearchBox(),
             ),
-            // CreateKnowledgeButton(createNewKnowledge: createNewKnowledge),
+            CreateKnowledgeButton(),
             if (knowledges.isNotEmpty) ...[
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3,
-                  ),
-                  itemCount: knowledges.length,
+                child: ListView.builder(
+                  itemCount: knowledges.length + 1,
                   itemBuilder: (context, index) {
+                    if(index == knowledges.length) {
+                      return knowledgeProvider.hasNext
+                          ? Center(
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
+                              child: TextButton(
+                              onPressed: () async {
+                                await knowledgeProvider.loadKnowledge('');
+                              },
+                              child: Text('More...', style: TextStyle(color: Colors.blue),)),
+                            ),
+                          )
+                          : SizedBox.shrink();
+                    }
                     return KnowledgeElement(knowledge: knowledges[index]);
                   },
                   // padding: const EdgeInsets.all(10),
                 ),
               ),
-              knowledgeProvider.hasNext
-                  ? TextButton(
-                      onPressed: () {fetchData();},
-                      child: Text('More...', style: TextStyle(color: Colors.blue),))
-                  : SizedBox.shrink()
-            ] else if (knowledgeProvider.isLoading) ...[
+            ] else if (knowledgeProvider.isLoading)
               Expanded(
                   child: Center(child: CircularProgressIndicator(),)
               )
-            ] else ...[
+            else ...[
               SizedBox(height: 30),
               Image.asset(
                 'assets/icons/empty-box.png',

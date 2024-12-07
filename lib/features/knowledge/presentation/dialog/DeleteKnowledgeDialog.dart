@@ -1,10 +1,19 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
+import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
 import 'package:flutter/material.dart';
 
-class DeleteKnowledgeDialog extends StatelessWidget {
-  const DeleteKnowledgeDialog({super.key, required this.knowledge, required this.deleteKnowledge});
+class DeleteKnowledgeDialog extends StatefulWidget {
+  DeleteKnowledgeDialog({super.key, required this.knowledge, required this.knowledgeProvider});
   final Knowledge knowledge;
-  final Function(String) deleteKnowledge;
+  KnowledgeProvider knowledgeProvider;
+
+  @override
+  State<DeleteKnowledgeDialog> createState() => _DeleteKnowledgeDialogState();
+}
+
+class _DeleteKnowledgeDialogState extends State<DeleteKnowledgeDialog> {
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +47,34 @@ class DeleteKnowledgeDialog extends StatelessWidget {
           child: const Text('Cancel'),
         ),
         FilledButton(
-            onPressed: () {
-              deleteKnowledge(knowledge.id);
-              Navigator.of(context).pop();
+            onPressed: () async {
+              setState(() {
+                isLoading = true;
+              });
+              bool status = await widget.knowledgeProvider.deleteKnowledge(widget.knowledge.id);
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.of(context).pop(status);
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red.shade600,
             ),
-            child: const Text('Confirm')
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                isLoading ? SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ) : SizedBox.shrink(),
+                SizedBox(width: 4,),
+                const Text('Confirm'),
+              ],
+            )
         ),
       ],
     );

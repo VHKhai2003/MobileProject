@@ -57,4 +57,48 @@ class KnowledgeProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> createKnowledge(String name, String description) async {
+    try {
+      final response = await _kbApiService.dio.post(
+          KBApiConstants.crudKnowledge,
+          data: {
+            "knowledgeName": name,
+            "description": description
+          },
+          options: Options(
+              extra: {
+                "requireToken": true,
+              }
+          )
+      );
+      if(response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+    }
+    catch(e) {
+      print("Catch error when create knowledge");
+    }
+    return false;
+  }
+
+  Future<bool> deleteKnowledge(String id) async {
+    try {
+      final response = await _kbApiService.dio.delete(
+          '${KBApiConstants.crudKnowledge}/$id',
+          options: Options(
+              extra: {
+                "requireToken": true,
+              }
+          )
+      );
+      if(response.statusCode == 200) {
+        return true;
+      }
+    }
+    catch(e) {
+      print("Catch error when delete knowledge");
+    }
+    return false;
+  }
+
 }

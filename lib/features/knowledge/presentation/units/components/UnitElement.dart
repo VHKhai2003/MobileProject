@@ -69,7 +69,7 @@ class _UnitElementState extends State<UnitElement> {
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: Image.asset(
-                                  types[unit.source]!,
+                                  types[unit.type]!,
                                   width: 40,
                                   height: 40,
                                   fit: BoxFit.cover,
@@ -96,7 +96,7 @@ class _UnitElementState extends State<UnitElement> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                  "From ${unit.source}",
+                                  "From ${unit.type}",
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.grey
@@ -112,7 +112,7 @@ class _UnitElementState extends State<UnitElement> {
                                   ),
                                   SizedBox(width: 5),
                                   Text(
-                                      "${unit.size} ${unit.size == 1 ? 'byte' : 'bytes'}",
+                                      "${(unit.size / 1024).toStringAsFixed(2)} KB",
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.grey
@@ -125,7 +125,7 @@ class _UnitElementState extends State<UnitElement> {
                                   Icon(CupertinoIcons.time, color: Colors.grey, size: 20),
                                   SizedBox(width: 5),
                                   Text(
-                                      unit.createTime,
+                                      unit.createdAt.toIso8601String().substring(0, 10),
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.grey
@@ -151,10 +151,10 @@ class _UnitElementState extends State<UnitElement> {
                       Transform.scale(
                         scale: 0.6, // Giảm kích thước của Switch
                         child: Switch(
-                          value: unit.isEnable,
+                          value: unit.status,
                           onChanged: (bool value) {
                             setState(() {
-                              unit.isEnable = value;
+                              unit.status = value;
                             });
                           },
                           activeColor: Colors.blueAccent,
