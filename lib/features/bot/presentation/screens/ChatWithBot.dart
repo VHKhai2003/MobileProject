@@ -7,10 +7,16 @@ import 'package:provider/provider.dart';
 class ChatWithBot extends StatelessWidget {
   final String botName;
   final List<String> listKnowledge;
+  final String openAiAssistantId;
+  final String openAiThreadIdPlay;
 
-  const ChatWithBot(
-      {Key? key, required this.botName, required this.listKnowledge})
-      : super(key: key);
+  const ChatWithBot({
+    Key? key,
+    required this.botName,
+    required this.listKnowledge,
+    required this.openAiAssistantId,
+    required this.openAiThreadIdPlay,
+  }) : super(key: key);
 
   void changeConversation() {
     print("Conversation changed");

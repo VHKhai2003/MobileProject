@@ -6,22 +6,23 @@ import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
+import 'package:code/features/bot/provider/BotProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final ApiService apiService = ApiService();
   await apiService.init();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TokenUsageProvider(apiService)),
-        ChangeNotifierProvider(create: (context) => AuthProvider(context.read<TokenUsageProvider>())),
-      ],
-      child: const MyApp(),
-    )
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => TokenUsageProvider(apiService)),
+      ChangeNotifierProvider(
+          create: (context) =>
+              AuthProvider(context.read<TokenUsageProvider>())),
+      ChangeNotifierProvider(create: (_) => BotProvider()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -45,12 +46,15 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: Colors.transparent,
           elevation: 0, // Xóa bóng đổ
           systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Color.fromARGB(255, 25, 118, 210), // Màu nền status bar
+            statusBarColor:
+                Color.fromARGB(255, 25, 118, 210), // Màu nền status bar
             statusBarIconBrightness: Brightness.dark, // Màu icon status bar
           ),
         ),
       ),
-      home: tokenUsageProvider.isAuthenticated ? ChatPage() : LoginPage(state: "Login"),
+      home: tokenUsageProvider.isAuthenticated
+          ? ChatPage()
+          : LoginPage(state: "Login"),
       debugShowCheckedModeBanner: false,
     );
   }

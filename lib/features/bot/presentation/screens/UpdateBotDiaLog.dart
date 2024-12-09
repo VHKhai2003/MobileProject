@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
+import 'package:code/features/bot/models/Bot.dart';
 
-class CreateBotDialog extends StatefulWidget {
-  const CreateBotDialog({super.key, required this.botProvider});
+class UpdateBotDialog extends StatefulWidget {
+  const UpdateBotDialog(
+      {super.key, required this.botProvider, required this.bot});
   final BotProvider botProvider;
+  final Bot bot;
 
   @override
-  State<CreateBotDialog> createState() => _CreateBotDialogState();
+  State<UpdateBotDialog> createState() => _UpdateBotDialogState();
 }
 
-class _CreateBotDialogState extends State<CreateBotDialog> {
+class _UpdateBotDialogState extends State<UpdateBotDialog> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController instructionsController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-
-  final FocusNode nameFocusNode = FocusNode();
-  final FocusNode instructionsFocusNode = FocusNode();
-  final FocusNode descriptionFocusNode = FocusNode();
 
   late int nameCharacterCount = 0;
   late int instructionsCharacterCount = 0;
@@ -26,13 +25,26 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
   bool isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadBotData();
+  }
+
+  void _loadBotData() {
+    nameController.text = widget.bot.name;
+    instructionsController.text = widget.bot.instructions ?? '';
+    descriptionController.text = widget.bot.description ?? '';
+
+    nameCharacterCount = widget.bot.name.length;
+    instructionsCharacterCount = widget.bot.instructions?.length ?? 0;
+    descriptionCharacterCount = widget.bot.description?.length ?? 0;
+  }
+
+  @override
   void dispose() {
     nameController.dispose();
     instructionsController.dispose();
     descriptionController.dispose();
-    nameFocusNode.dispose();
-    instructionsFocusNode.dispose();
-    descriptionFocusNode.dispose();
     super.dispose();
   }
 
@@ -47,7 +59,7 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Create New Bot',
+              'Update Bot',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             IconButton(
@@ -87,7 +99,6 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                 children: [
                   TextField(
                     controller: nameController,
-                    focusNode: nameFocusNode,
                     cursorColor: Colors.blue.shade700,
                     style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
                     decoration: InputDecoration(
@@ -109,8 +120,6 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                             BorderSide(color: Colors.blue.shade700, width: 1),
                       ),
                     ),
-                    onSubmitted: (_) => FocusScope.of(context)
-                        .requestFocus(instructionsFocusNode),
                     onChanged: (value) =>
                         setState(() => nameCharacterCount = value.length),
                   ),
@@ -129,7 +138,6 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                 children: [
                   TextField(
                     controller: instructionsController,
-                    focusNode: instructionsFocusNode,
                     maxLines: 3,
                     cursorColor: Colors.blue.shade700,
                     style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
@@ -152,8 +160,6 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                             BorderSide(color: Colors.blue.shade700, width: 1),
                       ),
                     ),
-                    onSubmitted: (_) => FocusScope.of(context)
-                        .requestFocus(descriptionFocusNode),
                     onChanged: (value) => setState(
                         () => instructionsCharacterCount = value.length),
                   ),
@@ -172,7 +178,6 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                 children: [
                   TextField(
                     controller: descriptionController,
-                    focusNode: descriptionFocusNode,
                     maxLines: 5,
                     cursorColor: Colors.blue.shade700,
                     style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
@@ -219,7 +224,8 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                 return;
               }
               setState(() => isLoading = true);
-              bool status = await widget.botProvider.createBot(
+              bool status = await widget.botProvider.updateBot(
+                widget.bot.id,
                 name,
                 instructionsController.text,
                 descriptionController.text,
@@ -234,8 +240,8 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
 
               Fluttertoast.showToast(
                   msg: status
-                      ? "Create bot successfully"
-                      : "Failed to create bot");
+                      ? "Update bot successfully"
+                      : "Failed to update bot");
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.blue.shade700,
@@ -254,7 +260,7 @@ class _CreateBotDialogState extends State<CreateBotDialog> {
                   ),
                   const SizedBox(width: 4),
                 ],
-                const Text('Confirm'),
+                const Text('Update'),
               ],
             ),
           ),
