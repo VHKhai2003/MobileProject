@@ -17,10 +17,10 @@ class _UnitElementState extends State<UnitElement> {
   late Unit unit;
 
   Map<String, String> types = {
-    UnitTypeName.local: UnitTypeIcon.local,
+    "file": UnitTypeIcon.local,
     UnitTypeName.slack: UnitTypeIcon.slack,
     UnitTypeName.drive: UnitTypeIcon.drive,
-    UnitTypeName.website: UnitTypeIcon.website,
+    "web": UnitTypeIcon.website,
     UnitTypeName.confluence: UnitTypeIcon.confluence
   };
 

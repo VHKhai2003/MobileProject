@@ -48,7 +48,7 @@ class _KnowledgeElementState extends State<KnowledgeElement> {
   Widget build(BuildContext context) {
     KnowledgeProvider provider = Provider.of<KnowledgeProvider>(context, listen: false);
     return Container(
-      height: 140,
+      height: 150,
       child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

@@ -28,14 +28,14 @@ class _UnitPageState extends State<UnitPage> {
     final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
 
     return ChangeNotifierProvider(
-        create: (context) => UnitProvider(),
+        create: (context) => UnitProvider(knowledge: knowledge),
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: const Color(0xFFEBEFFF),
             title: const Text("Units", style: TextStyle(fontWeight: FontWeight.bold)),
             actions: buildActions(context, tokenUsageProvider.tokenUsage),
           ),
-          body: ListUnits(knowledge: knowledge),
+          body: ListUnits(),
         ),
     );
   }

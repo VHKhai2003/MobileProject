@@ -1,5 +1,6 @@
 import 'package:code/core/constants/KBApiConstants.dart';
 import 'package:code/data/apis/KBApiService.dart';
+import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/models/Unit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,9 @@ import 'package:flutter/material.dart';
 class UnitProvider with ChangeNotifier {
 
   final KBApiService _kbApiService = KBApiService();
+  final Knowledge knowledge;
 
-  UnitProvider();
+  UnitProvider({required this.knowledge});
 
   List<Unit> units = [];
   int offset = 0;
@@ -25,10 +27,10 @@ class UnitProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadUnits(String knowledgeId) async {
+  Future<void> loadUnits() async {
     try {
       final response = await _kbApiService.dio.get(
-          KBApiConstants.getUnits.replaceFirst("{id}", knowledgeId),
+          KBApiConstants.getUnits.replaceFirst("{id}", knowledge.id),
           queryParameters: {
             "order": "DESC",
             "order_field": "createdAt",
