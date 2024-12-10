@@ -12,9 +12,8 @@ class SelectKnowledgeDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // AppBar để hiển thị tiêu đề và nút đóng
           AppBar(
-            automaticallyImplyLeading: false, // Không hiển thị nút quay lại
+            automaticallyImplyLeading: false,
             title: Text(
               'Select Knowledge',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -23,14 +22,13 @@ class SelectKnowledgeDialog extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.close),
                 onPressed: () {
-                  Navigator.of(context).pop(); // Đóng dialog khi nhấn nút X
+                  Navigator.of(context).pop();
                 },
               ),
             ],
             backgroundColor: Colors.transparent,
             elevation: 0,
-            iconTheme:
-                IconThemeData(color: Colors.black), // Dùng màu đen cho icon
+            iconTheme: IconThemeData(color: Colors.black),
           ),
           const SizedBox(height: 12),
           Padding(
@@ -42,11 +40,10 @@ class SelectKnowledgeDialog extends StatelessWidget {
                 final knowledge = knowledges[index];
                 return ListTile(
                   leading: Image.asset(
-                    "assets/icons/knowledge-base.png", // Đảm bảo đường dẫn hợp lệ
+                    "assets/icons/knowledge-base.png",
                     width: 40,
                     height: 40,
                     errorBuilder: (context, error, stackTrace) {
-                      // Hiển thị biểu tượng thay thế nếu ảnh không tải được
                       return Icon(Icons.error, size: 40, color: Colors.red);
                     },
                   ),

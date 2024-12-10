@@ -53,19 +53,25 @@ class BotProvider with ChangeNotifier {
     setLoading(false); // Add this
   }
 
-  Future<Bot> getBotById(String botId) async {
+  Future<Bot> getBot(String id) async {
     try {
       final response = await _kbApiService.dio.get(
-          '${KBApiConstants.crudBot}/$botId',
-          options: Options(extra: {"requireToken": true}));
-      if (response.statusCode == 200) {
+        '${KBApiConstants.crudBot}/$id',
+        options: Options(extra: {"requireToken": true}),
+      );
+
+      // if (response.statusCode == 200 &&
+      //     response.data != null &&
+      //     response.data['data'] != null)
+      if (response.statusCode == 200 && response.data != null) {
+        print("Bot data: ${response.data}"); // Kiểm tra dữ liệu trả về
         return Bot.fromMap(response.data);
       } else {
-        throw Exception('Failed to fetch bot data');
+        throw Exception('Failed to load bot details: No data');
       }
     } catch (e) {
-      print('Error getting bot by ID: $e');
-      rethrow;
+      print("Error getting bot: $e");
+      throw Exception('Failed to load bot details');
     }
   }
 
@@ -86,16 +92,17 @@ class BotProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateBot(
-      String id, String name, String instructions, String description) async {
+  Future<bool> updateBot(String id, String? name, String? instructions,
+      String? description) async {
     try {
+      final Map<String, dynamic> data = {};
+      if (name != null) data['assistantName'] = name;
+      if (instructions != null) data['instructions'] = instructions;
+      if (description != null) data['description'] = description;
+
       final response = await _kbApiService.dio.patch(
-          '${KBApiConstants.crudBot}/$id', // /kb-core/v1/ai-assistant/{assistantId}
-          data: {
-            "assistantName": name,
-            "instructions": instructions,
-            "description": description
-          },
+          '${KBApiConstants.crudBot}/$id',
+          data: data,
           options: Options(extra: {"requireToken": true}));
 
       return response.statusCode == 200;

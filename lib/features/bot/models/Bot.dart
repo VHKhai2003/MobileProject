@@ -5,7 +5,7 @@ class Bot {
   final String? instructions;
   final String createdAt;
   final String updatedAt;
-  final List<String> knowledge;
+  final List<String>? knowledge;
   final String openAiAssistantId;
   final String openAiThreadIdPlay;
   final String openAiVectorStoreId;
@@ -17,7 +17,7 @@ class Bot {
     this.instructions,
     required this.createdAt,
     required this.updatedAt,
-    required this.knowledge,
+    this.knowledge,
     required this.openAiAssistantId,
     required this.openAiThreadIdPlay,
     required this.openAiVectorStoreId,

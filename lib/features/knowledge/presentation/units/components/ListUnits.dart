@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ListUnits extends StatefulWidget {
-  const ListUnits({super.key, required Knowledge this.knowledge});
-  final Knowledge knowledge;
+  const ListUnits({super.key});
 
   @override
   State<ListUnits> createState() => _ListUnitsState();
@@ -27,16 +26,17 @@ class _ListUnitsState extends State<ListUnits> {
     UnitProvider provider = Provider.of<UnitProvider>(context, listen: false);
     provider.setLoading(true);
     try {
-      await provider.loadUnits(widget.knowledge.id);
+      await provider.loadUnits();
     } catch (e) {
     } finally {
       provider.setLoading(false);
     }
   }
+
   Future<void> fetchData() async {
     UnitProvider provider = Provider.of<UnitProvider>(context, listen: false);
     try {
-      await provider.loadUnits(widget.knowledge.id);
+      await provider.loadUnits();
     } catch (e) {
     } finally {
       provider.setLoading(false);
@@ -103,7 +103,7 @@ class _ListUnitsState extends State<ListUnits> {
                     padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
                     child: TextButton(
                     onPressed: () async {
-                      await unitProvider.loadUnits(widget.knowledge.id);
+                      await unitProvider.loadUnits();
                     },
                       child: Text('More...', style: TextStyle(color: Colors.blue),)),
                     ),

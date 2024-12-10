@@ -1,3 +1,4 @@
+import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/models/UnitType.dart';
 import 'package:code/features/knowledge/models/UnitTypeIcon.dart';
 import 'package:code/features/knowledge/models/UnitTypeName.dart';
@@ -6,10 +7,13 @@ import 'package:code/features/knowledge/presentation/import-data/ImportGoogleDri
 import 'package:code/features/knowledge/presentation/import-data/ImportLocalFilesPage.dart';
 import 'package:code/features/knowledge/presentation/import-data/ImportSlackPage.dart';
 import 'package:code/features/knowledge/presentation/import-data/ImportWebsitePage.dart';
+import 'package:code/features/knowledge/presentation/import-data/layout/ImportDataPageLayout.dart';
 import 'package:flutter/material.dart';
 
 class SelectUnitTypeDialog extends StatefulWidget {
-  const SelectUnitTypeDialog({super.key});
+  const SelectUnitTypeDialog({super.key, required this.knowledge});
+
+  final Knowledge knowledge;
 
   @override
   State<SelectUnitTypeDialog> createState() => _SelectUnitTypeDialogState();
@@ -105,8 +109,7 @@ class _SelectUnitTypeDialogState extends State<SelectUnitTypeDialog> {
           child: const Text('Cancel'),
         ),
         FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
+            onPressed: () async {
               Widget page;
               if(selectedUnitType == 0) {
                 page = ImportLocalFilesPage();
@@ -123,10 +126,12 @@ class _SelectUnitTypeDialogState extends State<SelectUnitTypeDialog> {
               else {
                 page = ImportConfluencePage();
               }
-              Navigator.push(
+              bool? status = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => page)
+                  MaterialPageRoute(builder: (context) => ImportDataPageLayout(child: page, knowledge: widget.knowledge))
               );
+
+              Navigator.of(context).pop(status);
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.blue.shade700,

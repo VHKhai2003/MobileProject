@@ -22,6 +22,11 @@ class BotCard extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  String _formatDate(String dateString) {
+    final date = DateTime.parse(dateString);
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -33,60 +38,106 @@ class BotCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.android, color: Colors.blue.shade700),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Bot Icon
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    if (description.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        description,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
+                    child: Icon(Icons.android,
+                        color: Colors.blue.shade700, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  // Bot Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            // Action Buttons
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit,
+                                      color: Colors.grey.shade600, size: 20),
+                                  onPressed: onEdit,
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(),
+                                  tooltip: 'Edit',
+                                ),
+                                const SizedBox(width: 4),
+                                IconButton(
+                                  icon: Icon(Icons.cloud_upload,
+                                      color: Colors.grey.shade600, size: 20),
+                                  onPressed: onPublish,
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(),
+                                  tooltip: 'Publish',
+                                ),
+                                const SizedBox(width: 4),
+                                IconButton(
+                                  icon: Icon(Icons.delete,
+                                      color: Colors.grey.shade600, size: 20),
+                                  onPressed: onDelete,
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(),
+                                  tooltip: 'Delete',
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    Row(
+                        if (description.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            description,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Date Info
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
                       children: [
                         Icon(Icons.calendar_today,
                             size: 12, color: Colors.grey.shade500),
                         const SizedBox(width: 4),
                         Text(
-                          "Created: $createdAt",
-                          style: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Icon(Icons.update,
-                            size: 12, color: Colors.grey.shade500),
-                        const SizedBox(width: 4),
-                        Text(
-                          "Updated: $updatedAt",
+                          "Created: ${_formatDate(createdAt)}",
                           style: TextStyle(
                             color: Colors.grey.shade500,
                             fontSize: 12,
@@ -94,25 +145,22 @@ class BotCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.grey.shade600),
-                    onPressed: onEdit,
-                    tooltip: 'Edit',
                   ),
-                  IconButton(
-                    icon: Icon(Icons.cloud_upload, color: Colors.grey.shade600),
-                    onPressed: onPublish,
-                    tooltip: 'Publish',
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.grey.shade600),
-                    onPressed: onDelete,
-                    tooltip: 'Delete',
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(Icons.update,
+                            size: 12, color: Colors.grey.shade500),
+                        const SizedBox(width: 4),
+                        Text(
+                          "Updated: ${_formatDate(updatedAt)}",
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

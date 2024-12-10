@@ -23,6 +23,7 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
   late int descriptionCharacterCount = 0;
 
   bool isLoading = false;
+  bool isInitializing = true;
 
   @override
   void initState() {
@@ -30,14 +31,39 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
     _loadBotData();
   }
 
-  void _loadBotData() {
-    nameController.text = widget.bot.name;
-    instructionsController.text = widget.bot.instructions ?? '';
-    descriptionController.text = widget.bot.description ?? '';
+  Future<void> _loadBotData() async {
+    try {
+      // Fetch fresh data from server
+      final freshBot = await widget.botProvider.getBot(widget.bot.id);
 
-    nameCharacterCount = widget.bot.name.length;
-    instructionsCharacterCount = widget.bot.instructions?.length ?? 0;
-    descriptionCharacterCount = widget.bot.description?.length ?? 0;
+      if (mounted) {
+        setState(() {
+          nameController.text = freshBot.name;
+          instructionsController.text = freshBot.instructions ?? '';
+          descriptionController.text = freshBot.description ?? '';
+
+          nameCharacterCount = freshBot.name.length;
+          instructionsCharacterCount = freshBot.instructions?.length ?? 0;
+          descriptionCharacterCount = freshBot.description?.length ?? 0;
+
+          isInitializing = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading fresh bot data: $e');
+      if (mounted) {
+        // Fallback to props data if fetch fails
+        nameController.text = widget.bot.name;
+        instructionsController.text = widget.bot.instructions ?? '';
+        descriptionController.text = widget.bot.description ?? '';
+
+        nameCharacterCount = widget.bot.name.length;
+        instructionsCharacterCount = widget.bot.instructions?.length ?? 0;
+        descriptionCharacterCount = widget.bot.description?.length ?? 0;
+
+        setState(() => isInitializing = false);
+      }
+    }
   }
 
   @override
@@ -77,11 +103,6 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
               RichText(
                 text: const TextSpan(
                   children: [
-                    TextSpan(
-                      text: "* ",
-                      style: TextStyle(
-                          color: Colors.redAccent, fontWeight: FontWeight.bold),
-                    ),
                     TextSpan(
                       text: "Bot Name",
                       style: TextStyle(

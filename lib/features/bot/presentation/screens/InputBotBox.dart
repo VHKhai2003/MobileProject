@@ -1,28 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:code/features/bot/presentation/screens/SelectKnowledgeDialog.dart';
+import 'package:code/features/bot/provider/BotProvider.dart';
+import 'package:code/features/bot/models/Bot.dart';
+import 'dart:async';
+import 'package:code/features/bot/presentation/widgets/ListKnowledge.dart';
 
-class InputBotBox extends StatefulWidget {
+class InputBotBox extends StatelessWidget {
   final VoidCallback changeConversation;
   final VoidCallback openNewChat;
   final List<String> listKnownledge;
+  final String botId;
+  final TextEditingController instructionController;
+  final TextEditingController chatController;
+  final bool isUpdating;
+  final bool showSuccess;
+  final ValueChanged<String> onInstructionChange;
 
-  InputBotBox({
+  const InputBotBox({
     Key? key,
     required this.changeConversation,
     required this.openNewChat,
     required this.listKnownledge,
+    required this.botId,
+    required this.instructionController,
+    required this.chatController,
+    required this.isUpdating,
+    required this.showSuccess,
+    required this.onInstructionChange,
   }) : super(key: key);
 
-  @override
-  _InputBotBoxState createState() => _InputBotBoxState();
-}
-
-class _InputBotBoxState extends State<InputBotBox> {
-  final TextEditingController _controller = TextEditingController();
-
-  void sendMessage(String message, String? knowledge) {
-    print("Tin nhắn gửi: $message, Kiến thức: $knowledge");
-    _controller.clear();
+  Widget _buildStatusIcon() {
+    if (isUpdating) {
+      return SizedBox(
+        width: 12,
+        height: 12,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Colors.blue.shade700,
+        ),
+      );
+    } else if (showSuccess) {
+      return Icon(
+        Icons.check_circle,
+        size: 12,
+        color: Colors.green.shade600,
+      );
+    }
+    return const SizedBox(width: 12);
   }
 
   @override
@@ -31,41 +54,46 @@ class _InputBotBoxState extends State<InputBotBox> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                ListKnownledge(listKnownledge: widget.listKnownledge),
-                IconButton(
-                  onPressed: () async {
-                    List<Map<String, dynamic>> mockData = [
-                      {"name": "New", "size": "0.77"},
-                      {"name": "DRL", "size": "5.79"},
-                      {"name": "Flutter", "size": "1.02"}
-                    ];
-
-                    final selectedKnowledge = await showDialog(
-                      context: context,
-                      builder: (context) =>
-                          SelectKnowledgeDialog(knowledges: mockData),
-                    );
-
-                    if (selectedKnowledge != null) {
-                      print('Bạn đã chọn: ${selectedKnowledge['name']}');
-                    }
-                  },
-                  icon: const Icon(Icons.add, color: Colors.blueGrey),
-                ),
-              ],
-            ),
-            IconButton(
-              onPressed: widget.openNewChat,
-              icon:
-                  Icon(Icons.add_comment_outlined, color: Colors.blue.shade700),
+            ListKnownledge(listKnownledge: listKnownledge),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  SizedBox(
+                    height: 32,
+                    child: TextField(
+                      controller: instructionController,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.fromLTRB(8, 8, 24, 8),
+                        hintText: "Instructions...",
+                        hintStyle: TextStyle(
+                            fontSize: 12, color: Colors.grey.shade600),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                      ),
+                      style: const TextStyle(fontSize: 12),
+                      maxLines: 1,
+                      onChanged: onInstructionChange,
+                    ),
+                  ),
+                  Positioned(
+                    right: 8,
+                    child: _buildStatusIcon(),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.blue.shade800, width: 0.6),
@@ -76,7 +104,7 @@ class _InputBotBoxState extends State<InputBotBox> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: _controller,
+                controller: chatController, // Use the new controller here
                 decoration: InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
                   hintStyle: TextStyle(fontSize: 14, color: Colors.blueGrey),
@@ -91,21 +119,11 @@ class _InputBotBoxState extends State<InputBotBox> {
                   children: [
                     IconButton(
                       onPressed: () {},
-                      icon: const Icon(Icons.add_circle_outline,
-                          color: Colors.blueGrey),
+                      icon: Icon(Icons.add_comment_outlined,
+                          color: Colors.blue.shade700),
                     ),
                     IconButton(
-                      onPressed: () {
-                        String userMessage = _controller.text.trim();
-                        if (userMessage.isNotEmpty &&
-                            widget.listKnownledge.isNotEmpty) {
-                          sendMessage(userMessage, widget.listKnownledge.first);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Input somethings')),
-                          );
-                        }
-                      },
+                      onPressed: () {},
                       icon: const Icon(Icons.send, color: Colors.blueGrey),
                     ),
                   ],
@@ -115,74 +133,6 @@ class _InputBotBoxState extends State<InputBotBox> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ListKnownledge extends StatelessWidget {
-  final List<String> listKnownledge;
-
-  const ListKnownledge({super.key, required this.listKnownledge});
-
-  void _showKnowledgeBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Available Knowledge",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: listKnownledge.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(listKnownledge[index]),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          print('Xóa kiến thức: ${listKnownledge[index]}');
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-              TextButton(
-                child: Text("Close"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showKnowledgeBottomSheet(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        constraints: BoxConstraints(maxHeight: 32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.grey.shade100,
-        ),
-        child: Center(
-          child: Text(
-            "View Knowledge",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-      ),
     );
   }
 }
