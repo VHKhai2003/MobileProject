@@ -89,7 +89,7 @@ class _ImportWebSitePageState extends State<ImportWebSitePage> {
                         color: Colors.white,
                       ),
                     ) : SizedBox.shrink(),
-                    SizedBox(width: 4,),
+                    SizedBox(width: 6,),
                     Text('Connect'),
                   ],
                 ),
