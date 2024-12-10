@@ -28,35 +28,70 @@ class CreateKnowledgeButton extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade700,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ElevatedButton(
-              onPressed: () {
-                _showCreateKnowledgeDialog(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                foregroundColor: Colors.white,
+        SizedBox(
+          height: 44,
+          child: FilledButton.icon(
+            onPressed: () {
+              _showCreateKnowledgeDialog(context);
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.blue.shade700,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add_circle_outline, size: 20),
-                  SizedBox(width: 10),
-                  const Text(
-                    'Create knowledge',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 0,
+              ),
+            ),
+            icon: const Icon(
+              Icons.add,
+              size: 20,
+            ),
+            label: const Text(
+              'Create Knowledge',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ),
       ],
     );
+
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.end,
+    //   children: [
+    //     Container(
+    //       margin: const EdgeInsets.symmetric(vertical: 10),
+    //       decoration: BoxDecoration(
+    //         color: Colors.blue.shade700,
+    //         borderRadius: BorderRadius.circular(10),
+    //       ),
+    //       child: ElevatedButton(
+    //           onPressed: () {
+    //             _showCreateKnowledgeDialog(context);
+    //           },
+    //           style: ElevatedButton.styleFrom(
+    //             backgroundColor: Colors.transparent,
+    //             shadowColor: Colors.transparent,
+    //             foregroundColor: Colors.white,
+    //           ),
+    //           child: Row(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               Icon(Icons.add_circle_outline, size: 20),
+    //               SizedBox(width: 10),
+    //               const Text(
+    //                 'Create knowledge',
+    //                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+    //               ),
+    //             ],
+    //           )
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 }

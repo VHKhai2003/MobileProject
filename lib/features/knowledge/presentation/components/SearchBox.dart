@@ -42,14 +42,14 @@ class _SearchBoxState extends State<SearchBox> {
       cursorColor: Colors.blue.shade700,
       decoration: InputDecoration(
         hintText: 'Find knowledge here...',
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: Icon(Icons.search, color: Colors.grey,),
         hintStyle: const TextStyle(color: Colors.grey),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.grey, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.blue.shade700, width: 1),
         ),
         // suffixIcon: const Icon(Icons.close)

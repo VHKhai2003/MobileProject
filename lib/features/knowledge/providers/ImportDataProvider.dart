@@ -75,6 +75,33 @@ class ImportDataProvider with ChangeNotifier {
     return false;
   }
 
+  Future<bool> importConfluence(String name, String url, String username, String token) async {
+    try {
+      final response = await _kbApiService.dio.post(
+          KBApiConstants.importConfluence.replaceFirst("{id}", knowledge.id),
+          data: {
+            "unitName": name,
+            "wikiPageUrl": url,
+            "confluenceUsername": username,
+            "confluenceAccessToken": token,
+          },
+          options: Options(
+              extra: {
+                "requireToken": true,
+              }
+          )
+      );
+      if(response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      }
+    }
+    catch(e) {
+      _handleException(e);
+      print("Error when import from confluence");
+    }
+    return false;
+  }
+
   MediaType _getContentType(String name) {
     if (name.endsWith('.txt')) {
       return MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document');

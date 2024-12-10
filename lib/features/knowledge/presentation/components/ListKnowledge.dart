@@ -50,6 +50,7 @@ class _ListKnowledgeState extends State<ListKnowledge> {
               child: SearchBox(),
             ),
             CreateKnowledgeButton(),
+            SizedBox(height: 10,),
             if (knowledges.isNotEmpty) ...[
               Expanded(
                 child: ListView.builder(

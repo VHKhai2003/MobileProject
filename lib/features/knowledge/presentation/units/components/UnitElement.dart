@@ -21,7 +21,7 @@ class _UnitElementState extends State<UnitElement> {
     "slack": UnitTypeIcon.slack,
     UnitTypeName.drive: UnitTypeIcon.drive,
     "web": UnitTypeIcon.website,
-    UnitTypeName.confluence: UnitTypeIcon.confluence
+    "confluence": UnitTypeIcon.confluence
   };
 
   @override

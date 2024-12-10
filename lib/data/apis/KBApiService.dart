@@ -19,8 +19,8 @@ class KBApiService {
 
   KBApiService() {
     _dio.options.baseUrl = KBApiConstants.baseUrl;
-    _dio.options.connectTimeout = const Duration(seconds: 20);
-    _dio.options.receiveTimeout = const Duration(seconds: 20);
+    _dio.options.connectTimeout = const Duration(seconds: 60);
+    _dio.options.receiveTimeout = const Duration(seconds: 60);
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
