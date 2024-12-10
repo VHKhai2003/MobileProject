@@ -18,7 +18,7 @@ class _UnitElementState extends State<UnitElement> {
 
   Map<String, String> types = {
     "local_file": UnitTypeIcon.local,
-    UnitTypeName.slack: UnitTypeIcon.slack,
+    "slack": UnitTypeIcon.slack,
     UnitTypeName.drive: UnitTypeIcon.drive,
     "web": UnitTypeIcon.website,
     UnitTypeName.confluence: UnitTypeIcon.confluence

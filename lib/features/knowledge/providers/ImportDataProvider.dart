@@ -13,6 +13,16 @@ class ImportDataProvider with ChangeNotifier {
 
   ImportDataProvider({required this.knowledge});
 
+  void _handleException(Object e) {
+    if (e is DioException) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Response data: ${e.response?.data}");
+      } else {
+        print("Error message: ${e.message}");
+      }
+    }
+  }
 
   Future<bool> importWebsite(String name, String url) async {
     try {
@@ -29,12 +39,38 @@ class ImportDataProvider with ChangeNotifier {
           )
       );
       if(response.statusCode == 201 || response.statusCode == 200) {
-        print(response.data);
         return true;
       }
     }
     catch(e) {
+      _handleException(e);
       print("Error when import from web");
+    }
+    return false;
+  }
+
+  Future<bool> importSlack(String name, String workspace, String token) async {
+    try {
+      final response = await _kbApiService.dio.post(
+          KBApiConstants.importSlack.replaceFirst("{id}", knowledge.id),
+          data: {
+            "unitName": name,
+            "slackWorkspace": workspace,
+            "slackBotToken": token,
+          },
+          options: Options(
+              extra: {
+                "requireToken": true,
+              }
+          )
+      );
+      if(response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      }
+    }
+    catch(e) {
+      _handleException(e);
+      print("Error when import from slack");
     }
     return false;
   }
@@ -94,15 +130,7 @@ class ImportDataProvider with ChangeNotifier {
       }
     }
     catch(e) {
-      if (e is DioException) {
-        if (e.response != null) {
-          print("Status code: ${e.response?.statusCode}");
-          print("Response data: ${e.response?.data}");
-        } else {
-          print("Error message: ${e.message}");
-        }
-      }
-      print(e);
+      _handleException(e);
       print("Error when import from file");
     }
 
