@@ -19,8 +19,8 @@ class TokenUsageProvider with ChangeNotifier {
   int _tokenUsage = 0;
   bool _isAuthenticated = false;
 
-  late TokenUsageModel _tokenUsageModel;
-  late CurrentUserModel _currentUserModel;
+  late TokenUsageModel _tokenUsageModel = TokenUsageModel(availableTokens: 0, totalTokens: 0, unlimited: false, date: DateTime.now().toIso8601String());
+  late CurrentUserModel _currentUserModel = CurrentUserModel(id: '', email: '', username: '');
 
   int get tokenUsage => _tokenUsage;
   bool get isAuthenticated => _isAuthenticated;
@@ -72,6 +72,35 @@ class TokenUsageProvider with ChangeNotifier {
       );
       if (response.statusCode == 200) {
         _currentUserModel = CurrentUserModel.fromJson(response.data);
+      }
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response != null) {
+          print("Status code: ${e.response?.statusCode}");
+          print("Response data: ${e.response?.data}");
+        } else {
+          print("Error message: ${e.message}");
+        }
+      }
+    }
+  }
+
+
+  // test upgrade pro
+  Future<void> getUsage1() async {
+    await _apiService.loadTokens();
+    try {
+      final response = await _apiService.dio.get(
+          ApiConstants.getUsage,
+          options: Options(
+            extra: {'requireToken': true},
+          )
+      );
+      if (response.statusCode == 200) {
+        _tokenUsageModel = TokenUsageModel.fromJson(response.data);
+        _tokenUsageModel.unlimited = true;
+        notifyListeners();
+
       }
     } catch (e) {
       if (e is DioException) {
