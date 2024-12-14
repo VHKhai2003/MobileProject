@@ -2,15 +2,16 @@ class AiAgent {
   String id;
   String name;
   String image;
-  int token;
-  AiAgent(this.id, this.name, this.image, this.token);
+  AiAgent(this.id, this.name, this.image);
 
-  static AiAgent gpt_4o_mini = AiAgent("gpt-4o-mini", "GPT-4o mini", 'assets/icons/gpt-4o-mini.png', 1);
-  static AiAgent gpt_4o = AiAgent("gpt-4o", "GPT-4o", 'assets/icons/gpt-4o.png', 5);
-  static AiAgent gemini_15_flash = AiAgent("gemini-1.5-flash-latest", "Gemini 1.5 Flash", 'assets/icons/gemini-15-flash.webp', 1);
-  static AiAgent gemini_15_pro = AiAgent("gemini-1.5-pro-latest", "Gemini 1.5 Pro", 'assets/icons/gemini-15-pro.png', 2);
-  static AiAgent claude_3_haiku = AiAgent("claude-3-haiku-20240307", "Claude 3 Haiku", 'assets/icons/claude-3-haiku.jpg', 3);
-  static AiAgent claude_35_sonnet = AiAgent("claude-3-sonnet-20240229", "Claude 3.5 Sonnet", 'assets/icons/claude-3-haiku.jpg', 3);
+  static AiAgent base_ai_models_label = AiAgent("base-ai-models-label", "Base AI models", 'assets/icons/gpt-4o-mini.png');
+  static AiAgent assistant_label = AiAgent("assistant-label", "Assistants", 'assets/icons/gpt-4o-mini.png');
+  static AiAgent gpt_4o_mini = AiAgent("gpt-4o-mini", "GPT-4o mini", 'assets/icons/gpt-4o-mini.png');
+  static AiAgent gpt_4o = AiAgent("gpt-4o", "GPT-4o", 'assets/icons/gpt-4o.png');
+  static AiAgent gemini_15_flash = AiAgent("gemini-1.5-flash-latest", "Gemini 1.5 Flash", 'assets/icons/gemini-15-flash.webp');
+  static AiAgent gemini_15_pro = AiAgent("gemini-1.5-pro-latest", "Gemini 1.5 Pro", 'assets/icons/gemini-15-pro.png');
+  static AiAgent claude_3_haiku = AiAgent("claude-3-haiku-20240307", "Claude 3 Haiku", 'assets/icons/claude-3-haiku.jpg');
+  static AiAgent claude_35_sonnet = AiAgent("claude-3-sonnet-20240229", "Claude 3.5 Sonnet", 'assets/icons/claude-3-haiku.jpg');
 
   static AiAgent? findById(String id) {
     if (id == gpt_4o_mini.id) return gpt_4o_mini;

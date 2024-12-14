@@ -45,7 +45,7 @@ class _ChatboxState extends State<Chatbox> {
     }
   }
   void _handleUsePrompt(String? data) {
-    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+    final conversationProvider = Provider.of<ConversationsProvider>(context);
     if(data != null) {
       final regex = RegExp(r'\[.*?\]');
       if (regex.hasMatch(data)) {
@@ -64,8 +64,8 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   Widget build(BuildContext context) {
-    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
-    final aiModelProvider = Provider.of<AiModelProvider>(context, listen: false);
+    final conversationProvider = Provider.of<ConversationsProvider>(context);
+    final aiModelProvider = Provider.of<AiModelProvider>(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -80,7 +80,7 @@ class _ChatboxState extends State<Chatbox> {
                     onPressed: () async {
                       // get conversation info here and display this conversation
                       widget.promptFocusNode.unfocus();
-                      conversationProvider.getConversations(aiModelProvider.aiAgent.id);
+                      conversationProvider.getConversations(aiModelProvider.aiAgent!.id);
                       String? result = await showModalBottomSheet(
                           context: context,
                           builder: (context) => HistoryBottomSheet(

@@ -85,7 +85,7 @@ class _HistoryBottomSheetState extends State<HistoryBottomSheet> {
                           child: ListTile(
                             onTap: () {
                               conversationsProvider.setSelectedIndex(index);
-                              conversationsProvider.getConversationHistory(chatHistoryInfo.id, aiModelProvider.aiAgent.id);
+                              conversationsProvider.getConversationHistory(chatHistoryInfo.id, aiModelProvider.aiAgent!.id);
                               Navigator.of(context).pop("open");
                             },
                             title: Row(
