@@ -1,6 +1,7 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/models/Unit.dart';
 import 'package:code/features/knowledge/presentation/units/components/AddUnitButton.dart';
+import 'package:code/features/knowledge/presentation/units/components/KnowledgeInfo.dart';
 import 'package:code/features/knowledge/presentation/units/components/UnitElement.dart';
 import 'package:code/features/knowledge/providers/UnitProvider.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,7 @@ class _ListUnitsState extends State<ListUnits> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Expanded(child: KnowledgeInfo()),
                   AddUnitButton()
                 ],
               ),

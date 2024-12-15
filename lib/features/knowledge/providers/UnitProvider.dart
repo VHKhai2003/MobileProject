@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class UnitProvider with ChangeNotifier {
 
   final KBApiService _kbApiService = KBApiService();
-  final Knowledge knowledge;
+  Knowledge knowledge;
 
   UnitProvider({required this.knowledge});
 
@@ -26,6 +26,7 @@ class UnitProvider with ChangeNotifier {
     units.clear();
     notifyListeners();
   }
+
 
   Future<void> loadUnits() async {
     try {
@@ -57,5 +58,32 @@ class UnitProvider with ChangeNotifier {
     catch(e) {
       print("Error when load knowledge");
     }
+  }
+
+  Future<bool> updateKnowledge(String name, String description) async {
+    try {
+      final response = await _kbApiService.dio.patch(
+          '${KBApiConstants.crudKnowledge}/${knowledge.id}',
+          data: {
+            "knowledgeName": name,
+            "description": description,
+          },
+          options: Options(
+              extra: {
+                "requireToken": true,
+              }
+          )
+      );
+      if (response.statusCode == 200) {
+        knowledge.knowledgeName = response.data['knowledgeName'];
+        knowledge.description = response.data['description'];
+        notifyListeners();
+        return true;
+      }
+    }
+    catch(e) {
+      print("Error when load knowledge");
+    }
+      return false;
   }
 }

@@ -5,11 +5,13 @@ import 'package:code/features/chat/presentation/ChatPage.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   final ApiService apiService = ApiService();
   await apiService.init();
 

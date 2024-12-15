@@ -1,34 +1,35 @@
 import 'package:code/features/knowledge/models/Knowledge.dart';
+import 'package:code/features/knowledge/models/Unit.dart';
+import 'package:code/features/knowledge/providers/UnitProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditKnowledgeDialog extends StatefulWidget {
-  const EditKnowledgeDialog({super.key, required this.editKnowledge, required this.knowledge});
-  final Function(Knowledge) editKnowledge;
-  final Knowledge knowledge;
+  const EditKnowledgeDialog({super.key, required this.unitProvider});
+  final UnitProvider unitProvider;
 
   @override
   State<EditKnowledgeDialog> createState() => _EditKnowledgeDialogState();
 }
 
 class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
+  bool isLoading = false;
   final TextEditingController knowledgeNameController = TextEditingController();
   final TextEditingController knowledgeDescriptionController = TextEditingController();
 
   final FocusNode knowledgeNameFocusNode = FocusNode();
   final FocusNode knowledgeDescriptionFocusNode = FocusNode();
 
-  late Knowledge knowledge;
   late int knowledgeNameCharacterCount;
   late int knowledgeDescriptionCharacterCount;
 
   @override
   void initState() {
     super.initState();
-    knowledge = widget.knowledge;
-    knowledgeNameController.text = widget.knowledge.knowledgeName;
-    knowledgeDescriptionController.text = widget.knowledge.description;
-    knowledgeNameCharacterCount = widget.knowledge.knowledgeName.length;
-    knowledgeDescriptionCharacterCount = widget.knowledge.description.length;
+    knowledgeNameController.text = widget.unitProvider.knowledge.knowledgeName;
+    knowledgeDescriptionController.text = widget.unitProvider.knowledge.description;
+    knowledgeNameCharacterCount = widget.unitProvider.knowledge.knowledgeName.length;
+    knowledgeDescriptionCharacterCount = widget.unitProvider.knowledge.description.length;
   }
 
   @override
@@ -52,7 +53,7 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Create New Knowledge', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+            const Text('Edit knowledge', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
             IconButton(onPressed: () {
               Navigator.of(context).pop();
             }, icon: const Icon(Icons.close)),
@@ -184,16 +185,51 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
             child: const Text('Cancel'),
           ),
           FilledButton(
-              onPressed: () {
-                knowledge.knowledgeName = knowledgeNameController.text;
-                knowledge.description = knowledgeDescriptionController.text;
-                widget.editKnowledge(knowledge);
+              onPressed: () async {
+                if(isLoading) {
+                  return;
+                }
+                String name = knowledgeNameController.text;
+                String description = knowledgeDescriptionController.text;
+                if(name.trim().isEmpty) {
+                  Fluttertoast.showToast(msg: 'Name must be not empty');
+                  return;
+                }
+                if(name.length > 50) {
+                  Fluttertoast.showToast(msg: 'Name is too long');
+                  return;
+                }
+                if(description.length > 2000) {
+                  Fluttertoast.showToast(msg: 'Description is too long');
+                  return;
+                }
+                setState(() {
+                  isLoading = true;
+                });
+                bool status = await widget.unitProvider.updateKnowledge(name, description);
+                if(status == false) {
+                  Fluttertoast.showToast(msg: 'Failed to update knowledge');
+                }
                 Navigator.of(context).pop();
               },
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.blue.shade700,
               ),
-              child: const Text('Confirm')
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  isLoading ? SizedBox(
+                    width: 10,
+                    height: 10,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ) : SizedBox.shrink(),
+                  SizedBox(width: 4,),
+                  const Text('Confirm'),
+                ],
+              )
           ),
         ],
       ),
