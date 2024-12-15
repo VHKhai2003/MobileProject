@@ -1,8 +1,7 @@
+import 'package:code/features/bot/presentation/widgets/ListKbOnBot.dart';
 import 'package:flutter/material.dart';
-import 'package:code/features/bot/provider/BotProvider.dart';
-import 'package:code/features/bot/models/Bot.dart';
-import 'dart:async';
-import 'package:code/features/bot/presentation/widgets/ListKnowledge.dart';
+import 'package:provider/provider.dart';
+import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
 
 class InputBotBox extends StatelessWidget {
   final VoidCallback changeConversation;
@@ -55,7 +54,10 @@ class InputBotBox extends StatelessWidget {
       children: [
         Row(
           children: [
-            ListKnownledge(listKnownledge: listKnownledge),
+            ListKbOnBot(
+              listKnownledge: listKnownledge,
+              botId: botId,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Stack(
@@ -70,7 +72,9 @@ class InputBotBox extends StatelessWidget {
                         contentPadding: const EdgeInsets.fromLTRB(8, 8, 24, 8),
                         hintText: "Instructions...",
                         hintStyle: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade600),
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -104,8 +108,8 @@ class InputBotBox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: chatController, // Use the new controller here
-                decoration: InputDecoration(
+                controller: chatController,
+                decoration: const InputDecoration(
                   hintText: "Ask me anything, press '/' for prompts...",
                   hintStyle: TextStyle(fontSize: 14, color: Colors.blueGrey),
                   border: InputBorder.none,

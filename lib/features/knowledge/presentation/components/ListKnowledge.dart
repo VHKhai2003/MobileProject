@@ -24,7 +24,8 @@ class _ListKnowledgeState extends State<ListKnowledge> {
   }
 
   Future<void> initData() async {
-    KnowledgeProvider provider = Provider.of<KnowledgeProvider>(context, listen: false);
+    KnowledgeProvider provider =
+        Provider.of<KnowledgeProvider>(context, listen: false);
     provider.setLoading(true);
     provider.clearListKnowledge();
     try {
@@ -50,24 +51,29 @@ class _ListKnowledgeState extends State<ListKnowledge> {
               child: SearchBox(),
             ),
             CreateKnowledgeButton(),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             if (knowledges.isNotEmpty) ...[
               Expanded(
                 child: ListView.builder(
                   itemCount: knowledges.length + 1,
                   itemBuilder: (context, index) {
-                    if(index == knowledges.length) {
+                    if (index == knowledges.length) {
                       return knowledgeProvider.hasNext
                           ? Center(
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                              child: TextButton(
-                              onPressed: () async {
-                                await knowledgeProvider.loadKnowledge('');
-                              },
-                              child: Text('More...', style: TextStyle(color: Colors.blue),)),
-                            ),
-                          )
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
+                                child: TextButton(
+                                    onPressed: () async {
+                                      await knowledgeProvider.loadKnowledge('');
+                                    },
+                                    child: Text(
+                                      'More...',
+                                      style: TextStyle(color: Colors.blue),
+                                    )),
+                              ),
+                            )
                           : SizedBox.shrink();
                     }
                     return KnowledgeElement(knowledge: knowledges[index]);
@@ -77,8 +83,9 @@ class _ListKnowledgeState extends State<ListKnowledge> {
               ),
             ] else if (knowledgeProvider.isLoading)
               Expanded(
-                  child: Center(child: CircularProgressIndicator(),)
-              )
+                  child: Center(
+                child: CircularProgressIndicator(),
+              ))
             else ...[
               SizedBox(height: 30),
               Image.asset(
@@ -88,7 +95,8 @@ class _ListKnowledgeState extends State<ListKnowledge> {
                 fit: BoxFit.cover,
               ),
               SizedBox(height: 10),
-              Text("No data", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text("No data",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Text(
                 "Create a knowledge base to store your data and manage your units.",

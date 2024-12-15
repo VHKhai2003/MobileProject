@@ -31,7 +31,7 @@ class Bot {
       instructions: map['instructions'],
       createdAt: DateTime.parse(map['createdAt']).toString(),
       updatedAt: DateTime.parse(map['updatedAt']).toString(),
-      knowledge: [], // API response should include knowledge list
+      knowledge: [],
       openAiAssistantId: map['openAiAssistantId'] ?? '',
       openAiThreadIdPlay: map['openAiThreadIdPlay'] ?? '',
       openAiVectorStoreId: map['openAiVectorStoreId'] ?? '',
