@@ -59,14 +59,6 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> categoriesList;
-    if(_isShowAllCategories) {
-      categoriesList = PromptCategory.categories;
-    }
-    else {
-      categoriesList = PromptCategory.categories.sublist(0, 4);
-    }
-
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom, // space for virtual keyboard
@@ -107,14 +99,15 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
                 const SizedBox(height: 10,),
                 SearchPrompt(controller: searchController, onSubmitted: _handleSearch ,isFavoriteChecked: _isFavoriteChecked, onTap: _toggleIsFavoriteCheck, isPublic: _selections.last,),
                 const SizedBox(height: 10,),
-                _selections.last ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Wrap(
+                _selections.last ? SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
                         spacing: 8.0, // Khoảng cách giữa các phần tử
                         runSpacing: 8.0, // Khoảng cách giữa các dòng
-                        children: categoriesList.map((category) {
+                        children: PromptCategory.categories.map((category) {
                           return ChoiceChip(
                             label: Text(category),
                             selected: _selectedCategory == category,
@@ -136,13 +129,8 @@ class _PromptBottomSheetState extends State<PromptBottomSheet> {
                           );
                         }).toList(),
                       ),
-                    ),
-                    IconButton(onPressed: () {
-                      setState(() {
-                        _isShowAllCategories = !_isShowAllCategories;
-                      });
-                    }, icon: const Icon(Icons.arrow_drop_down_outlined))
-                  ],
+                    ],
+                  ),
                 ) : const SizedBox.shrink(),
                 _selections.first ? ListPrivatePrompt(keyword: keyword, current: current,) : ListPublicPrompt(keyword: keyword, category: _selectedCategory, isFavorite: _isFavoriteChecked, current: current,)
               ],

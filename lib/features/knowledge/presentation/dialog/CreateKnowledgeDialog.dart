@@ -1,4 +1,3 @@
-import 'package:code/features/knowledge/models/Knowledge.dart';
 import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,8 +12,7 @@ class CreateKnowledgeDialog extends StatefulWidget {
 
 class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
   final TextEditingController knowledgeNameController = TextEditingController();
-  final TextEditingController knowledgeDescriptionController =
-      TextEditingController();
+  final TextEditingController knowledgeDescriptionController = TextEditingController();
 
   final FocusNode knowledgeNameFocusNode = FocusNode();
   final FocusNode knowledgeDescriptionFocusNode = FocusNode();
@@ -45,10 +43,7 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Create New Knowledge',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Create New Knowledge', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
             IconButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -61,25 +56,14 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
           height: 400,
           child: ListView(
             children: [
-              Image.asset(
-                'assets/icons/knowledge-base.png',
-                width: 80,
-                height: 80,
-                fit: BoxFit.contain,
-              ),
+              Image.asset('assets/icons/knowledge-base.png', width: 80, height: 80, fit: BoxFit.contain,),
               SizedBox(height: 20),
               RichText(
-                  text: TextSpan(children: <TextSpan>[
-                const TextSpan(
-                    text: "* ",
-                    style: TextStyle(
-                        color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                text: TextSpan(children: <TextSpan>[
+                const TextSpan(text: "* ", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                 TextSpan(
                   text: "Knowledge name",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold,),
                 ),
               ])),
               SizedBox(height: 10),
@@ -108,8 +92,7 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                         ),
                       ),
                       onSubmitted: (value) {
-                        FocusScope.of(context)
-                            .requestFocus(knowledgeDescriptionFocusNode);
+                        FocusScope.of(context).requestFocus(knowledgeDescriptionFocusNode);
                       },
                       onChanged: (value) {
                         setState(() {
@@ -117,13 +100,11 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                         });
                       }),
                   SizedBox(height: 3),
-                  Text("$knowledgeNameCharacterCount/50",
-                      style: TextStyle(color: Colors.grey, fontSize: 15))
+                  Text("$knowledgeNameCharacterCount/50", style: TextStyle(color: Colors.grey, fontSize: 15))
                 ],
               ),
               SizedBox(height: 20),
-              Text("Knowledge description",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("Knowledge description", style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -139,8 +120,7 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.grey, width: 1),
+                          borderSide: const BorderSide(color: Colors.grey, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -158,8 +138,7 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
                         });
                       }),
                   SizedBox(height: 3),
-                  Text("$knowledgeDescriptionCharacterCount/2000",
-                      style: TextStyle(color: Colors.grey, fontSize: 15))
+                  Text("$knowledgeDescriptionCharacterCount/2000", style: TextStyle(color: Colors.grey, fontSize: 15))
                 ],
               ),
             ],
@@ -176,36 +155,34 @@ class _CreateKnowledgeDialogState extends State<CreateKnowledgeDialog> {
               onPressed: () async {
                 String name = knowledgeNameController.text;
                 if(name.trim().isEmpty) {
-                  Fluttertoast.showToast(
-                    msg: 'Knowledge name must not be empty',
-                  );
+                  Fluttertoast.showToast(msg: 'Knowledge name must not be empty',);
                   return;
                 }
-                setState(() {
-                  isLoading = true;
-                });
+                if(knowledgeDescriptionController.text.length > 2000) {
+                  Fluttertoast.showToast(msg: 'Description is too long',);
+                  return;
+                }
+                if(name.length > 50) {
+                  Fluttertoast.showToast(msg: 'Knowledge name is too long',);
+                  return;
+                }
+                // loading, call api
+                setState(() {isLoading = true;});
                 bool status = await widget.knowledgeProvider.createKnowledge(name, knowledgeDescriptionController.text);
-                setState(() {
-                  isLoading = false;
-                });
+                setState(() {isLoading = false;});
                 Fluttertoast.showToast(msg: status ? "Create knowledge successfully" : "Failed to create knowledge");
                 if(status) {
                   Navigator.of(context).pop(status);
                 }
               },
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.blue.shade700,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: Colors.blue.shade700,),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   isLoading ? SizedBox(
                     width: 10,
                     height: 10,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,),
                   ) : SizedBox.shrink(),
                   SizedBox(width: 4,),
                   const Text('Confirm'),
