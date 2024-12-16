@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:code/features/bot/models/Bot.dart';
 import 'dart:async';
 import 'package:code/features/bot/presentation/widgets/ChatBubble.dart';
+import 'package:code/features/bot/provider/RLTBotAndKbProvider.dart';
 
 class ChatWithBot extends StatefulWidget {
   final BotProvider botProvider;
@@ -22,97 +23,6 @@ class ChatWithBot extends StatefulWidget {
   State<ChatWithBot> createState() => _ChatWithBotState();
 }
 
-// class _ChatWithBotState extends State<ChatWithBot> {
-//   bool showInstructionEditor = false;
-//   Bot? currentBot;
-//   void changeConversation() {
-//     print("Conversation changed");
-//   }
-
-//   void openNewChat() {
-//     print("New chat opened");
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadBotDetails();
-//   }
-
-//   Future<void> _loadBotDetails() async {
-//     try {
-//       final bot = await context.read<BotProvider>().getBot(widget.bot.id);
-//       setState(() {
-//         currentBot = bot;
-//       });
-//     } catch (e) {
-//       print('Error loading bot details: $e');
-//       setState(() {
-//         currentBot = null;
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
-
-//     if (currentBot == null) {
-//       return Scaffold(
-//         appBar: AppBar(
-//           backgroundColor: const Color(0xFFEBEFFF),
-//           title: const Text('Loading Bot'),
-//         ),
-//         body: const Center(
-//           child: CircularProgressIndicator(),
-//         ),
-//       );
-//     }
-
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: const Color(0xFFEBEFFF),
-//         title: Text(currentBot!.name,
-//             style: const TextStyle(fontWeight: FontWeight.bold)),
-//         actions: [
-//           ...buildActions(context, tokenUsageProvider.tokenUsage),
-//         ],
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           children: [
-//             if (showInstructionEditor && currentBot != null)
-//               Padding(
-//                 padding: const EdgeInsets.only(bottom: 16.0),
-//                 child: Text(currentBot!.instructions ?? ''),
-//               ),
-//             Expanded(
-//               child: ListView(
-//                 children: [
-//                   ChatBubble(isBot: true, text: "Hi, I'm ${currentBot!.name}."),
-//                   ChatBubble(
-//                     isBot: false,
-//                     text: "I need your help to do something...",
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(height: 10),
-//             InputBotBox(
-//               changeConversation: changeConversation,
-//               openNewChat: openNewChat,
-//               listKnownledge: currentBot?.knowledge ?? [],
-//               botId: widget.bot.id,
-//               botProvider: context.read<BotProvider>(),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 class _ChatWithBotState extends State<ChatWithBot> {
   bool showInstructionEditor = false;
   Bot? currentBot;
@@ -133,6 +43,11 @@ class _ChatWithBotState extends State<ChatWithBot> {
   void initState() {
     super.initState();
     _loadBotDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<RLTBotAndKBProvider>().getAssistantKnowledges(
+            assistantId: widget.bot.id,
+          );
+    });
   }
 
   @override
@@ -173,7 +88,7 @@ class _ChatWithBotState extends State<ChatWithBot> {
         if (status && mounted) {
           widget.botProvider.clearListBot();
           widget.botProvider.loadBots('');
-          await _loadBotDetails(); // Reload current bot
+          await _loadBotDetails();
 
           setState(() {
             showUpdateSuccess = true;

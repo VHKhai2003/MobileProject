@@ -26,21 +26,20 @@ class BotProvider with ChangeNotifier {
   }
 
   Future<void> loadBots(String keyword) async {
-    setLoading(true); // Add this
+    setLoading(true);
     try {
-      final response =
-          await _kbApiService.dio.get(KBApiConstants.crudBot, // Verify endpoint
-              queryParameters: {
-                "order": "DESC",
-                "order_field": "updatedAt",
-                "offset": offset,
-                "limit": 20,
-                "q": keyword
-              },
-              options: Options(extra: {"requireToken": true}));
+      final response = await _kbApiService.dio.get(KBApiConstants.crudBot,
+          queryParameters: {
+            "order": "DESC",
+            "order_field": "updatedAt",
+            "offset": offset,
+            "limit": 20,
+            "q": keyword
+          },
+          options: Options(extra: {"requireToken": true}));
 
       if (response.statusCode == 200) {
-        print(response.data); // Debug response
+        print(response.data);
         bots.addAll(List<Bot>.from(
             response.data["data"].map((item) => Bot.fromMap(item))));
         offset = bots.length;
@@ -48,9 +47,9 @@ class BotProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print("Error loading bots: $e"); // Add error details
+      print("Error loading bots: $e");
     }
-    setLoading(false); // Add this
+    setLoading(false);
   }
 
   Future<Bot> getBot(String id) async {
@@ -60,11 +59,8 @@ class BotProvider with ChangeNotifier {
         options: Options(extra: {"requireToken": true}),
       );
 
-      // if (response.statusCode == 200 &&
-      //     response.data != null &&
-      //     response.data['data'] != null)
       if (response.statusCode == 200 && response.data != null) {
-        print("Bot data: ${response.data}"); // Kiểm tra dữ liệu trả về
+        print("Bot data: ${response.data}");
         return Bot.fromMap(response.data);
       } else {
         throw Exception('Failed to load bot details: No data');

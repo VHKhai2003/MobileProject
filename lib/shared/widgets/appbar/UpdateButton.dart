@@ -11,18 +11,17 @@ class UpdateButton extends StatefulWidget {
   State<UpdateButton> createState() => _UpdateButtonState();
 }
 
-class _UpdateButtonState extends State<UpdateButton> with WidgetsBindingObserver {
-
+class _UpdateButtonState extends State<UpdateButton>
+    with WidgetsBindingObserver {
   Future<void> redirectTo(String url) async {
     final Uri uri = Uri.parse(url);
     // if (await canLaunch(url)) {
-        await launchUrl(uri);
+    await launchUrl(uri);
     // launch(url);
     // } else {
     //   print('Can not redirect to: $url');
     // }
   }
-
 
   @override
   void initState() {
@@ -42,7 +41,8 @@ class _UpdateButtonState extends State<UpdateButton> with WidgetsBindingObserver
     if (state == AppLifecycleState.resumed) {
       print("Application comes from background!");
       // call getUsage here to update status
-      // final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+      // final tokenUsageProvider =
+      //     Provider.of<TokenUsageProvider>(context, listen: false);
       // tokenUsageProvider.getUsage1();
     } else if (state == AppLifecycleState.paused) {
       print("Application is paused");

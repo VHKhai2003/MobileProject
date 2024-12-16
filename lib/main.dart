@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
+import 'package:code/features/bot/provider/RLTBotAndKbProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ void main() async {
           create: (context) =>
               AuthProvider(context.read<TokenUsageProvider>())),
       ChangeNotifierProvider(create: (_) => BotProvider()),
+      ChangeNotifierProvider(create: (_) => RLTBotAndKBProvider()),
     ],
     child: const MyApp(),
   ));

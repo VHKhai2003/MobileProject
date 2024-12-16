@@ -11,4 +11,8 @@ class KBApiConstants {
   static const String importSlack = "/kb-core/v1/knowledge/{id}/slack";
   static const String importDrive = "/kb-core/v1/knowledge/{id}/google-drive";
   static const String importFile = "/kb-core/v1/knowledge/{id}/local-file";
+  static const String getAssistantKnowledges =
+      "/kb-core/v1/ai-assistant/{assistantId}/knowledges";
+  static const String botAndKB =
+      "/kb-core/v1/ai-assistant/{assistantId}/knowledges/{knowledgeId}";
 }

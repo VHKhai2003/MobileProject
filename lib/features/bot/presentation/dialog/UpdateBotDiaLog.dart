@@ -97,140 +97,150 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
         content: SizedBox(
           width: 400,
           height: 500,
-          child: ListView(
-            children: [
-              const SizedBox(height: 20),
-              RichText(
-                text: const TextSpan(
+          child: isInitializing
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView(
                   children: [
-                    TextSpan(
-                      text: "Bot Name",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 20),
+                    RichText(
+                      text: const TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Bot Name",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    const SizedBox(height: 10),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextField(
+                          controller: nameController,
+                          cursorColor: Colors.blue.shade700,
+                          style:
+                              const TextStyle(fontSize: 15, letterSpacing: 0.5),
+                          decoration: InputDecoration(
+                            hintText: "Your bot is...",
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                  color: Colors.blue.shade700, width: 1),
+                            ),
+                          ),
+                          onChanged: (value) =>
+                              setState(() => nameCharacterCount = value.length),
+                        ),
+                        const SizedBox(height: 3),
+                        Text("$nameCharacterCount/50",
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 15)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text("Instructions",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextField(
+                          controller: instructionsController,
+                          maxLines: 3,
+                          cursorColor: Colors.blue.shade700,
+                          style:
+                              const TextStyle(fontSize: 15, letterSpacing: 0.5),
+                          decoration: InputDecoration(
+                            hintText: "Enter instructions for your bot...",
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                  color: Colors.blue.shade700, width: 1),
+                            ),
+                          ),
+                          onChanged: (value) => setState(
+                              () => instructionsCharacterCount = value.length),
+                        ),
+                        const SizedBox(height: 3),
+                        Text("$instructionsCharacterCount/5000",
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 15)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text("Description",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextField(
+                          controller: descriptionController,
+                          maxLines: 5,
+                          cursorColor: Colors.blue.shade700,
+                          style:
+                              const TextStyle(fontSize: 15, letterSpacing: 0.5),
+                          decoration: InputDecoration(
+                            hintText: "Enter description for your bot...",
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                  color: Colors.blue.shade700, width: 1),
+                            ),
+                          ),
+                          onChanged: (value) => setState(
+                              () => descriptionCharacterCount = value.length),
+                        ),
+                        const SizedBox(height: 3),
+                        Text("$descriptionCharacterCount/2000",
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 15)),
+                      ],
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    cursorColor: Colors.blue.shade700,
-                    style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
-                    decoration: InputDecoration(
-                      hintText: "Your bot is...",
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            BorderSide(color: Colors.blue.shade700, width: 1),
-                      ),
-                    ),
-                    onChanged: (value) =>
-                        setState(() => nameCharacterCount = value.length),
-                  ),
-                  const SizedBox(height: 3),
-                  Text("$nameCharacterCount/50",
-                      style: const TextStyle(color: Colors.grey, fontSize: 15)),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text("Instructions",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextField(
-                    controller: instructionsController,
-                    maxLines: 3,
-                    cursorColor: Colors.blue.shade700,
-                    style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
-                    decoration: InputDecoration(
-                      hintText: "Enter instructions for your bot...",
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            BorderSide(color: Colors.blue.shade700, width: 1),
-                      ),
-                    ),
-                    onChanged: (value) => setState(
-                        () => instructionsCharacterCount = value.length),
-                  ),
-                  const SizedBox(height: 3),
-                  Text("$instructionsCharacterCount/5000",
-                      style: const TextStyle(color: Colors.grey, fontSize: 15)),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text("Description",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextField(
-                    controller: descriptionController,
-                    maxLines: 5,
-                    cursorColor: Colors.blue.shade700,
-                    style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
-                    decoration: InputDecoration(
-                      hintText: "Enter description for your bot...",
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            BorderSide(color: Colors.blue.shade700, width: 1),
-                      ),
-                    ),
-                    onChanged: (value) => setState(
-                        () => descriptionCharacterCount = value.length),
-                  ),
-                  const SizedBox(height: 3),
-                  Text("$descriptionCharacterCount/2000",
-                      style: const TextStyle(color: Colors.grey, fontSize: 15)),
-                ],
-              ),
-            ],
-          ),
         ),
         actions: [
           OutlinedButton(
@@ -271,7 +281,7 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (isLoading) ...[
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                     height: 10,
                     child: CircularProgressIndicator(
