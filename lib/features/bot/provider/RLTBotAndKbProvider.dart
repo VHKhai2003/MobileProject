@@ -129,4 +129,9 @@ class RLTBotAndKBProvider with ChangeNotifier {
     hasNext = false;
     notifyListeners();
   }
+
+  void removeKnowledge(String knowledgeId) {
+    knowledges.removeWhere((k) => k.id == knowledgeId);
+    notifyListeners();
+  }
 }

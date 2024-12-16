@@ -38,26 +38,6 @@ class _MainBotState extends State<MainBot> {
     });
   }
 
-  // Future<void> _navigateToChatWithBot(
-  //     BuildContext context, BotProvider botProvider, Bot bot) async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => ChangeNotifierProvider(
-  //         create: (_) => RLTBotAndKBProvider(),
-  //         child: ChatWithBot(
-  //           botProvider: botProvider,
-  //           bot: bot,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-
-  //   if (result == true || result == null) {
-  //     await _loadBots();
-  //   }
-  // }
-
   Future<void> _navigateToChatWithBot(
       BuildContext context, BotProvider botProvider, Bot bot) async {
     final result = await Navigator.push(
