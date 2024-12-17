@@ -94,28 +94,6 @@ class _ChatPageState extends State<ChatPage> {
             actions: buildActions(context, tokenUsageProvider.tokenUsage),
           ),
           drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
-          // body: Container(
-          //   padding: const EdgeInsets.all(20),
-          //   color: Colors.white,
-          //   child: Column(
-          //     children: [
-          //       isEmpty ?
-          //       EmptyConversation(
-          //         changeConversation: _handleOpenConversation,
-          //         promptController: promptController,
-          //       ) :
-          //       Expanded(child: Conversation(isConversationHistory: isEmpty, scrollController: _scrollController,)),
-          //       Chatbox(
-          //         isNewChat: isEmpty,
-          //         changeConversation: _handleOpenConversation,
-          //         openNewChat: _handleNewChat,
-          //         promptFocusNode: promptFocusNode,
-          //         promptController: promptController,
-          //         scrollController: _scrollController,
-          //       ),
-          //     ],
-          //   ),
-          // ),
           body: Stack(
             children: [
               Container(
