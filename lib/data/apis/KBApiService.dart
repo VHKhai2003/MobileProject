@@ -51,7 +51,7 @@ class KBApiService {
   }
 
   Future<void> saveTokens(String accessToken, String refreshToken) async {
-    await _storage.write(key: 'KBAaccessToken', value: accessToken);
+    await _storage.write(key: 'KBAccessToken', value: accessToken);
     await _storage.write(key: 'KBRefreshToken', value: refreshToken);
   }
 

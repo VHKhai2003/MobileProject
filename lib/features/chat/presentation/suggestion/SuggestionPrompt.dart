@@ -89,7 +89,7 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
 
   @override
   Widget build(BuildContext context) {
-    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+    final conversationProvider = Provider.of<ConversationsProvider>(context);
 
     return prompts.isNotEmpty ?
     Column(

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Conversation extends StatefulWidget {
-  const Conversation({super.key, required this.isConversationHistory});
+  const Conversation({super.key, required this.isConversationHistory, required this.scrollController});
   final bool isConversationHistory;
+  final ScrollController scrollController;
 
   @override
   State<Conversation> createState() => _ConversationState();
@@ -15,8 +16,18 @@ class _ConversationState extends State<Conversation> {
 
   @override
   Widget build(BuildContext context) {
-    final conversationsProvider = Provider.of<ConversationsProvider>(context, listen: false);
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final conversationsProvider = Provider.of<ConversationsProvider>(context);
+    final chatProvider = Provider.of<ChatProvider>(context);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.scrollController.hasClients) {
+        widget.scrollController.animateTo(
+          widget.scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
 
     return MultiProvider(
       providers: [
@@ -26,6 +37,7 @@ class _ConversationState extends State<Conversation> {
       child: Consumer2<ConversationsProvider, ChatProvider>(
         builder: (context, conversationsProvider, chatProvider, child) {
           return SingleChildScrollView(
+            controller: widget.scrollController,
             child: Column(
               children: [
                 if (conversationsProvider.isLoadingConversationHistory) ...[

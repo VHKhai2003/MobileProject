@@ -5,16 +5,18 @@ import 'package:code/features/prompt/presentation/dialog/PromptSuggestionOverlay
 import 'package:flutter/material.dart';
 import 'package:code/features/chat/presentation/chatbox/AiModels.dart';
 import 'package:code/features/prompt/presentation/PromptBottomSheet.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class Chatbox extends StatefulWidget {
-  const Chatbox({super.key, required this.changeConversation, required this.openNewChat, required this.promptFocusNode, required this.isNewChat, required this.promptController});
+  const Chatbox({super.key, required this.changeConversation, required this.openNewChat, required this.promptFocusNode, required this.isNewChat, required this.promptController, required this.scrollController});
 
   final FocusNode promptFocusNode;
   final TextEditingController promptController;
   final bool isNewChat;
   final VoidCallback changeConversation;
   final VoidCallback openNewChat;
+  final ScrollController scrollController;
 
   @override
   State<Chatbox> createState() => _ChatboxState();
@@ -79,17 +81,25 @@ class _ChatboxState extends State<Chatbox> {
                 IconButton(
                     onPressed: () async {
                       // get conversation info here and display this conversation
-                      widget.promptFocusNode.unfocus();
-                      conversationProvider.getConversations(aiModelProvider.aiAgent!.id);
-                      String? result = await showModalBottomSheet(
-                          context: context,
-                          builder: (context) => HistoryBottomSheet(
-                            conversationsProvider: conversationProvider,
-                            aiModelProvider: aiModelProvider,
-                          )
-                      );
-                      if(result == 'open') {
-                        widget.changeConversation();
+                      if (aiModelProvider.aiAgent != null) {
+                        widget.promptFocusNode.unfocus();
+                        conversationProvider.getConversations(
+                            aiModelProvider.aiAgent!.id);
+                        String? result = await showModalBottomSheet(
+                            context: context,
+                            builder: (context) =>
+                                HistoryBottomSheet(
+                                  conversationsProvider: conversationProvider,
+                                  aiModelProvider: aiModelProvider,
+                                )
+                        );
+                        if (result == 'open') {
+                          widget.changeConversation();
+                        }
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: 'Cannot get conversation history of assistant!',
+                        );
                       }
                     },
                     icon: const Icon(Icons.history, color: Colors.blueGrey,)
@@ -206,13 +216,28 @@ class _ChatboxState extends State<Chatbox> {
                     ),
                     IconButton(
                       onPressed: () {
-                        if (widget.isNewChat) {
-                          conversationProvider.createNewThreadChat(widget.promptController.text);
-                          widget.changeConversation();
-                        } else {
-                          conversationProvider.sendMessage(widget.promptController.text);
+                        if (aiModelProvider.aiAgent != null && aiModelProvider.bot == null) {
+                          if (widget.isNewChat) {
+                            conversationProvider.createNewThreadChat(widget
+                                .promptController.text);
+                            widget.changeConversation();
+                          } else {
+                            conversationProvider.sendMessage(widget
+                                .promptController.text);
+                          }
+                        } else if (aiModelProvider.bot != null && aiModelProvider.aiAgent == null) {
+
                         }
                         widget.promptController.clear();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (widget.scrollController.hasClients) {
+                            widget.scrollController.animateTo(
+                              widget.scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          }
+                        });
                       },
                       icon: Icon(Icons.send, color: widget.promptController.text == "" ? Colors.blueGrey : Colors.blue),)
                   ],

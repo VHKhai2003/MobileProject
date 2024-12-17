@@ -5,7 +5,7 @@ import 'package:code/data/apis/KBApiService.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -14,16 +14,16 @@ class AuthProvider with ChangeNotifier {
 
   AuthProvider(this._tokenUsageProvider);
 
-  // final GoogleSignIn _googleSignIn = GoogleSignIn(
-  //   // clientId: ApiConstants.googleOauthClientId
-  // );
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: ApiConstants.googleOauthClientId
+  );
 
   Future<String?> getGoogleAuthToken() async {
     try {
       print('>>> hahahaha');
-      // final GoogleSignInAccount? account = await _googleSignIn.signIn();
+      final GoogleSignInAccount? account = await _googleSignIn.signIn();
       print('>>> hihihihi');
-      // print('>>> account ${account}');
+      print('>>> account ${account.toString()}');
       // if (account != null) {
       //   final GoogleSignInAuthentication auth = await account.authentication;
       //   print('>>> idToken ${auth.idToken}');
@@ -57,10 +57,10 @@ class AuthProvider with ChangeNotifier {
           return e.response?.data["details"][0]["issue"];
         } else {
           print("Error message: ${e.message}");
-          return "Network error: ${e.message}";
+          return "Please check your Internet connection.";
         }
       }
-      return "Unknown error: $e";
+      return "Something went wrong! Please try again.";
     }
   }
 
@@ -75,6 +75,7 @@ class AuthProvider with ChangeNotifier {
         await _tokenUsageProvider.getUsage();
         await _tokenUsageProvider.getUser();
         await signInKnowledgeBase(accessToken);
+        _tokenUsageProvider.setIsAuthenticated(true);
         return "success";
       }
       return "fail";
@@ -86,10 +87,10 @@ class AuthProvider with ChangeNotifier {
           return e.response?.data["details"][0]["issue"];
         } else {
           print("Error message: ${e.message}");
-          return "Network error: ${e.message}";
+          return "Please check your Internet connection.";
         }
       }
-      return "Unknown error: $e";
+      return "Something went wrong! Please try again.";
     }
   }
 
@@ -105,8 +106,6 @@ class AuthProvider with ChangeNotifier {
         final accessToken = response.data['token']['accessToken'];
         final refreshToken = response.data['token']['refreshToken'];
         await _kbApiService.saveTokens(accessToken, refreshToken);
-        print('kb access: $accessToken');
-        print('kb refresh: $refreshToken');
       }
       else {
         print('Error when sign in knowledge base');
@@ -144,6 +143,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<String?> logout() async {
+    _tokenUsageProvider.setIsAuthenticated(false);
+
     try {
       final response = await _apiService.dio.get(
         ApiConstants.logout,
@@ -161,7 +162,6 @@ class AuthProvider with ChangeNotifier {
         if (e.response != null) {
           print("Status code: ${e.response?.statusCode}");
           print("Response data: ${e.response?.data}");
-          return e.response?.data["details"][0]["issue"];
         }
         return "Network error: ${e.message}";
       }

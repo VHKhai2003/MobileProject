@@ -89,20 +89,21 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => ChatPage(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0); // Bắt đầu từ bên phải
-              const end = Offset.zero; // Kết thúc tại vị trí gốc
-              const curve = Curves.easeInOut; // Hiệu ứng chuyển cảnh
-              var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            }),
+          pageBuilder: (context, animation, secondaryAnimation) => ChatPage(),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0); // Bắt đầu từ bên phải
+            const end = Offset.zero; // Kết thúc tại vị trí gốc
+            const curve = Curves.easeInOut; // Hiệu ứng chuyển cảnh
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          }
+        ),
       );
     }
   }

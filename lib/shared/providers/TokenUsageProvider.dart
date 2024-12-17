@@ -1,4 +1,5 @@
 import 'package:code/core/constants/ApiConstants.dart';
+import 'package:code/core/utils/event_bus.dart';
 import 'package:code/data/apis/ApiService.dart';
 import 'package:code/data/models/CurrentUserModel.dart';
 import 'package:code/data/models/TokenUsageModel.dart';
@@ -14,6 +15,10 @@ class TokenUsageProvider with ChangeNotifier {
       getUsage();
       getUser();
     }
+
+    eventBus.on<TokenRefreshFailedEvent>().listen((event) {
+      setIsAuthenticated(false);
+    });
   }
 
   int _tokenUsage = 0;
@@ -100,7 +105,6 @@ class TokenUsageProvider with ChangeNotifier {
         _tokenUsageModel = TokenUsageModel.fromJson(response.data);
         _tokenUsageModel.unlimited = true;
         notifyListeners();
-
       }
     } catch (e) {
       if (e is DioException) {

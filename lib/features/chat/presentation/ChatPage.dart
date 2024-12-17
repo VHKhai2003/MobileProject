@@ -21,6 +21,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final FocusNode promptFocusNode = FocusNode();
   final TextEditingController promptController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   // ads
   BannerAd? _bannerAd;
@@ -48,14 +49,13 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     loadAds();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _scrollController.dispose();
     _bannerAd?.dispose();
     super.dispose();
   }
@@ -72,6 +72,7 @@ class _ChatPageState extends State<ChatPage> {
       isEmpty = false;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +94,28 @@ class _ChatPageState extends State<ChatPage> {
             actions: buildActions(context, tokenUsageProvider.tokenUsage),
           ),
           drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
+          // body: Container(
+          //   padding: const EdgeInsets.all(20),
+          //   color: Colors.white,
+          //   child: Column(
+          //     children: [
+          //       isEmpty ?
+          //       EmptyConversation(
+          //         changeConversation: _handleOpenConversation,
+          //         promptController: promptController,
+          //       ) :
+          //       Expanded(child: Conversation(isConversationHistory: isEmpty, scrollController: _scrollController,)),
+          //       Chatbox(
+          //         isNewChat: isEmpty,
+          //         changeConversation: _handleOpenConversation,
+          //         openNewChat: _handleNewChat,
+          //         promptFocusNode: promptFocusNode,
+          //         promptController: promptController,
+          //         scrollController: _scrollController,
+          //       ),
+          //     ],
+          //   ),
+          // ),
           body: Stack(
             children: [
               Container(
@@ -105,18 +128,19 @@ class _ChatPageState extends State<ChatPage> {
                       changeConversation: _handleOpenConversation,
                       promptController: promptController,
                     ) :
-                    Expanded(child: Conversation(isConversationHistory: isEmpty)),
+                    Expanded(child: Conversation(isConversationHistory: isEmpty, scrollController: _scrollController,)),
                     Chatbox(
                       isNewChat: isEmpty,
                       changeConversation: _handleOpenConversation,
                       openNewChat: _handleNewChat,
                       promptFocusNode: promptFocusNode,
                       promptController: promptController,
+                      scrollController: _scrollController,
                     ),
                   ],
                 ),
               ),
-              if (_isAdLoaded)
+              if (_isAdLoaded) ...[
                 Positioned(
                   top: 0,
                   left: 50,
@@ -147,6 +171,7 @@ class _ChatPageState extends State<ChatPage> {
                     ],
                   ),
                 ),
+              ]
             ],
           ),
         ),
