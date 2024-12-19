@@ -119,18 +119,18 @@ class ConversationsProvider with ChangeNotifier {
                       role: 'user',
                       content: message.query,
                       assistant: Assistant(
-                        id: aiModelProvider.aiAgent.id,
+                        id: aiModelProvider.aiAgent!.id,
                         model: 'dify',
-                        name: aiModelProvider.aiAgent.name
+                        name: aiModelProvider.aiAgent!.name
                       )
                     ),
                     Message(
                       role: 'model',
                       content: message.answer,
                       assistant: Assistant(
-                        id: aiModelProvider.aiAgent.id,
+                        id: aiModelProvider.aiAgent!.id,
                         model: 'dify',
-                        name: aiModelProvider.aiAgent.name
+                        name: aiModelProvider.aiAgent!.name
                       )
                     )
                   ];
@@ -160,7 +160,7 @@ class ConversationsProvider with ChangeNotifier {
             children: [
               chatProvider.buildQuestion(content),
               const SizedBox(height: 20),
-              chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
+              chatProvider.buildWaitForResponse(aiModelProvider.aiAgent!),
               const SizedBox(height: 20),
             ],
           )
@@ -172,14 +172,14 @@ class ConversationsProvider with ChangeNotifier {
               role: 'user',
               content: content,
               assistant: Assistant(
-                  id: aiModelProvider.aiAgent.id,
+                  id: aiModelProvider.aiAgent!.id,
                   model: 'dify',
-                  name: aiModelProvider.aiAgent.name
+                  name: aiModelProvider.aiAgent!.name
               )
           )
         ]
     );
-    chatProvider.newThreadChat(aiModelProvider.aiAgent.id, content);
+    chatProvider.newThreadChat(aiModelProvider.aiAgent!.id, content);
     setSelectedIndex(0);
   }
 
@@ -189,7 +189,7 @@ class ConversationsProvider with ChangeNotifier {
           children: [
             chatProvider.buildQuestion(content),
             const SizedBox(height: 20),
-            chatProvider.buildWaitForResponse(aiModelProvider.aiAgent),
+            chatProvider.buildWaitForResponse(aiModelProvider.aiAgent!),
             const SizedBox(height: 20),
           ],
         )
@@ -197,16 +197,16 @@ class ConversationsProvider with ChangeNotifier {
     chatProvider.sendMessage(
         content,
         chatProvider.conversationId!,
-        aiModelProvider.aiAgent
+        aiModelProvider.aiAgent!
     );
     chatProvider.addMessageRequest(
         Message(
             role: 'user',
             content: content,
             assistant: Assistant(
-                id: aiModelProvider.aiAgent.id,
+                id: aiModelProvider.aiAgent!.id,
                 model: 'dify',
-                name: aiModelProvider.aiAgent.name
+                name: aiModelProvider.aiAgent!.name
             )
         )
     );

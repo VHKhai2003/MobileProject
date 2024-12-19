@@ -42,6 +42,7 @@ dependencies:
   http_parser: ^4.0.0
   url_launcher: ^6.3.1
   google_mobile_ads: ^5.2.0
+  event_bus: ^2.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -94,6 +95,7 @@ flutter:
     - assets/icons/google-drive.png
     - assets/icons/confluence.png
     - assets/icons/source.png
+    - assets/icons/android.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
