@@ -15,4 +15,12 @@ class KBApiConstants {
       "/kb-core/v1/ai-assistant/{assistantId}/knowledges";
   static const String botAndKB =
       "/kb-core/v1/ai-assistant/{assistantId}/knowledges/{knowledgeId}";
+  static const String createThreadBot = "/kb-core/v1/ai-assistant/thread";
+  static const String updateNewThread =
+      "/kb-core/v1/ai-assistant/thread/playground";
+  static const String askBot = "/kb-core/v1/ai-assistant/{assistantId}/ask";
+  static const String retrieveMess =
+      "/kb-core/v1/ai-assistant/thread/{openAiThreadId}/messages";
+  static const String getThead =
+      "/kb-core/v1/ai-assistant/{assistantId}/threads";
 }

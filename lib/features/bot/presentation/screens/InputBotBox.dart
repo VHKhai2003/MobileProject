@@ -1,154 +1,14 @@
-// import 'package:code/features/bot/presentation/widgets/ListKbOnBot.dart';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
-
-// class InputBotBox extends StatelessWidget {
-//   final VoidCallback changeConversation;
-//   final VoidCallback openNewChat;
-//   final List<String> listKnownledge;
-//   final String botId;
-//   final TextEditingController instructionController;
-//   final TextEditingController chatController;
-//   final bool isUpdating;
-//   final bool showSuccess;
-//   final ValueChanged<String> onInstructionChange;
-
-//   const InputBotBox({
-//     Key? key,
-//     required this.changeConversation,
-//     required this.openNewChat,
-//     required this.listKnownledge,
-//     required this.botId,
-//     required this.instructionController,
-//     required this.chatController,
-//     required this.isUpdating,
-//     required this.showSuccess,
-//     required this.onInstructionChange,
-//   }) : super(key: key);
-
-//   Widget _buildStatusIcon() {
-//     if (isUpdating) {
-//       return SizedBox(
-//         width: 12,
-//         height: 12,
-//         child: CircularProgressIndicator(
-//           strokeWidth: 2,
-//           color: Colors.blue.shade700,
-//         ),
-//       );
-//     } else if (showSuccess) {
-//       return Icon(
-//         Icons.check_circle,
-//         size: 12,
-//         color: Colors.green.shade600,
-//       );
-//     }
-//     return const SizedBox(width: 12);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         Row(
-//           children: [
-//             ListKbOnBot(
-//               listKnownledge: listKnownledge,
-//               botId: botId,
-//             ),
-//             const SizedBox(width: 8),
-//             Expanded(
-//               child: Stack(
-//                 alignment: Alignment.centerRight,
-//                 children: [
-//                   SizedBox(
-//                     height: 32,
-//                     child: TextField(
-//                       controller: instructionController,
-//                       decoration: InputDecoration(
-//                         isDense: true,
-//                         contentPadding: const EdgeInsets.fromLTRB(8, 8, 24, 8),
-//                         hintText: "Instructions...",
-//                         hintStyle: TextStyle(
-//                           fontSize: 12,
-//                           color: Colors.grey.shade600,
-//                         ),
-//                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(8),
-//                           borderSide: BorderSide(color: Colors.grey.shade300),
-//                         ),
-//                         enabledBorder: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(8),
-//                           borderSide: BorderSide(color: Colors.grey.shade300),
-//                         ),
-//                       ),
-//                       style: const TextStyle(fontSize: 12),
-//                       maxLines: 1,
-//                       onChanged: onInstructionChange,
-//                     ),
-//                   ),
-//                   Positioned(
-//                     right: 8,
-//                     child: _buildStatusIcon(),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//         Container(
-//           decoration: BoxDecoration(
-//             border: Border.all(color: Colors.blue.shade800, width: 0.6),
-//             borderRadius: BorderRadius.circular(12.0),
-//           ),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               TextField(
-//                 controller: chatController,
-//                 decoration: const InputDecoration(
-//                   hintText: "Ask me anything, press '/' for prompts...",
-//                   hintStyle: TextStyle(fontSize: 14, color: Colors.blueGrey),
-//                   border: InputBorder.none,
-//                   contentPadding: EdgeInsets.symmetric(horizontal: 16),
-//                 ),
-//               ),
-//               Container(
-//                 padding: const EdgeInsets.fromLTRB(4, 2, 2, 4),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     IconButton(
-//                       onPressed: () {},
-//                       icon: Icon(Icons.add_comment_outlined,
-//                           color: Colors.blue.shade700),
-//                     ),
-//                     IconButton(
-//                       onPressed: () {},
-//                       icon: const Icon(Icons.send, color: Colors.blueGrey),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-import 'package:code/features/bot/presentation/widgets/ListKbOnBot.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
+import 'package:code/features/bot/presentation/widgets/ListKbOnBot.dart';
+import 'package:code/features/bot/presentation/widgets/InstructionInput.dart';
+import 'package:code/features/bot/presentation/widgets/ChatInput.dart';
+import 'package:code/features/bot/presentation/widgets/ChatActions.dart';
+import 'package:code/features/bot/presentation/dialog/ThreadListDialog.dart';
 
 class InputBotBox extends StatelessWidget {
   final VoidCallback changeConversation;
-  final VoidCallback openNewChat;
   final List<String> listKnownledge;
   final String botId;
   final TextEditingController instructionController;
@@ -156,11 +16,17 @@ class InputBotBox extends StatelessWidget {
   final bool isUpdating;
   final bool showSuccess;
   final ValueChanged<String> onInstructionChange;
+  final Function(String message, String threadId, String instruction)?
+      onSendMessage;
+  final Function(String assistantId, String message)? onCreateThread;
+  final Function(String assistantId, String message)? onUpdateThread;
+  final Function(String threadId)? onViewMessages;
+  final Function(String assistantId)? onViewThreadList;
+  final String? currentThreadId;
 
   const InputBotBox({
     Key? key,
     required this.changeConversation,
-    required this.openNewChat,
     required this.listKnownledge,
     required this.botId,
     required this.instructionController,
@@ -168,7 +34,86 @@ class InputBotBox extends StatelessWidget {
     required this.isUpdating,
     required this.showSuccess,
     required this.onInstructionChange,
+    this.onSendMessage,
+    this.onCreateThread,
+    this.onUpdateThread,
+    this.onViewMessages,
+    this.onViewThreadList,
+    this.currentThreadId,
   }) : super(key: key);
+
+  void showThreadListDialog(BuildContext context, List<dynamic> threads) {
+    final List<Map<String, dynamic>> mappedThreads = threads.map((thread) {
+      return Map<String, dynamic>.from(thread as Map);
+    }).toList();
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 500),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Chat History',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Expanded(
+                child: mappedThreads.isEmpty
+                    ? const Center(child: Text('No chat history'))
+                    : ListView.builder(
+                        itemCount: mappedThreads.length,
+                        itemBuilder: (context, index) {
+                          final thread = mappedThreads[index];
+                          return ListTile(
+                            leading: const Icon(Icons.chat_bubble_outline),
+                            title: Text(
+                                thread['threadName'] ?? 'Chat ${index + 1}'),
+                            subtitle: Text(
+                              'Created: ${_formatDate(thread['createdAt'])}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              if (onViewMessages != null) {
+                                onViewMessages!(thread['openAiThreadId']);
+                              }
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return '';
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
+    } catch (e) {
+      return '';
+    }
+  }
 
   Widget _buildStatusIcon() {
     if (isUpdating) {
@@ -200,6 +145,8 @@ class InputBotBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final threadProvider = Provider.of<ThreadBotProvider>(context);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -231,39 +178,70 @@ class InputBotBox extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Stack(
-                    alignment: Alignment.centerRight,
+                  child: Row(
                     children: [
-                      Container(
-                        height: 36,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-                        child: TextField(
-                          controller: instructionController,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(12, 8, 32, 8),
-                            hintText: "Instructions...",
-                            hintStyle: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade500,
-                            ),
-                            border: InputBorder.none,
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.blue.shade100),
                           ),
-                          style: const TextStyle(
-                            fontSize: 13,
-                            height: 1.3,
+                          child: InstructionInput(
+                            controller: instructionController,
+                            onInstructionChange: onInstructionChange,
+                            isUpdating: isUpdating,
+                            showSuccess: showSuccess,
                           ),
-                          maxLines: 1,
-                          onChanged: onInstructionChange,
                         ),
                       ),
-                      Positioned(
-                        right: 8,
-                        child: _buildStatusIcon(),
+                      IconButton(
+                        onPressed: () async {
+                          if (onViewThreadList != null) {
+                            await onViewThreadList!(botId);
+                            if (context.mounted) {
+                              final threads =
+                                  threadProvider.threads.map((thread) {
+                                return Map<String, dynamic>.from(thread as Map);
+                              }).toList();
+
+                              if (context.mounted) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => ThreadListDialog(
+                                    threads: threads,
+                                    onThreadSelected: (threadId) {
+                                      if (onViewMessages != null) {
+                                        onViewMessages!(threadId);
+                                      }
+                                    },
+                                  ),
+                                );
+                              }
+                            }
+                          }
+                        },
+                        icon: Icon(
+                          Icons.history,
+                          color: Colors.blue.shade700,
+                          size: 22,
+                        ),
+                        tooltip: 'Chat History',
+                        splashRadius: 20,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          changeConversation();
+                          chatController.clear();
+                        },
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Colors.blue.shade700,
+                          size: 22,
+                        ),
+                        tooltip: 'New Chat',
+                        splashRadius: 20,
                       ),
                     ],
                   ),
@@ -278,60 +256,29 @@ class InputBotBox extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.blue.shade100, width: 1),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
               children: [
-                TextField(
-                  controller: chatController,
-                  decoration: InputDecoration(
-                    hintText: "Ask me anything, press '/' for prompts...",
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                  ),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.4,
-                  ),
-                  minLines: 1,
-                  maxLines: 4,
+                Expanded(
+                  child: ChatInput(controller: chatController),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: Colors.blue.shade50),
-                    ),
+                IconButton(
+                  onPressed: () {
+                    if (chatController.text.isEmpty) return;
+                    if (onSendMessage != null) {
+                      onSendMessage!(
+                        chatController.text,
+                        currentThreadId ?? '',
+                        instructionController.text,
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    Icons.send_rounded,
+                    color: Colors.blue.shade700,
+                    size: 22,
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.add_comment_outlined,
-                          color: Colors.blue.shade700,
-                          size: 22,
-                        ),
-                        tooltip: 'Add comment',
-                        splashRadius: 20,
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.send_rounded,
-                          color: Colors.blue.shade700,
-                          size: 22,
-                        ),
-                        tooltip: 'Send message',
-                        splashRadius: 20,
-                      ),
-                    ],
-                  ),
+                  tooltip: 'Send Message',
+                  splashRadius: 20,
                 ),
               ],
             ),

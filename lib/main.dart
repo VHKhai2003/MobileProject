@@ -9,6 +9,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 import 'package:code/features/bot/provider/RLTBotAndKbProvider.dart';
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ void main() async {
               AuthProvider(context.read<TokenUsageProvider>())),
       ChangeNotifierProvider(create: (_) => BotProvider()),
       ChangeNotifierProvider(create: (_) => RLTBotAndKBProvider()),
+      ChangeNotifierProvider(create: (_) => ThreadBotProvider()),
     ],
     child: const MyApp(),
   ));

@@ -61,8 +61,7 @@ class _KnowledgePopupContentState extends State<KnowledgePopupContent> {
               ),
             ],
           ),
-          const Divider(
-              color: Colors.grey), // Đường kẻ nhẹ phân chia header và nội dung
+          const Divider(color: Colors.grey),
           const SizedBox(height: 8),
           if (widget.provider.isLoading)
             const Center(
@@ -72,7 +71,6 @@ class _KnowledgePopupContentState extends State<KnowledgePopupContent> {
                     strokeWidth: 2, color: Colors.blueAccent),
               ),
             )
-          // Empty Message
           else if (widget.provider.knowledges.isEmpty)
             const Center(
               child: Text(

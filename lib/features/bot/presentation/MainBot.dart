@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
 import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 
 class MainBot extends StatefulWidget {
   @override
@@ -47,6 +48,7 @@ class _MainBotState extends State<MainBot> {
           providers: [
             ChangeNotifierProvider(create: (_) => RLTBotAndKBProvider()),
             ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
+            ChangeNotifierProvider(create: (_) => ThreadBotProvider()),
           ],
           child: ChatWithBot(
             botProvider: botProvider,
