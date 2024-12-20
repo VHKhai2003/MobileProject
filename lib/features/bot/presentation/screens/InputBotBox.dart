@@ -4,7 +4,6 @@ import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 import 'package:code/features/bot/presentation/widgets/ListKbOnBot.dart';
 import 'package:code/features/bot/presentation/widgets/InstructionInput.dart';
 import 'package:code/features/bot/presentation/widgets/ChatInput.dart';
-import 'package:code/features/bot/presentation/widgets/ChatActions.dart';
 import 'package:code/features/bot/presentation/dialog/ThreadListDialog.dart';
 
 class InputBotBox extends StatelessWidget {
@@ -25,7 +24,7 @@ class InputBotBox extends StatelessWidget {
   final String? currentThreadId;
 
   const InputBotBox({
-    Key? key,
+    super.key,
     required this.changeConversation,
     required this.listKnownledge,
     required this.botId,
@@ -40,7 +39,7 @@ class InputBotBox extends StatelessWidget {
     this.onViewMessages,
     this.onViewThreadList,
     this.currentThreadId,
-  }) : super(key: key);
+  });
 
   void showThreadListDialog(BuildContext context, List<dynamic> threads) {
     final List<Map<String, dynamic>> mappedThreads = threads.map((thread) {
@@ -115,33 +114,33 @@ class InputBotBox extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusIcon() {
-    if (isUpdating) {
-      return Container(
-        width: 16,
-        height: 16,
-        padding: const EdgeInsets.all(2),
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: Colors.blue.shade700,
-        ),
-      );
-    } else if (showSuccess) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.green.shade50,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.all(2),
-        child: Icon(
-          Icons.check_circle,
-          size: 14,
-          color: Colors.green.shade600,
-        ),
-      );
-    }
-    return const SizedBox(width: 16);
-  }
+  // Widget _buildStatusIcon() {
+  //   if (isUpdating) {
+  //     return Container(
+  //       width: 16,
+  //       height: 16,
+  //       padding: const EdgeInsets.all(2),
+  //       child: CircularProgressIndicator(
+  //         strokeWidth: 2,
+  //         color: Colors.blue.shade700,
+  //       ),
+  //     );
+  //   } else if (showSuccess) {
+  //     return Container(
+  //       decoration: BoxDecoration(
+  //         color: Colors.green.shade50,
+  //         borderRadius: BorderRadius.circular(10),
+  //       ),
+  //       padding: const EdgeInsets.all(2),
+  //       child: Icon(
+  //         Icons.check_circle,
+  //         size: 14,
+  //         color: Colors.green.shade600,
+  //       ),
+  //     );
+  //   }
+  //   return const SizedBox(width: 16);
+  // }
 
   @override
   Widget build(BuildContext context) {

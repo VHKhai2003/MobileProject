@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:code/core/constants/ApiConstants.dart';
 import 'package:code/data/apis/ApiService.dart';
+import 'package:code/features/bot/models/Bot.dart';
 import 'package:code/features/chat/models/AiAgent.dart';
 import 'package:code/features/chat/models/Message.dart';
 import 'package:code/features/chat/models/MessageResponse.dart';
@@ -21,10 +22,12 @@ class ChatProvider with ChangeNotifier {
   MessageResponse? _messageResponse;
   List<Message> _messagesRequest = [];
   String? _conversationId;
+  String? _openAiThreadId;
 
   List<Widget> get messages => _messages;
   List<Message> get messagesRequest => _messagesRequest;
   String? get conversationId => _conversationId;
+  String? get openAiThreadId => _openAiThreadId;
 
   Widget buildResponse(AiAgent agent, String content) {
     return Row(
@@ -44,6 +47,33 @@ class ChatProvider with ChangeNotifier {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(agent.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+              const SizedBox(height: 4,),
+              Text(content),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildResponseBot(Bot bot, String content) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: Image.asset(
+            "assets/icons/android.png",
+            width: 20, height: 20,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(width: 8,),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(bot.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
               const SizedBox(height: 4,),
               Text(content),
             ],
@@ -88,6 +118,41 @@ class ChatProvider with ChangeNotifier {
     );
   }
 
+  Widget buildWaitForResponseBot(Bot bot) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: Image.asset(
+            "assets/icons/android.png",
+            width: 20, height: 20,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(width: 8,),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(bot.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+              const SizedBox(height: 4,),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SpinKitThreeBounce(
+                    color: Colors.grey,
+                    size: 15,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
   Widget buildQuestion(String content) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +160,10 @@ class ChatProvider with ChangeNotifier {
         CircleAvatar(
             radius: 10,
             backgroundColor: Colors.blue.shade700,
-            child: const Text('K', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),)
+            child: Text(
+              tokenUsageProvider.currentUserModel.username[0].toUpperCase(),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+            )
         ),
         const SizedBox(width: 8,),
         Expanded(
@@ -114,6 +182,10 @@ class ChatProvider with ChangeNotifier {
 
   void setConversationId(String id) {
     _conversationId = id;
+  }
+
+  void setOpenAiThreadId(String id) {
+    _openAiThreadId = id;
   }
 
   void addMessage(Widget widget) {
@@ -245,4 +317,5 @@ class ChatProvider with ChangeNotifier {
       print(_errorMessage);
     }
   }
+
 }

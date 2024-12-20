@@ -15,10 +15,10 @@ class ChatWithBot extends StatefulWidget {
   final Bot bot;
 
   const ChatWithBot({
-    Key? key,
+    super.key,
     required this.bot,
     required this.botProvider,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatWithBot> createState() => _ChatWithBotState();

@@ -12,6 +12,13 @@ class ThreadBotProvider with ChangeNotifier {
 
   List<dynamic> threads = [];
   bool hasNext = false;
+  int _selectedIndex = -1;
+
+  int get selectedIndex => _selectedIndex;
+
+  void setSelectedIndex(int index) {
+    _selectedIndex = index;
+  }
 
   Future<String?> createThread({
     required String assistantId,

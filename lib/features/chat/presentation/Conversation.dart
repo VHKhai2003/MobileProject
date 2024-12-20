@@ -46,18 +46,18 @@ class _ConversationState extends State<Conversation> {
                     child: Center(child: CircularProgressIndicator())
                   )
                 ]
-                // else if (conversationsProvider.errorConversationHistory != null) ...[
-                //   SizedBox(
-                //       height: MediaQuery.of(context).size.height/1.5,
-                //       child: Center(child: Text('Error: ${conversationsProvider.errorConversationHistory}'))
-                //   )
-                // ]
-                else if (conversationsProvider.conversationHistory == null) ...[
+                else if (conversationsProvider.errorConversationHistory != null) ...[
                   SizedBox(
                       height: MediaQuery.of(context).size.height/1.5,
-                      child: Center(child: Text('No conversation history found.'))
+                      child: Center(child: Text('Error: ${conversationsProvider.errorConversationHistory}'))
                   )
                 ]
+                // else if (conversationsProvider.conversationHistory == null) ...[
+                //   SizedBox(
+                //       height: MediaQuery.of(context).size.height/1.5,
+                //       child: Center(child: Text('No conversation history found.'))
+                //   )
+                // ]
                 else ...[
                   ...chatProvider.messages
                 ],

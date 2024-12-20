@@ -1,3 +1,5 @@
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
+import 'package:code/features/chat/presentation/history/BotHistoryBottomSheet.dart';
 import 'package:code/features/chat/presentation/history/HistoryBottomSheet.dart';
 import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
@@ -68,6 +70,7 @@ class _ChatboxState extends State<Chatbox> {
   Widget build(BuildContext context) {
     final conversationProvider = Provider.of<ConversationsProvider>(context);
     final aiModelProvider = Provider.of<AiModelProvider>(context);
+    final threadBotProvider = Provider.of<ThreadBotProvider>(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -75,23 +78,44 @@ class _ChatboxState extends State<Chatbox> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const AiModels(),
+            AiModels(openNewChat: widget.openNewChat),
             Row(
               children: [
-                IconButton(
+                if (aiModelProvider.bot != null && aiModelProvider.aiAgent == null) ...[
+                  IconButton(
+                    onPressed: () async {
+                      widget.promptFocusNode.unfocus();
+                      threadBotProvider.getThreads(assistantId: aiModelProvider.bot!.id);
+                      String? result = await showModalBottomSheet(
+                        context: context,
+                        builder: (context) =>
+                          BotHistoryBottomSheet(
+                            conversationsProvider: conversationProvider,
+                            threadBotProvider: threadBotProvider,
+                            aiModelProvider: aiModelProvider,
+                          )
+                      );
+                      if (result == 'open') {
+                        widget.changeConversation();
+                      }
+                    },
+                    icon: const Icon(Icons.history, color: Colors.blueGrey,),
+                    tooltip: 'Chat History',
+                  ),
+                ] else if (aiModelProvider.bot == null && aiModelProvider.aiAgent != null) ...[
+                  IconButton(
                     onPressed: () async {
                       // get conversation info here and display this conversation
                       if (aiModelProvider.aiAgent != null) {
                         widget.promptFocusNode.unfocus();
-                        conversationProvider.getConversations(
-                            aiModelProvider.aiAgent!.id);
+                        conversationProvider.getConversations(aiModelProvider.aiAgent!.id);
                         String? result = await showModalBottomSheet(
-                            context: context,
-                            builder: (context) =>
-                                HistoryBottomSheet(
-                                  conversationsProvider: conversationProvider,
-                                  aiModelProvider: aiModelProvider,
-                                )
+                          context: context,
+                          builder: (context) =>
+                            HistoryBottomSheet(
+                              conversationsProvider: conversationProvider,
+                              aiModelProvider: aiModelProvider,
+                            )
                         );
                         if (result == 'open') {
                           widget.changeConversation();
@@ -102,13 +126,19 @@ class _ChatboxState extends State<Chatbox> {
                         );
                       }
                     },
-                    icon: const Icon(Icons.history, color: Colors.blueGrey,)
+                    icon: const Icon(Icons.history, color: Colors.blueGrey,),
+                    tooltip: 'Chat History',
+                  ),
+                ],
+                IconButton(
+                  onPressed: () {
+                    widget.promptFocusNode.unfocus();
+                    conversationProvider.setSelectedIndex(-1);
+                    widget.openNewChat();
+                  },
+                  icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,),
+                  tooltip: 'New Chat',
                 ),
-                IconButton(onPressed: () {
-                  widget.promptFocusNode.unfocus();
-                  conversationProvider.setSelectedIndex(-1);
-                  widget.openNewChat();
-                }, icon: Icon(Icons.add_comment_outlined, color: Colors.blue.shade700,)),
               ],
             )
           ],
@@ -226,7 +256,12 @@ class _ChatboxState extends State<Chatbox> {
                                 .promptController.text);
                           }
                         } else if (aiModelProvider.bot != null && aiModelProvider.aiAgent == null) {
-
+                          if (widget.isNewChat) {
+                            conversationProvider.createNewThreadBot(aiModelProvider.bot!.id, widget.promptController.text);
+                            widget.changeConversation();
+                          } else {
+                            conversationProvider.chatWithBot(aiModelProvider.bot!.id, widget.promptController.text, false);
+                          }
                         }
                         widget.promptController.clear();
                         WidgetsBinding.instance.addPostFrameCallback((_) {
