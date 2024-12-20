@@ -245,46 +245,52 @@ class _ChatWithBotState extends State<ChatWithBot> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: ChatAppBar(
-        botName: currentBot!.name,
-        threadId: currentThreadId,
-        tokenUsage: tokenUsageProvider.tokenUsage,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Consumer<ThreadBotProvider>(
-              builder: (context, provider, _) => ChatMessages(
-                scrollController: _scrollController,
-                messages: provider.messages,
-                isLoading: isLoading,
-                isBotTyping: isBotTyping,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: ChatAppBar(
+          botName: currentBot!.name,
+          threadId: currentThreadId,
+          tokenUsage: tokenUsageProvider.tokenUsage,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Consumer<ThreadBotProvider>(
+                builder: (context, provider, _) => ChatMessages(
+                  scrollController: _scrollController,
+                  messages: provider.messages,
+                  isLoading: isLoading,
+                  isBotTyping: isBotTyping,
+                ),
               ),
             ),
-          ),
-          const Divider(height: 1, thickness: 1),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: InputBotBox(
-              changeConversation: _handleNewConversation,
-              listKnownledge: currentBot?.knowledge ?? [],
-              botId: widget.bot.id,
-              instructionController: instructionController,
-              chatController: chatController,
-              isUpdating: isUpdatingInstruction,
-              showSuccess: showUpdateSuccess,
-              onInstructionChange: _handleInstructionUpdate,
-              onSendMessage: _handleMessageSend,
-              onViewThreadList: (assistantId) async {
-                await threadProvider.getThreads(assistantId: assistantId);
-              },
-              onViewMessages: _switchThread,
-              currentThreadId: currentThreadId,
+            const Divider(height: 1, thickness: 1),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: InputBotBox(
+                changeConversation: _handleNewConversation,
+                listKnownledge: currentBot?.knowledge ?? [],
+                botId: widget.bot.id,
+                instructionController: instructionController,
+                chatController: chatController,
+                isUpdating: isUpdatingInstruction,
+                showSuccess: showUpdateSuccess,
+                onInstructionChange: _handleInstructionUpdate,
+                onSendMessage: _handleMessageSend,
+                onViewThreadList: (assistantId) async {
+                  await threadProvider.getThreads(assistantId: assistantId);
+                },
+                onViewMessages: _switchThread,
+                currentThreadId: currentThreadId,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

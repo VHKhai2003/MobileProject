@@ -264,15 +264,6 @@ class _ChatboxState extends State<Chatbox> {
                           }
                         }
                         widget.promptController.clear();
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (widget.scrollController.hasClients) {
-                            widget.scrollController.animateTo(
-                              widget.scrollController.position.maxScrollExtent,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeOut,
-                            );
-                          }
-                        });
                       },
                       icon: Icon(Icons.send, color: widget.promptController.text == "" ? Colors.blueGrey : Colors.blue),)
                   ],

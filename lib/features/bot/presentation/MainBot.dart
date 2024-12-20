@@ -77,75 +77,81 @@ class _MainBotState extends State<MainBot> {
                     .contains(searchQuery.toLowerCase()))
             .toList();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFEBEFFF),
-        actions: buildActions(context, tokenUsageProvider.tokenUsage),
-      ),
-      drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            BotDashboard(
-              onBotTypeChanged: (type) {},
-              onSearch: (query) {
-                setState(() {
-                  searchQuery = query;
-                });
-              },
-              onCreateBot: () {
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      CreateBotDialog(botProvider: botProvider),
-                );
-              },
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: botProvider.isLoading ?
-              Center(child: CircularProgressIndicator()) :
-              ListView.builder(
-                itemCount: filteredBots.length,
-                itemBuilder: (context, index) {
-                  final bot = filteredBots[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: BotCard(
-                      name: bot.name,
-                      description: bot.description ?? '',
-                      createdAt: bot.createdAt,
-                      updatedAt: bot.updatedAt,
-                      onEdit: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => UpdateBotDialog(
-                            botProvider: botProvider,
-                            bot: bot,
-                          ),
-                        );
-                      },
-                      onPublish: () {},
-                      onDelete: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => DeleteBotDialog(
-                            botProvider: botProvider,
-                            bot: bot,
-                          ),
-                        );
-                      },
-                      onTap: () {
-                        _navigateToChatWithBot(context, botProvider, bot);
-                      },
-                    ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFEBEFFF),
+          actions: buildActions(context, tokenUsageProvider.tokenUsage),
+        ),
+        drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              BotDashboard(
+                onBotTypeChanged: (type) {},
+                onSearch: (query) {
+                  setState(() {
+                    searchQuery = query;
+                  });
+                },
+                onCreateBot: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                        CreateBotDialog(botProvider: botProvider),
                   );
                 },
               ),
-            ),
-          ],
+              SizedBox(height: 16),
+              Expanded(
+                child: botProvider.isLoading ?
+                Center(child: CircularProgressIndicator()) :
+                ListView.builder(
+                  itemCount: filteredBots.length,
+                  itemBuilder: (context, index) {
+                    final bot = filteredBots[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: BotCard(
+                        name: bot.name,
+                        description: bot.description ?? '',
+                        createdAt: bot.createdAt,
+                        updatedAt: bot.updatedAt,
+                        onEdit: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => UpdateBotDialog(
+                              botProvider: botProvider,
+                              bot: bot,
+                            ),
+                          );
+                        },
+                        onPublish: () {},
+                        onDelete: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => DeleteBotDialog(
+                              botProvider: botProvider,
+                              bot: bot,
+                            ),
+                          );
+                        },
+                        onTap: () {
+                          _navigateToChatWithBot(context, botProvider, bot);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

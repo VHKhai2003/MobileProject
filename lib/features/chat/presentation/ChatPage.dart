@@ -57,6 +57,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    promptController.dispose();
+    promptFocusNode.dispose();
     _bannerAd?.dispose();
     super.dispose();
   }
