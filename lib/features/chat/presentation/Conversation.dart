@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Conversation extends StatefulWidget {
-  const Conversation({super.key, required this.isConversationHistory, required this.scrollController});
+  const Conversation(
+      {super.key,
+      required this.isConversationHistory,
+      required this.scrollController});
   final bool isConversationHistory;
   final ScrollController scrollController;
 
@@ -13,7 +16,6 @@ class Conversation extends StatefulWidget {
 }
 
 class _ConversationState extends State<Conversation> {
-
   @override
   Widget build(BuildContext context) {
     final conversationsProvider = Provider.of<ConversationsProvider>(context);
@@ -35,37 +37,27 @@ class _ConversationState extends State<Conversation> {
         ChangeNotifierProvider.value(value: chatProvider),
       ],
       child: Consumer2<ConversationsProvider, ChatProvider>(
-        builder: (context, conversationsProvider, chatProvider, child) {
-          return SingleChildScrollView(
-            controller: widget.scrollController,
-            child: Column(
-              children: [
-                if (conversationsProvider.isLoadingConversationHistory) ...[
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height/1.5,
-                    child: Center(child: CircularProgressIndicator())
-                  )
-                ]
-                // else if (conversationsProvider.errorConversationHistory != null) ...[
-                //   SizedBox(
-                //       height: MediaQuery.of(context).size.height/1.5,
-                //       child: Center(child: Text('Error: ${conversationsProvider.errorConversationHistory}'))
-                //   )
-                // ]
-                else if (conversationsProvider.conversationHistory == null) ...[
-                  SizedBox(
-                      height: MediaQuery.of(context).size.height/1.5,
-                      child: Center(child: Text('No conversation history found.'))
-                  )
-                ]
-                else ...[
-                  ...chatProvider.messages
-                ],
+          builder: (context, conversationsProvider, chatProvider, child) {
+        return SingleChildScrollView(
+          controller: widget.scrollController,
+          child: Column(
+            children: [
+              if (conversationsProvider.isLoadingConversationHistory) ...[
+                SizedBox(
+                    height: MediaQuery.of(context).size.height / 1.5,
+                    child: Center(child: CircularProgressIndicator()))
+              ] else if (conversationsProvider.conversationHistory == null) ...[
+                SizedBox(
+                    height: MediaQuery.of(context).size.height / 1.5,
+                    child:
+                        Center(child: Text('No conversation history found.')))
+              ] else ...[
+                ...chatProvider.messages
               ],
-            ),
-          );
-        }
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

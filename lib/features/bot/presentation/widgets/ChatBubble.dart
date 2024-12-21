@@ -1,11 +1,10 @@
-// 2. chat_bubble.dart
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isBot;
   final String text;
-  final String? threadId; // giữ lại để không ảnh hưởng logic
-  final DateTime? timestamp;
+  final String? threadId;
+  final dynamic timestamp; // Thay đổi kiểu từ DateTime? sang dynamic
 
   const ChatBubble({
     Key? key,
@@ -14,6 +13,21 @@ class ChatBubble extends StatelessWidget {
     this.threadId,
     this.timestamp,
   }) : super(key: key);
+
+  String _formatTimestamp(dynamic timestamp) {
+    if (timestamp == null) return '';
+
+    DateTime dateTime;
+    if (timestamp is String) {
+      dateTime = DateTime.parse(timestamp);
+    } else if (timestamp is DateTime) {
+      dateTime = timestamp;
+    } else {
+      return '';
+    }
+
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +75,12 @@ class ChatBubble extends StatelessWidget {
                 if (timestamp != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    _formatTimestamp(timestamp!),
+                    _formatTimestamp(timestamp),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
                     ),
+                    textAlign: isBot ? TextAlign.left : TextAlign.right,
                   ),
                 ],
               ],
@@ -74,9 +89,5 @@ class ChatBubble extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _formatTimestamp(DateTime timestamp) {
-    return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 }

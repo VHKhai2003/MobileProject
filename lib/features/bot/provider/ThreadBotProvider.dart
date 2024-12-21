@@ -163,6 +163,8 @@ class ThreadBotProvider with ChangeNotifier {
           };
         }).toList();
 
+        messages.sort((a, b) => a['timestamp'].compareTo(b['timestamp']));
+
         notifyListeners();
       }
     } catch (e) {

@@ -48,7 +48,7 @@ class _MainBotState extends State<MainBot> {
           providers: [
             ChangeNotifierProvider(create: (_) => RLTBotAndKBProvider()),
             ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
-            ChangeNotifierProvider(create: (_) => ThreadBotProvider()),
+            // ChangeNotifierProvider(create: (_) => ThreadBotProvider()),
           ],
           child: ChatWithBot(
             botProvider: botProvider,
@@ -105,45 +105,45 @@ class _MainBotState extends State<MainBot> {
             ),
             SizedBox(height: 16),
             Expanded(
-              child: botProvider.isLoading ?
-              Center(child: CircularProgressIndicator()) :
-              ListView.builder(
-                itemCount: filteredBots.length,
-                itemBuilder: (context, index) {
-                  final bot = filteredBots[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: BotCard(
-                      name: bot.name,
-                      description: bot.description ?? '',
-                      createdAt: bot.createdAt,
-                      updatedAt: bot.updatedAt,
-                      onEdit: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => UpdateBotDialog(
-                            botProvider: botProvider,
-                            bot: bot,
+              child: botProvider.isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: filteredBots.length,
+                      itemBuilder: (context, index) {
+                        final bot = filteredBots[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: BotCard(
+                            name: bot.name,
+                            description: bot.description ?? '',
+                            createdAt: bot.createdAt,
+                            updatedAt: bot.updatedAt,
+                            onEdit: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => UpdateBotDialog(
+                                  botProvider: botProvider,
+                                  bot: bot,
+                                ),
+                              );
+                            },
+                            onPublish: () {},
+                            onDelete: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => DeleteBotDialog(
+                                  botProvider: botProvider,
+                                  bot: bot,
+                                ),
+                              );
+                            },
+                            onTap: () {
+                              _navigateToChatWithBot(context, botProvider, bot);
+                            },
                           ),
                         );
-                      },
-                      onPublish: () {},
-                      onDelete: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => DeleteBotDialog(
-                            botProvider: botProvider,
-                            bot: bot,
-                          ),
-                        );
-                      },
-                      onTap: () {
-                        _navigateToChatWithBot(context, botProvider, bot);
                       },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

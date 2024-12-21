@@ -5,14 +5,14 @@ class ChatMessages extends StatelessWidget {
   final ScrollController scrollController;
   final List<Map<String, dynamic>> messages;
   final bool isLoading;
-  final bool isBotTyping; // Thêm biến để kiểm tra bot đang trả lời
+  final bool isBotTyping;
 
   const ChatMessages({
     Key? key,
     required this.scrollController,
     required this.messages,
     this.isLoading = false,
-    required this.isBotTyping, // Thêm tham số này
+    required this.isBotTyping,
   }) : super(key: key);
 
   Widget _buildTypingIndicator() {
@@ -71,24 +71,25 @@ class ChatMessages extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Tạo một bản sao đảo ngược của messages
-    final reversedMessages = messages.reversed.toList();
-
     return ListView.builder(
       controller: scrollController,
       padding: const EdgeInsets.all(16.0),
-      itemCount: reversedMessages.length + (isBotTyping ? 1 : 0),
+      itemCount: messages.length + (isBotTyping ? 1 : 0),
       itemBuilder: (context, index) {
-        if (isBotTyping && index == reversedMessages.length) {
+        // Hiển thị tin nhắn theo thứ tự thông thường (không đảo ngược)
+        if (index < messages.length) {
+          final message = messages[index];
+          return ChatBubble(
+            isBot: message['isBot'] ?? false,
+            text: message['content'] ?? '',
+            threadId: message['threadId'],
+            timestamp: message['createdAt'],
+          );
+        } else if (isBotTyping) {
+          // Hiển thị typing indicator ở cuối cùng
           return _buildTypingIndicator();
         }
-        final message = reversedMessages[index];
-        return ChatBubble(
-          isBot: message['isBot'] ?? false,
-          text: message['content'] ?? '',
-          threadId: message['threadId'],
-          timestamp: message['timestamp'],
-        );
+        return const SizedBox.shrink();
       },
     );
   }

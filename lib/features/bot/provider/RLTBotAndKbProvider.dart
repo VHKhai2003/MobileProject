@@ -46,8 +46,6 @@ class RLTBotAndKBProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("Response data: $data");
-
         if (offset == 0) {
           knowledges.clear();
         }
@@ -76,9 +74,6 @@ class RLTBotAndKBProvider with ChangeNotifier {
   Future<bool> importKnowledgeToAssistant(
       String assistantId, String knowledgeId) async {
     try {
-      print(
-          "Starting import - assistantId: $assistantId, knowledgeId: $knowledgeId");
-
       final response = await _kbApiService.dio.post(
         KBApiConstants.botAndKB
             .replaceAll('{assistantId}', assistantId)
@@ -91,7 +86,6 @@ class RLTBotAndKBProvider with ChangeNotifier {
         ),
       );
 
-      print("Import response: ${response.statusCode}");
       final success = response.statusCode == 200 || response.statusCode == 201;
       if (success) {
         await getAssistantKnowledges(assistantId: assistantId);

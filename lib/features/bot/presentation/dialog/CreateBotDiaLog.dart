@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateBotDialog extends StatefulWidget {
   const CreateBotDialog({super.key, required this.botProvider});

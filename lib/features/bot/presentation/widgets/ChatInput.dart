@@ -13,7 +13,7 @@ class ChatInput extends StatelessWidget {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        hintText: "Ask me anything, press '/' for prompts...",
+        hintText: "Ask me anything, ...",
         hintStyle: TextStyle(
           fontSize: 14,
           color: Colors.grey.shade600,

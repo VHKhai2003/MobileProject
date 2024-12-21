@@ -9,6 +9,7 @@ import '../widgets/ChatAppBar.dart';
 import '../widgets/ChatMessages.dart';
 import './InputBotBox.dart';
 import 'package:code/features/bot/models/Bot.dart';
+import 'package:code/features/bot/presentation/screens/ChatBotEmpty.dart';
 
 class ChatWithBot extends StatefulWidget {
   final BotProvider botProvider;
@@ -83,38 +84,31 @@ class _ChatWithBotState extends State<ChatWithBot> {
 
     setState(() => isUpdatingInstruction = true);
 
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
-      try {
-        final status = await widget.botProvider.updateBot(
-          widget.bot.id,
-          currentBot!.name,
-          newInstruction,
-          currentBot!.description,
-        );
+    try {
+      final status = await widget.botProvider.updateBot(
+        widget.bot.id,
+        currentBot!.name,
+        newInstruction,
+        currentBot!.description,
+      );
 
-        if (status && mounted) {
-          widget.botProvider.clearListBot();
-          widget.botProvider.loadBots('');
-          await _loadBotDetails();
-
-          setState(() {
-            showUpdateSuccess = true;
-            isUpdatingInstruction = false;
-          });
-
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
-              setState(() => showUpdateSuccess = false);
-            }
-          });
-        }
-      } catch (e) {
-        print('Error updating instructions: $e');
-        if (mounted) {
-          setState(() => isUpdatingInstruction = false);
-        }
+      if (status && mounted) {
+        widget.botProvider.clearListBot();
+        widget.botProvider.loadBots('');
+        await _loadBotDetails();
       }
-    });
+    } catch (e) {
+      print('Error updating instructions: $e');
+    } finally {
+      if (mounted) {
+        setState(() => isUpdatingInstruction = false);
+      }
+    }
+  }
+
+  void _handleInstructionCancel() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    setState(() => isUpdatingInstruction = false);
   }
 
   Future<void> _handleMessageSend(
@@ -127,8 +121,20 @@ class _ChatWithBotState extends State<ChatWithBot> {
     }
 
     final threadProvider = context.read<ThreadBotProvider>();
+    bool isNewThread = currentThreadId == null;
+    String activeThreadId = currentThreadId ?? '';
 
-    if (currentThreadId == null) {
+    threadProvider.addMessage(
+      content: message,
+      isBot: false,
+      threadId: activeThreadId,
+    );
+    chatController.clear();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
+    setState(() => isBotTyping = true);
+
+    if (isNewThread) {
       try {
         final newThreadId = await threadProvider.createThread(
           assistantId: widget.bot.id,
@@ -141,51 +147,42 @@ class _ChatWithBotState extends State<ChatWithBot> {
               const SnackBar(content: Text('Failed to create new thread')),
             );
           }
+          setState(() => isBotTyping = false);
           return;
         }
 
-        setState(() => currentThreadId = newThreadId);
+        activeThreadId = newThreadId;
+        if (mounted) {
+          setState(() => currentThreadId = newThreadId);
+        }
       } catch (e) {
         print('Error creating new thread: $e');
+        setState(() => isBotTyping = false);
         return;
       }
     }
 
-    // Thêm tin nhắn người dùng vào UI
-    if (mounted) {
-      setState(() {
-        threadProvider.addMessage(
-          content: message,
-          isBot: false,
-          threadId: currentThreadId,
-        );
-      });
-    }
-    setState(() => isBotTyping = true);
-    chatController.clear();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-
-    // Gửi tin nhắn và nhận phản hồi
     final response = await threadProvider.askAssistant(
       widget.bot.id,
       message: message,
-      threadId: currentThreadId!,
+      threadId: activeThreadId,
       additionalInstruction: instruction,
     );
 
-    setState(() => isBotTyping = false);
-
-    if (response != null && mounted) {
+    if (mounted) {
       setState(() {
-        threadProvider.addMessage(
-          content: response,
-          isBot: true,
-          threadId: currentThreadId,
-        );
+        isBotTyping = false;
+        if (response != null) {
+          threadProvider.addMessage(
+            content: response,
+            isBot: true,
+            threadId: activeThreadId,
+          );
+        }
       });
-
-      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
   Future<void> _switchThread(String threadId) async {
@@ -217,12 +214,6 @@ class _ChatWithBotState extends State<ChatWithBot> {
     chatController.clear();
     instructionController.clear();
     _loadBotDetails();
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ready for new conversation')),
-      );
-    }
   }
 
   @override
@@ -249,40 +240,48 @@ class _ChatWithBotState extends State<ChatWithBot> {
       backgroundColor: Colors.white,
       appBar: ChatAppBar(
         botName: currentBot!.name,
-        threadId: currentThreadId,
         tokenUsage: tokenUsageProvider.tokenUsage,
       ),
       body: Column(
         children: [
           Expanded(
             child: Consumer<ThreadBotProvider>(
-              builder: (context, provider, _) => ChatMessages(
-                scrollController: _scrollController,
-                messages: provider.messages,
-                isLoading: isLoading,
-                isBotTyping: isBotTyping,
-              ),
+              builder: (context, provider, _) {
+                // Kiểm tra xem có threadId và messages không
+                if (currentThreadId == null || provider.messages.isEmpty) {
+                  return EmptyChat(
+                    botName: currentBot!.name,
+                    chatController: chatController,
+                  );
+                }
+                return ChatMessages(
+                  scrollController: _scrollController,
+                  messages: provider.messages,
+                  isLoading: isLoading,
+                  isBotTyping: isBotTyping,
+                );
+              },
             ),
           ),
           const Divider(height: 1, thickness: 1),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: InputBotBox(
-              changeConversation: _handleNewConversation,
-              listKnownledge: currentBot?.knowledge ?? [],
-              botId: widget.bot.id,
-              instructionController: instructionController,
-              chatController: chatController,
-              isUpdating: isUpdatingInstruction,
-              showSuccess: showUpdateSuccess,
-              onInstructionChange: _handleInstructionUpdate,
-              onSendMessage: _handleMessageSend,
-              onViewThreadList: (assistantId) async {
-                await threadProvider.getThreads(assistantId: assistantId);
-              },
-              onViewMessages: _switchThread,
-              currentThreadId: currentThreadId,
-            ),
+                changeConversation: _handleNewConversation,
+                listKnownledge: currentBot?.knowledge ?? [],
+                botId: widget.bot.id,
+                instructionController: instructionController,
+                chatController: chatController,
+                isUpdating: isUpdatingInstruction,
+                showSuccess: showUpdateSuccess,
+                onInstructionChange: _handleInstructionUpdate,
+                onSendMessage: _handleMessageSend,
+                onViewThreadList: (assistantId) async {
+                  await threadProvider.getThreads(assistantId: assistantId);
+                },
+                onViewMessages: _switchThread,
+                currentThreadId: currentThreadId,
+                onCancelInstruction: _handleInstructionCancel),
           ),
         ],
       ),

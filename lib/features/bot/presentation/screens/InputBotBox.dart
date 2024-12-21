@@ -4,8 +4,8 @@ import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 import 'package:code/features/bot/presentation/widgets/ListKbOnBot.dart';
 import 'package:code/features/bot/presentation/widgets/InstructionInput.dart';
 import 'package:code/features/bot/presentation/widgets/ChatInput.dart';
-import 'package:code/features/bot/presentation/widgets/ChatActions.dart';
-import 'package:code/features/bot/presentation/dialog/ThreadListDialog.dart';
+import 'package:intl/intl.dart';
+import 'package:code/features/bot/presentation/widgets/ThreadListContent.dart';
 
 class InputBotBox extends StatelessWidget {
   final VoidCallback changeConversation;
@@ -15,6 +15,7 @@ class InputBotBox extends StatelessWidget {
   final TextEditingController chatController;
   final bool isUpdating;
   final bool showSuccess;
+  final VoidCallback onCancelInstruction;
   final ValueChanged<String> onInstructionChange;
   final Function(String message, String threadId, String instruction)?
       onSendMessage;
@@ -40,66 +41,141 @@ class InputBotBox extends StatelessWidget {
     this.onViewMessages,
     this.onViewThreadList,
     this.currentThreadId,
+    required this.onCancelInstruction,
   }) : super(key: key);
 
-  void showThreadListDialog(BuildContext context, List<dynamic> threads) {
+  String timeAgo(String? dateStr) {
+    if (dateStr == null) return '';
+    try {
+      final currentTime = DateTime.now();
+      final createdAt = DateTime.parse(dateStr);
+      final difference = currentTime.difference(createdAt);
+
+      if (difference.inDays >= 7) {
+        final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+        return dateFormat.format(createdAt);
+      } else if (difference.inDays > 0) {
+        return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+      } else {
+        return 'Just now';
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  void showThreadListDialog(
+      BuildContext context, List<dynamic> threads, String? currentThreadId) {
     final List<Map<String, dynamic>> mappedThreads = threads.map((thread) {
       return Map<String, dynamic>.from(thread as Map);
     }).toList();
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => Dialog(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 500),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Chat History',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(16),
+            topLeft: Radius.circular(16),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Chat History',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const Divider(),
-              Expanded(
-                child: mappedThreads.isEmpty
-                    ? const Center(child: Text('No chat history'))
-                    : ListView.builder(
-                        itemCount: mappedThreads.length,
-                        itemBuilder: (context, index) {
-                          final thread = mappedThreads[index];
-                          return ListTile(
-                            leading: const Icon(Icons.chat_bubble_outline),
-                            title: Text(
-                                thread['threadName'] ?? 'Chat ${index + 1}'),
-                            subtitle: Text(
-                              'Created: ${_formatDate(thread['createdAt'])}',
-                              style: const TextStyle(fontSize: 12),
-                            ),
+                    icon: const Icon(Icons.close))
+              ],
+            ),
+            Expanded(
+              child: mappedThreads.isEmpty
+                  ? const Center(child: Text('No chat history'))
+                  : ListView.separated(
+                      itemCount: mappedThreads.length,
+                      itemBuilder: (context, index) {
+                        final thread = mappedThreads[index];
+                        final isCurrentThread =
+                            thread['openAiThreadId'] == currentThreadId;
+
+                        return Card(
+                          elevation: 0,
+                          color: isCurrentThread
+                              ? Colors.blueGrey.shade50
+                              : Colors.white,
+                          child: ListTile(
                             onTap: () {
                               Navigator.of(context).pop();
                               if (onViewMessages != null) {
                                 onViewMessages!(thread['openAiThreadId']);
                               }
                             },
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
+                            title: Row(
+                              children: [
+                                if (isCurrentThread)
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(6, 2, 6, 2),
+                                    margin:
+                                        const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          const Color.fromARGB(255, 23, 37, 84),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Text(
+                                      'current',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                Flexible(
+                                  child: Text(
+                                    thread['threadName'] ?? 'Chat ${index + 1}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            subtitle: Text(
+                              timeAgo(thread['createdAt']),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 13),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Divider(
+                          color: Colors.blueGrey,
+                          thickness: 0.5,
+                          height: 1,
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );
@@ -181,46 +257,47 @@ class InputBotBox extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.blue.shade100),
-                          ),
-                          child: InstructionInput(
-                            controller: instructionController,
-                            onInstructionChange: onInstructionChange,
-                            isUpdating: isUpdating,
-                            showSuccess: showSuccess,
-                          ),
+                        child: InstructionInput(
+                          controller: instructionController,
+                          onInstructionChange: onInstructionChange,
+                          isUpdating: isUpdating,
+                          showSuccess: showSuccess,
+                          onCancel: onCancelInstruction, // Thêm callback này
                         ),
                       ),
                       IconButton(
-                        onPressed: () async {
-                          if (onViewThreadList != null) {
-                            await onViewThreadList!(botId);
-                            if (context.mounted) {
-                              final threads =
-                                  threadProvider.threads.map((thread) {
-                                return Map<String, dynamic>.from(thread as Map);
-                              }).toList();
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16)),
+                            ),
+                            builder: (context) {
+                              // Sử dụng addPostFrameCallback để gọi API sau khi UI đã được build
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                onViewThreadList?.call(botId);
+                              });
 
-                              if (context.mounted) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => ThreadListDialog(
+                              return Consumer<ThreadBotProvider>(
+                                builder: (context, provider, _) {
+                                  final threads =
+                                      provider.threads.map((thread) {
+                                    return Map<String, dynamic>.from(
+                                        thread as Map);
+                                  }).toList();
+
+                                  return ThreadListContent(
                                     threads: threads,
-                                    onThreadSelected: (threadId) {
-                                      if (onViewMessages != null) {
-                                        onViewMessages!(threadId);
-                                      }
-                                    },
-                                  ),
-                                );
-                              }
-                            }
-                          }
+                                    isLoading: provider.isLoading,
+                                    currentThreadId: currentThreadId,
+                                    onViewMessages: onViewMessages,
+                                    onClose: () => Navigator.pop(context),
+                                  );
+                                },
+                              );
+                            },
+                          );
                         },
                         icon: Icon(
                           Icons.history,
@@ -252,7 +329,6 @@ class InputBotBox extends StatelessWidget {
           Container(
             margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.blue.shade100, width: 1),
             ),

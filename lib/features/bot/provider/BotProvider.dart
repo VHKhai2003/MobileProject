@@ -39,7 +39,6 @@ class BotProvider with ChangeNotifier {
           options: Options(extra: {"requireToken": true}));
 
       if (response.statusCode == 200) {
-        print(response.data);
         bots.addAll(List<Bot>.from(
             response.data["data"].map((item) => Bot.fromMap(item))));
         offset = bots.length;
@@ -60,7 +59,6 @@ class BotProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        print("Bot data: ${response.data}");
         return Bot.fromMap(response.data);
       } else {
         throw Exception('Failed to load bot details: No data');
