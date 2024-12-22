@@ -97,6 +97,8 @@ flutter:
     - assets/icons/source.png
     - assets/icons/android.png
     - assets/icons/bot-icon.png
+    - assets/icons/messenger.png
+    - assets/icons/telegram.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

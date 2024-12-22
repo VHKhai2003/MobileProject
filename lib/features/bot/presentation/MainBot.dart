@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
 import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
+import 'package:code/features/bot/presentation/dialog/PublishBotDialog.dart';
 import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 
 class MainBot extends StatefulWidget {
@@ -28,9 +29,6 @@ class _MainBotState extends State<MainBot> {
   void initState() {
     super.initState();
     _loadBots();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<RLTBotAndKBProvider>();
-    // });
   }
 
   Future<void> _loadBots() async {
@@ -132,7 +130,15 @@ class _MainBotState extends State<MainBot> {
                                   ),
                                 );
                               },
-                              onPublish: () {},
+                              onPublish: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => PublishBotDialog(
+                                    botProvider: botProvider,
+                                    bot: bot,
+                                  ),
+                                );
+                              },
                               onDelete: () {
                                 showDialog(
                                   context: context,

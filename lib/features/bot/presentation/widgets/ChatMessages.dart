@@ -6,6 +6,7 @@ class ChatMessages extends StatelessWidget {
   final List<Map<String, dynamic>> messages;
   final bool isLoading;
   final bool isBotTyping;
+  final String botName;
 
   const ChatMessages({
     Key? key,
@@ -13,6 +14,7 @@ class ChatMessages extends StatelessWidget {
     required this.messages,
     this.isLoading = false,
     required this.isBotTyping,
+    required this.botName,
   }) : super(key: key);
 
   Widget _buildTypingIndicator() {
@@ -84,6 +86,7 @@ class ChatMessages extends StatelessWidget {
             text: message['content'] ?? '',
             threadId: message['threadId'],
             timestamp: message['createdAt'],
+            botName: botName,
           );
         } else if (isBotTyping) {
           // Hiển thị typing indicator ở cuối cùng

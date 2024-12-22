@@ -246,12 +246,22 @@ class _ChatWithBotState extends State<ChatWithBot> {
         children: [
           Expanded(
             child: Consumer<ThreadBotProvider>(
-              builder: (context, provider, _) => ChatMessages(
-                scrollController: _scrollController,
-                messages: provider.messages,
-                isLoading: isLoading,
-                isBotTyping: isBotTyping,
-              ),
+              builder: (context, provider, _) {
+                if (provider.messages.isEmpty) {
+                  return EmptyChat(
+                    botName: currentBot!.name,
+                    chatController: chatController,
+                  );
+                } else {
+                  return ChatMessages(
+                    scrollController: _scrollController,
+                    messages: provider.messages,
+                    isLoading: isLoading,
+                    isBotTyping: isBotTyping,
+                    botName: currentBot!.name,
+                  );
+                }
+              },
             ),
           ),
           const Divider(height: 1, thickness: 1),

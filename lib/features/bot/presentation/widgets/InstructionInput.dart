@@ -209,26 +209,6 @@ class _InstructionInputState extends State<InstructionInput> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          'prompt: ',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey.shade600,
-          ),
-        ),
-        Expanded(
-          child: Text(
-            widget.controller.text.isEmpty
-                ? 'Add instructions...'
-                : widget.controller.text,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey.shade800,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
       ],
     );
   }

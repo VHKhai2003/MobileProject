@@ -20,11 +20,51 @@ class ThreadBotProvider with ChangeNotifier {
     _selectedIndex = index;
   }
 
+  // Future<String?> createThread({
+  //   required String assistantId,
+  //   String? firstMessage,
+  // }) async {
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+
+  //     final response = await _kbApiService.dio.post(
+  //       KBApiConstants.createThreadBot,
+  //       data: {
+  //         'assistantId': assistantId,
+  //         if (firstMessage != null && firstMessage.isNotEmpty)
+  //           'firstMessage': firstMessage,
+  //       },
+  //       options: Options(
+  //         headers: {'x-jarvis-guid': null},
+  //         extra: {"requireToken": true},
+  //       ),
+  //     );
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       // Thay đổi từ threadId thành openAiThreadId
+  //       final threadId = response.data['openAiThreadId'];
+  //       return threadId;
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     hasError = true;
+  //     errorMessage = e.toString();
+  //     return null;
+  //   } finally {
+  //     isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
   Future<String?> createThread({
     required String assistantId,
     String? firstMessage,
   }) async {
     try {
+      print(
+          "Starting create thread with assistantId: $assistantId"); // Debug log
+      print("First message: $firstMessage"); // Debug log
+
       isLoading = true;
       notifyListeners();
 
@@ -40,13 +80,27 @@ class ThreadBotProvider with ChangeNotifier {
           extra: {"requireToken": true},
         ),
       );
+
+      print("Response status code: ${response.statusCode}"); // Debug log
+      print("Response data: ${response.data}"); // Debug log
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Thay đổi từ threadId thành openAiThreadId
         final threadId = response.data['openAiThreadId'];
+        print("Created thread ID: $threadId"); // Debug log
         return threadId;
       }
+
+      print("Failed with status code: ${response.statusCode}"); // Debug log
       return null;
     } catch (e) {
+      print("Error creating thread: $e"); // Debug log
+      if (e is DioException) {
+        print("DioError details:"); // Debug log
+        print("  Response: ${e.response?.data}"); // Debug log
+        print("  Status code: ${e.response?.statusCode}"); // Debug log
+        print("  Headers: ${e.response?.headers}"); // Debug log
+      }
+
       hasError = true;
       errorMessage = e.toString();
       return null;
