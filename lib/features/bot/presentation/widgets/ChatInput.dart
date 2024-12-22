@@ -4,16 +4,16 @@ class ChatInput extends StatelessWidget {
   final TextEditingController controller;
 
   const ChatInput({
-    Key? key,
+    super.key,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        hintText: "Ask me anything, ...",
+        hintText: "Ask me anything...",
         hintStyle: TextStyle(
           fontSize: 14,
           color: Colors.grey.shade600,

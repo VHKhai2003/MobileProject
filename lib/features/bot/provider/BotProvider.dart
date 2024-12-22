@@ -27,18 +27,20 @@ class BotProvider with ChangeNotifier {
 
   Future<void> loadBots(String keyword) async {
     setLoading(true);
+    _kbApiService.loadTokens();
     try {
       final response = await _kbApiService.dio.get(KBApiConstants.crudBot,
           queryParameters: {
             "order": "DESC",
             "order_field": "updatedAt",
-            "offset": offset,
+            "offset": 0,
             "limit": 20,
             "q": keyword
           },
           options: Options(extra: {"requireToken": true}));
 
       if (response.statusCode == 200) {
+        bots.clear();
         bots.addAll(List<Bot>.from(
             response.data["data"].map((item) => Bot.fromMap(item))));
         offset = bots.length;

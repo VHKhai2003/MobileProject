@@ -1,3 +1,4 @@
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:code/features/chat/providers/ChatProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
@@ -56,6 +57,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    promptController.dispose();
+    promptFocusNode.dispose();
     _bannerAd?.dispose();
     super.dispose();
   }
@@ -82,7 +85,13 @@ class _ChatPageState extends State<ChatPage> {
       providers: [
         ChangeNotifierProvider(create: (_) => AiModelProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider(context.read<TokenUsageProvider>())),
-        ChangeNotifierProvider(create: (context) => ConversationsProvider(context.read<ChatProvider>(), context.read<AiModelProvider>())),
+        ChangeNotifierProvider(create:
+          (context) => ConversationsProvider(
+            context.read<ChatProvider>(),
+            context.read<AiModelProvider>(),
+            context.read<ThreadBotProvider>()
+          )
+        ),
       ],
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -131,20 +140,20 @@ class _ChatPageState extends State<ChatPage> {
                         child: AdWidget(ad: _bannerAd!),
                       ),
                       Positioned(
-                          right: 0,
-                          top: 0,
-                          child: GestureDetector(
-                              onTap: () async {
-                                setState(() {
-                                  _isAdLoaded = false;
-                                });
-                                await loadAds();
-                              },
-                              child: Container(
-                                  color: Colors.white,
-                                  child: Icon(Icons.clear, color: Colors.blue, size: 20,)
-                              )
+                        right: 0,
+                        top: 0,
+                        child: GestureDetector(
+                          onTap: () async {
+                            setState(() {
+                              _isAdLoaded = false;
+                            });
+                            await loadAds();
+                          },
+                          child: Container(
+                            color: Colors.white,
+                            child: Icon(Icons.clear, color: Colors.blue, size: 20,)
                           )
+                        )
                       )
                     ],
                   ),

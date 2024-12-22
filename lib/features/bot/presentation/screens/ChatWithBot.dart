@@ -16,10 +16,10 @@ class ChatWithBot extends StatefulWidget {
   final Bot bot;
 
   const ChatWithBot({
-    Key? key,
+    super.key,
     required this.bot,
     required this.botProvider,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatWithBot> createState() => _ChatWithBotState();
@@ -246,42 +246,34 @@ class _ChatWithBotState extends State<ChatWithBot> {
         children: [
           Expanded(
             child: Consumer<ThreadBotProvider>(
-              builder: (context, provider, _) {
-                // Kiểm tra xem có threadId và messages không
-                if (currentThreadId == null || provider.messages.isEmpty) {
-                  return EmptyChat(
-                    botName: currentBot!.name,
-                    chatController: chatController,
-                  );
-                }
-                return ChatMessages(
-                  scrollController: _scrollController,
-                  messages: provider.messages,
-                  isLoading: isLoading,
-                  isBotTyping: isBotTyping,
-                );
-              },
+              builder: (context, provider, _) => ChatMessages(
+                scrollController: _scrollController,
+                messages: provider.messages,
+                isLoading: isLoading,
+                isBotTyping: isBotTyping,
+              ),
             ),
           ),
           const Divider(height: 1, thickness: 1),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: InputBotBox(
-                changeConversation: _handleNewConversation,
-                listKnownledge: currentBot?.knowledge ?? [],
-                botId: widget.bot.id,
-                instructionController: instructionController,
-                chatController: chatController,
-                isUpdating: isUpdatingInstruction,
-                showSuccess: showUpdateSuccess,
-                onInstructionChange: _handleInstructionUpdate,
-                onSendMessage: _handleMessageSend,
-                onViewThreadList: (assistantId) async {
-                  await threadProvider.getThreads(assistantId: assistantId);
-                },
-                onViewMessages: _switchThread,
-                currentThreadId: currentThreadId,
-                onCancelInstruction: _handleInstructionCancel),
+              changeConversation: _handleNewConversation,
+              listKnownledge: currentBot?.knowledge ?? [],
+              botId: widget.bot.id,
+              instructionController: instructionController,
+              chatController: chatController,
+              isUpdating: isUpdatingInstruction,
+              showSuccess: showUpdateSuccess,
+              onInstructionChange: _handleInstructionUpdate,
+              onSendMessage: _handleMessageSend,
+              onViewThreadList: (assistantId) async {
+                await threadProvider.getThreads(assistantId: assistantId);
+              },
+              onViewMessages: _switchThread,
+              currentThreadId: currentThreadId,
+              onCancelInstruction: _handleInstructionCancel,
+            ),
           ),
         ],
       ),

@@ -26,7 +26,7 @@ class InputBotBox extends StatelessWidget {
   final String? currentThreadId;
 
   const InputBotBox({
-    Key? key,
+    super.key,
     required this.changeConversation,
     required this.listKnownledge,
     required this.botId,
@@ -42,8 +42,7 @@ class InputBotBox extends StatelessWidget {
     this.onViewThreadList,
     this.currentThreadId,
     required this.onCancelInstruction,
-  }) : super(key: key);
-
+  });
   String timeAgo(String? dateStr) {
     if (dateStr == null) return '';
     try {
@@ -222,33 +221,33 @@ class InputBotBox extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusIcon() {
-    if (isUpdating) {
-      return Container(
-        width: 16,
-        height: 16,
-        padding: const EdgeInsets.all(2),
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: Colors.blue.shade700,
-        ),
-      );
-    } else if (showSuccess) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.green.shade50,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.all(2),
-        child: Icon(
-          Icons.check_circle,
-          size: 14,
-          color: Colors.green.shade600,
-        ),
-      );
-    }
-    return const SizedBox(width: 16);
-  }
+  // Widget _buildStatusIcon() {
+  //   if (isUpdating) {
+  //     return Container(
+  //       width: 16,
+  //       height: 16,
+  //       padding: const EdgeInsets.all(2),
+  //       child: CircularProgressIndicator(
+  //         strokeWidth: 2,
+  //         color: Colors.blue.shade700,
+  //       ),
+  //     );
+  //   } else if (showSuccess) {
+  //     return Container(
+  //       decoration: BoxDecoration(
+  //         color: Colors.green.shade50,
+  //         borderRadius: BorderRadius.circular(10),
+  //       ),
+  //       padding: const EdgeInsets.all(2),
+  //       child: Icon(
+  //         Icons.check_circle,
+  //         size: 14,
+  //         color: Colors.green.shade600,
+  //       ),
+  //     );
+  //   }
+  //   return const SizedBox(width: 16);
+  // }
 
   @override
   Widget build(BuildContext context) {
