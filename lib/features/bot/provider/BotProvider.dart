@@ -46,6 +46,7 @@ class BotProvider with ChangeNotifier {
         offset = bots.length;
         hasNext = response.data["meta"]["hasNext"];
         notifyListeners();
+        print("$response.data");
       }
     } catch (e) {
       print("Error loading bots: $e");
@@ -108,6 +109,27 @@ class BotProvider with ChangeNotifier {
     }
   }
 
+  Future<List<dynamic>> getConfigurations(String assistantId) async {
+    try {
+      final response = await _kbApiService.dio.get(
+        '${KBApiConstants.botIntegration}/$assistantId/configurations',
+        options: Options(
+          extra: {"requireToken": true},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        print(response.data);
+        return response.data as List<dynamic>;
+      } else {
+        throw Exception('Failed to load bot configurations: No data');
+      }
+    } catch (e) {
+      print("Error getting bot configurations: $e");
+      throw Exception('Failed to load bot configurations');
+    }
+  }
+
   Future<bool> deleteBot(String id) async {
     try {
       final response = await _kbApiService.dio.delete(
@@ -116,6 +138,130 @@ class BotProvider with ChangeNotifier {
       return response.statusCode == 200;
     } catch (e) {
       print("Catch error when delete bot");
+      return false;
+    }
+  }
+
+  Future<bool> verifyTelegramBot(String assistantId, String botToken) async {
+    try {
+      final response = await _kbApiService.dio.post(
+        '${KBApiConstants.botIntegration}/telegram/validation',
+        data: {"botToken": botToken},
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error verifying telegram bot: $e");
+      return false;
+    }
+  }
+
+  Future<bool> verifySlackBot(
+    String assistantId, {
+    required String botToken,
+    required String clientId,
+    required String clientSecret,
+    required String signingSecret,
+  }) async {
+    try {
+      final response = await _kbApiService.dio.post(
+        '${KBApiConstants.botIntegration}/slack/validation',
+        data: {
+          "botToken": botToken,
+          "clientId": clientId,
+          "clientSecret": clientSecret,
+          "signingSecret": signingSecret,
+        },
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error verifying slack bot: $e");
+      return false;
+    }
+  }
+
+  Future<bool> verifyMessengerBot(
+    String assistantId, {
+    required String botToken,
+    required String pageId,
+    required String appSecret,
+  }) async {
+    try {
+      final response = await _kbApiService.dio.post(
+        '${KBApiConstants.botIntegration}/messenger/validation',
+        data: {
+          "botToken": botToken,
+          "pageId": pageId,
+          "appSecret": appSecret,
+        },
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error verifying messenger bot: $e");
+      return false;
+    }
+  }
+
+  Future<bool> publishMessengerBot(
+    String assistantId, {
+    required String botToken,
+    required String pageId,
+    required String appSecret,
+  }) async {
+    try {
+      final response = await _kbApiService.dio.post(
+        '${KBApiConstants.botIntegration}/messenger/publish/$assistantId',
+        data: {
+          "botToken": botToken,
+          "pageId": pageId,
+          "appSecret": appSecret,
+        },
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error publishing messenger bot: $e");
+      return false;
+    }
+  }
+
+  Future<bool> publishSlackBot(
+    String assistantId, {
+    required String botToken,
+    required String clientId,
+    required String clientSecret,
+    required String signingSecret,
+  }) async {
+    try {
+      final response = await _kbApiService.dio.post(
+        '${KBApiConstants.botIntegration}/slack/publish/$assistantId',
+        data: {
+          "botToken": botToken,
+          "clientId": clientId,
+          "clientSecret": clientSecret,
+          "signingSecret": signingSecret,
+        },
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error publishing slack bot: $e");
+      return false;
+    }
+  }
+
+  Future<bool> publishTelegramBot(String assistantId, String botToken) async {
+    try {
+      final response = await _kbApiService.dio.post(
+        '${KBApiConstants.botIntegration}/telegram/publish/$assistantId',
+        data: {"botToken": botToken},
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error publishing telegram bot: $e");
       return false;
     }
   }

@@ -1,19 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:code/features/bot/provider/BotProvider.dart';
+import 'package:code/features/bot/models/Bot.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class TelegramConfigDialog extends StatelessWidget {
-  const TelegramConfigDialog({Key? key}) : super(key: key);
+class TelegramConfigDialog extends StatefulWidget {
+  // Chuyển thành StatefulWidget
+  final Bot bot;
+  final BotProvider botProvider;
 
-  void _copyToClipboard(BuildContext context, String content) {
-    Clipboard.setData(ClipboardData(text: content));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Copied to clipboard!',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
+  const TelegramConfigDialog({
+    Key? key,
+    required this.bot,
+    required this.botProvider,
+  }) : super(key: key);
+
+  @override
+  State<TelegramConfigDialog> createState() => _TelegramConfigDialogState();
+}
+
+class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
+  final TextEditingController _tokenController = TextEditingController();
+  bool _isVerifying = false;
+  String? _errorMessage;
+
+  Future<void> _verifyToken() async {
+    if (_tokenController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter token';
+      });
+      return;
+    }
+
+    setState(() {
+      _isVerifying = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final response = await widget.botProvider.verifyTelegramBot(
+        widget.bot.id,
+        _tokenController.text,
+      );
+
+      if (mounted) {
+        if (response) {
+          Navigator.pop(context, true);
+        } else {
+          setState(() {
+            _errorMessage =
+                'Verification failed. Please check your token and try again.';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error: Failed to verify token';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isVerifying = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildInputField(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _tokenController, // Sử dụng controller
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              hintText: 'Enter $title',
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -49,6 +128,32 @@ class TelegramConfigDialog extends StatelessWidget {
                   ),
                 ],
               ),
+              if (_errorMessage != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red[200]!),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline,
+                          color: Colors.red[700], size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               const SizedBox(height: 8),
               Text(
                 'Connect to Telegram Bots and chat with this bot in Telegram App',
@@ -56,8 +161,19 @@ class TelegramConfigDialog extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () {
-                  // Xử lý "How to obtain Telegram configurations?"
+                onTap: () async {
+                  final Uri url = Uri.parse(
+                      'https://jarvis.cx/help/knowledge-base/publish-bot/telegram');
+                  if (!await launchUrl(url)) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Could not open help page'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: Text(
                   'How to obtain Telegram configurations?',
@@ -70,8 +186,6 @@ class TelegramConfigDialog extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Telegram information section
               _buildInfoSection(
                 icon: Icons.info_outline,
                 title: 'Telegram information',
@@ -81,7 +195,6 @@ class TelegramConfigDialog extends StatelessWidget {
               _buildInputField('Token'),
               const SizedBox(height: 16),
 
-              // Action buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -97,22 +210,28 @@ class TelegramConfigDialog extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () {
-                      // Xử lý "OK"
-                      Navigator.pop(context);
-                    },
+                    onPressed: _isVerifying ? null : _verifyToken,
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.blue,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                     ),
-                    child: const Text(
-                      'OK',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isVerifying
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Verify',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ],
               ),
@@ -153,34 +272,6 @@ class TelegramConfigDialog extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildInputField(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              hintText: 'Enter $title',
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

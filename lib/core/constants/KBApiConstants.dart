@@ -23,4 +23,5 @@ class KBApiConstants {
       "/kb-core/v1/ai-assistant/thread/{openAiThreadId}/messages";
   static const String getThead =
       "/kb-core/v1/ai-assistant/{assistantId}/threads";
+  static const String botIntegration = '/kb-core/v1/bot-integration';
 }

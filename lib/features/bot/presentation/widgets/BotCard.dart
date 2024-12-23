@@ -127,7 +127,6 @@ class BotCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              // Date Info
               Row(
                 children: [
                   Expanded(

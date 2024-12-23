@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Để sao chép nội dung vào clipboard
+import 'package:flutter/services.dart';
+import 'package:code/features/bot/models/Bot.dart';
+import 'package:code/features/bot/provider/BotProvider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class MessengerConfigDialog extends StatelessWidget {
-  const MessengerConfigDialog({Key? key}) : super(key: key);
+class MessengerConfigDialog extends StatefulWidget {
+  final Bot bot;
+  final BotProvider botProvider;
 
-  // Hàm sao chép nội dung vào clipboard
+  const MessengerConfigDialog({
+    Key? key,
+    required this.bot,
+    required this.botProvider,
+  }) : super(key: key);
+
+  @override
+  State<MessengerConfigDialog> createState() => _MessengerConfigDialogState();
+}
+
+class _MessengerConfigDialogState extends State<MessengerConfigDialog> {
+  final TextEditingController _botTokenController = TextEditingController();
+  final TextEditingController _pageIdController = TextEditingController();
+  final TextEditingController _appSecretController = TextEditingController();
+  bool _isVerifying = false;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _botTokenController.dispose();
+    _pageIdController.dispose();
+    _appSecretController.dispose();
+    super.dispose();
+  }
+
   void _copyToClipboard(BuildContext context, String content) {
     Clipboard.setData(ClipboardData(text: content));
     ScaffoldMessenger.of(context).showSnackBar(
@@ -19,132 +47,52 @@ class MessengerConfigDialog extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Container(
-        width: 480,
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Configure Messenger Bot',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Connect to Messenger Bots and chat with this bot in Messenger App',
-                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () {
-                  // Xử lý "How to obtain Messenger configurations?"
-                },
-                child: Text(
-                  'How to obtain Messenger configurations?',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+  Future<void> _verifyMessenger() async {
+    if (_botTokenController.text.isEmpty ||
+        _pageIdController.text.isEmpty ||
+        _appSecretController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please fill in all fields';
+      });
+      return;
+    }
 
-              // Messenger copylink section
-              _buildInfoSection(
-                icon: Icons.info_outline,
-                title: 'Messenger copylink',
-                description:
-                    'Copy the following content to your Messenger app configuration page.',
-              ),
-              const SizedBox(height: 8),
-              _buildUrlRow(
-                context,
-                'Callback URL',
-                'https://knowledge-api.jarvis.cx/kb-core/v1/hook/messenger/91f84829-132b-4522-a4e4-03352edf13a1',
-              ),
-              const SizedBox(height: 8),
-              _buildUrlRow(
-                context,
-                'Verify Token',
-                'knowledge',
-              ),
-              const SizedBox(height: 16),
+    setState(() {
+      _isVerifying = true;
+      _errorMessage = null;
+    });
 
-              // Messenger information section
-              _buildInfoSection(
-                icon: Icons.info_outline,
-                title: 'Messenger information',
-                description: '',
-              ),
-              const SizedBox(height: 8),
-              _buildInputField('Messenger Bot Token'),
-              _buildInputField('Messenger Bot Page ID'),
-              _buildInputField('Messenger Bot App Secret'),
-              const SizedBox(height: 16),
+    try {
+      final response = await widget.botProvider.verifyMessengerBot(
+        widget.bot.id,
+        botToken: _botTokenController.text,
+        pageId: _pageIdController.text,
+        appSecret: _appSecretController.text,
+      );
 
-              // Action buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () {
-                      // Xử lý "OK"
-                      Navigator.pop(context);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                    ),
-                    child: const Text(
-                      'OK',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+      if (mounted) {
+        if (response) {
+          Navigator.pop(context, true);
+        } else {
+          setState(() {
+            _errorMessage =
+                'Verification failed. Please check your credentials and try again.';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error: Failed to verify Messenger configuration';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isVerifying = false;
+        });
+      }
+    }
   }
 
   Widget _buildInfoSection({
@@ -207,7 +155,7 @@ class MessengerConfigDialog extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.copy, size: 20, color: Colors.blue),
               onPressed: () {
-                _copyToClipboard(context, content); // Gọi hàm sao chép
+                _copyToClipboard(context, content);
               },
             ),
           ],
@@ -216,7 +164,7 @@ class MessengerConfigDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildInputField(String title) {
+  Widget _buildInputField(String title, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -231,6 +179,7 @@ class MessengerConfigDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           TextField(
+            controller: controller,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -240,6 +189,169 @@ class MessengerConfigDialog extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        width: 480,
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Configure Messenger Bot',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Connect to Messenger Bots and chat with this bot in Messenger App',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () async {
+                  final Uri url = Uri.parse(
+                      'https://jarvis.cx/help/knowledge-base/publish-bot/messenger');
+                  if (!await launchUrl(url)) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Could not open help page'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Text(
+                  'How to obtain Messenger configurations?',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (_errorMessage != null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red[200]!),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline,
+                          color: Colors.red[700], size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style:
+                              TextStyle(color: Colors.red[700], fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              _buildInfoSection(
+                icon: Icons.info_outline,
+                title: 'Messenger copylink',
+                description:
+                    'Copy the following content to your Messenger app configuration page.',
+              ),
+              const SizedBox(height: 8),
+              _buildUrlRow(
+                context,
+                'Callback URL',
+                'https://knowledge-api.dev.jarvis.cx/kb-core/v1/hook/messenger/${widget.bot.id}',
+              ),
+              const SizedBox(height: 8),
+              _buildUrlRow(
+                context,
+                'Verify Token',
+                'knowledge',
+              ),
+              const SizedBox(height: 16),
+              _buildInfoSection(
+                icon: Icons.info_outline,
+                title: 'Messenger information',
+                description: '',
+              ),
+              const SizedBox(height: 8),
+              _buildInputField('Messenger Bot Token', _botTokenController),
+              _buildInputField('Messenger Bot Page ID', _pageIdController),
+              _buildInputField(
+                  'Messenger Bot App Secret', _appSecretController),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: _isVerifying ? null : _verifyMessenger,
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                    ),
+                    child: _isVerifying
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Verify',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -20,42 +20,6 @@ class ThreadBotProvider with ChangeNotifier {
     _selectedIndex = index;
   }
 
-  // Future<String?> createThread({
-  //   required String assistantId,
-  //   String? firstMessage,
-  // }) async {
-  //   try {
-  //     isLoading = true;
-  //     notifyListeners();
-
-  //     final response = await _kbApiService.dio.post(
-  //       KBApiConstants.createThreadBot,
-  //       data: {
-  //         'assistantId': assistantId,
-  //         if (firstMessage != null && firstMessage.isNotEmpty)
-  //           'firstMessage': firstMessage,
-  //       },
-  //       options: Options(
-  //         headers: {'x-jarvis-guid': null},
-  //         extra: {"requireToken": true},
-  //       ),
-  //     );
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       // Thay đổi từ threadId thành openAiThreadId
-  //       final threadId = response.data['openAiThreadId'];
-  //       return threadId;
-  //     }
-  //     return null;
-  //   } catch (e) {
-  //     hasError = true;
-  //     errorMessage = e.toString();
-  //     return null;
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
-
   Future<String?> createThread({
     required String assistantId,
     String? firstMessage,

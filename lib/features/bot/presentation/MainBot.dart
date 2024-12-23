@@ -130,14 +130,31 @@ class _MainBotState extends State<MainBot> {
                                   ),
                                 );
                               },
-                              onPublish: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => PublishBotDialog(
-                                    botProvider: botProvider,
-                                    bot: bot,
-                                  ),
-                                );
+                              onPublish: () async {
+                                try {
+                                  // Gọi getConfigurations trước
+                                  final configurations = await botProvider
+                                      .getConfigurations(bot.id);
+
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => PublishBotDialog(
+                                        botProvider: botProvider,
+                                        bot: bot,
+                                        configurations: configurations,
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Không thể lấy cấu hình bot: $e')),
+                                    );
+                                  }
+                                }
                               },
                               onDelete: () {
                                 showDialog(
