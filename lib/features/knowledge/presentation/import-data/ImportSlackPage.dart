@@ -1,8 +1,10 @@
+import 'package:code/core/constants/KBApiConstants.dart';
 import 'package:code/features/knowledge/presentation/input-data-widgets/CustomLabelAndTextField.dart';
 import 'package:code/features/knowledge/providers/ImportDataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ImportSlackPage extends StatefulWidget {
   ImportSlackPage({super.key});
@@ -28,11 +30,26 @@ class _ImportSlackPageState extends State<ImportSlackPage> {
           Container(
             padding: EdgeInsets.all(10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/icons/slack.png', width: 32, height: 32,),
-                SizedBox(width: 6,),
-                Text('Slack', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 10,),
+                      Image.asset('assets/icons/slack.png', width: 32, height: 32,),
+                      SizedBox(width: 6,),
+                      Text('Slack', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                    ],
+                  ),
+                ),
+                IconButton(
+                    tooltip: 'How to connect',
+                    onPressed: () async {
+                      final Uri uri = Uri.parse(KBApiConstants.guidelineImportSlack);
+                      await launchUrl(uri);
+                    },
+                    icon: Icon(Icons.file_present)
+                )
               ],
             ),
           ),

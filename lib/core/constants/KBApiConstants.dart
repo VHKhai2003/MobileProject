@@ -24,4 +24,7 @@ class KBApiConstants {
   static const String getThead =
       "/kb-core/v1/ai-assistant/{assistantId}/threads";
   static const String botIntegration = '/kb-core/v1/bot-integration';
+  static const String guidelineImportConfluence = "https://jarvis.cx/help/knowledge-base/connectors/confluence/";
+  static const String guidelineImportSlack = "https://jarvis.cx/help/knowledge-base/connectors/slack/";
+  static const String guidelineImportGGDrive = "https://jarvis.cx/help/knowledge-base/connectors/google-drive/";
 }

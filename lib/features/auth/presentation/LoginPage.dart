@@ -262,11 +262,11 @@ class _LoginPageState extends State<LoginPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(),
         body: ListView(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom + 30),
             children: [
+              SizedBox(height: 50,),
               Row(
                 children: [
                   Expanded(flex: 1, child: Container()),
