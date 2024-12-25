@@ -25,10 +25,6 @@ class ThreadBotProvider with ChangeNotifier {
     String? firstMessage,
   }) async {
     try {
-      print(
-          "Starting create thread with assistantId: $assistantId"); // Debug log
-      print("First message: $firstMessage"); // Debug log
-
       isLoading = true;
       notifyListeners();
 
@@ -45,25 +41,16 @@ class ThreadBotProvider with ChangeNotifier {
         ),
       );
 
-      print("Response status code: ${response.statusCode}"); // Debug log
-      print("Response data: ${response.data}"); // Debug log
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final threadId = response.data['openAiThreadId'];
-        print("Created thread ID: $threadId"); // Debug log
         return threadId;
       }
 
-      print("Failed with status code: ${response.statusCode}"); // Debug log
+      print("Failed with status code: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error creating thread: $e"); // Debug log
-      if (e is DioException) {
-        print("DioError details:"); // Debug log
-        print("  Response: ${e.response?.data}"); // Debug log
-        print("  Status code: ${e.response?.statusCode}"); // Debug log
-        print("  Headers: ${e.response?.headers}"); // Debug log
-      }
+      print("Error creating thread: $e");
+      if (e is DioException) {}
 
       hasError = true;
       errorMessage = e.toString();
@@ -232,6 +219,7 @@ class ThreadBotProvider with ChangeNotifier {
         ),
       );
       if (response.data != null && response.data['data'] is List) {
+        print(response.data);
         if (offset == 0) {
           threads.clear();
         }

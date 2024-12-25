@@ -15,7 +15,8 @@ class AuthProvider with ChangeNotifier {
   AuthProvider(this._tokenUsageProvider);
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: ApiConstants.googleOauthClientId
+    serverClientId: ApiConstants.googleOauthClientId,
+    scopes: ['email', 'profile', 'openid'],
   );
 
   Future<String?> getGoogleAuthToken() async {

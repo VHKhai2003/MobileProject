@@ -40,6 +40,7 @@ class _ChatWithBotState extends State<ChatWithBot> {
   @override
   void initState() {
     super.initState();
+    _handleNewConversation();
     _loadInitialData();
   }
 

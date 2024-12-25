@@ -25,9 +25,11 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               fit: BoxFit.contain,
             ),
             const SizedBox(width: 8),
-            Text(
-              botName,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Expanded(
+              child: Text(
+                botName,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),

@@ -46,7 +46,6 @@ class BotProvider with ChangeNotifier {
         offset = bots.length;
         hasNext = response.data["meta"]["hasNext"];
         notifyListeners();
-        print("$response.data");
       }
     } catch (e) {
       print("Error loading bots: $e");
@@ -262,6 +261,19 @@ class BotProvider with ChangeNotifier {
       return response.statusCode == 200;
     } catch (e) {
       print("Error publishing telegram bot: $e");
+      return false;
+    }
+  }
+
+  Future<bool> disconnectBot(String assistantId, String type) async {
+    try {
+      final response = await _kbApiService.dio.delete(
+        '${KBApiConstants.botIntegration}/$assistantId/$type',
+        options: Options(extra: {"requireToken": true}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error disconnecting bot: $e");
       return false;
     }
   }
