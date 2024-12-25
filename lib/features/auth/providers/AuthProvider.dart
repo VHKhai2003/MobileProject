@@ -14,8 +14,10 @@ class AuthProvider with ChangeNotifier {
 
   AuthProvider(this._tokenUsageProvider);
 
-  final GoogleSignIn _googleSignIn =
-      GoogleSignIn(clientId: ApiConstants.googleOauthClientId);
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: ApiConstants.googleOauthClientId,
+    scopes: ['email', 'profile', 'openid'],
+  );
 
   Future<String?> getGoogleAuthToken() async {
     try {
@@ -37,8 +39,8 @@ class AuthProvider with ChangeNotifier {
 
   Future<String?> loginWithGoogle(String token) async {
     try {
-      final response = await _apiService.dio
-          .post(ApiConstants.loginWithGoogle, data: {"token": token});
+      final response = await _apiService.dio.post(ApiConstants.loginWithGoogle,
+          data: {"token": token});
       if (response.statusCode == 200) {
         final accessToken = response.data['token']['accessToken'];
         final refreshToken = response.data['token']['refreshToken'];
@@ -95,25 +97,27 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signInKnowledgeBase(String accessToken) async {
     try {
-      final response =
-          await _kbApiService.dio.post(KBApiConstants.login, data: {
-        "token": accessToken,
-      });
-      if (response.statusCode == 200) {
-        print(response.data);
+      final response = await _kbApiService.dio.post(
+          KBApiConstants.login,
+          data: {
+            "token": accessToken,
+          }
+      );
+      if(response.statusCode == 200) {
         final accessToken = response.data['token']['accessToken'];
         final refreshToken = response.data['token']['refreshToken'];
         await _kbApiService.saveTokens(accessToken, refreshToken);
-      } else {
+      }
+      else {
         print('Error when sign in knowledge base');
       }
-    } catch (e) {
+    }
+    catch(e) {
       print('Catch Exception: Error when sign in knowledge base');
     }
   }
 
-  Future<String?> register(
-      String email, String password, String username) async {
+  Future<String?> register(String email, String password, String username) async {
     try {
       final response = await _apiService.dio.post(ApiConstants.register,
           data: {"email": email, "password": password, "username": username});
@@ -143,10 +147,12 @@ class AuthProvider with ChangeNotifier {
     _tokenUsageProvider.setIsAuthenticated(false);
 
     try {
-      final response = await _apiService.dio.get(ApiConstants.logout,
-          options: Options(
-            extra: {'requireToken': true},
-          ));
+      final response = await _apiService.dio.get(
+        ApiConstants.logout,
+        options: Options(
+          extra: {'requireToken': true},
+        )
+      );
 
       if (response.statusCode == 200) {
         return "success";
