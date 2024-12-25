@@ -70,14 +70,36 @@ class _MessengerConfigDialogState extends State<MessengerConfigDialog> {
         appSecret: _appSecretController.text,
       );
 
-      if (mounted) {
-        if (response) {
-          Navigator.pop(context, true);
-        } else {
+      if (response) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Messenger configuration verified successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Trả về cả trạng thái verify và thông tin cấu hình
+          Navigator.pop(context, {
+            'verified': true,
+            'config': {
+              'botToken': _botTokenController.text,
+              'pageId': _pageIdController.text,
+              'appSecret': _appSecretController.text,
+            }
+          });
+        }
+      } else {
+        if (mounted) {
           setState(() {
             _errorMessage =
-                'Verification failed. Please check your credentials and try again.';
+                'Failed to verify Messenger configuration. Please check your credentials and try again.';
           });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to verify Messenger configuration'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -85,6 +107,12 @@ class _MessengerConfigDialogState extends State<MessengerConfigDialog> {
         setState(() {
           _errorMessage = 'Error: Failed to verify Messenger configuration';
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred while verifying configuration'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {

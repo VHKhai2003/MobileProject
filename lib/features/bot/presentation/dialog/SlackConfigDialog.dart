@@ -75,12 +75,33 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
 
       if (mounted) {
         if (response) {
-          Navigator.pop(context, true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Slack configuration verified successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Trả về cả trạng thái verify và thông tin cấu hình
+          Navigator.pop(context, {
+            'verified': true,
+            'config': {
+              'botToken': _tokenController.text,
+              'clientId': _clientIdController.text,
+              'clientSecret': _clientSecretController.text,
+              'signingSecret': _signingSecretController.text,
+            }
+          });
         } else {
           setState(() {
             _errorMessage =
-                'Verification failed. Please check your credentials and try again.';
+                'Failed to verify Slack configuration. Please check your credentials and try again.';
           });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to verify Slack configuration'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -88,6 +109,12 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
         setState(() {
           _errorMessage = 'Error: Failed to verify Slack configuration';
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred while verifying configuration'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {

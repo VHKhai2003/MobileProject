@@ -45,12 +45,30 @@ class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
 
       if (mounted) {
         if (response) {
-          Navigator.pop(context, true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Telegram configuration verified successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Trả về cả trạng thái verify và thông tin cấu hình
+          Navigator.pop(context, {
+            'verified': true,
+            'config': {
+              'botToken': _tokenController.text,
+            }
+          });
         } else {
           setState(() {
             _errorMessage =
-                'Verification failed. Please check your token and try again.';
+                'Failed to verify Telegram configuration. Please check your token and try again.';
           });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to verify Telegram configuration'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -58,6 +76,12 @@ class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
         setState(() {
           _errorMessage = 'Error: Failed to verify token';
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred while verifying configuration'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {

@@ -34,49 +34,53 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label row
           Padding(
-            padding: EdgeInsets.only(bottom: 0.0),
-            // left: isBot ? 36.0 : 36.0), // Added left padding for user name
+            padding: const EdgeInsets.only(left: 40.0, bottom: 2.0),
             child: Text(
               isBot ? botName : 'You',
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.bold, // Changed to bold
+                fontWeight: FontWeight.bold,
                 color: Colors.grey[700],
               ),
             ),
           ),
-          // Message row with avatar for both bot and user
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar for both bot and user
+              // Avatar
               CircleAvatar(
                 radius: 16,
                 backgroundColor: isBot ? Colors.blue[100] : Colors.grey[200],
-                child: isBot
-                    ? Icon(Icons.smart_toy, size: 20, color: Colors.blue[700])
-                    : Icon(Icons.person, size: 20, color: Colors.grey[700]),
+                child: Image.asset(
+                  isBot ? 'assets/icons/bot-icon.png' : 'assets/icons/user.jpg',
+                  width: 20,
+                  height: 20,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      isBot ? Icons.smart_toy : Icons.person,
+                      size: 20,
+                      color: isBot ? Colors.blue[700] : Colors.grey[700],
+                    );
+                  },
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               Flexible(
                 child: Container(
                   constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width *
-                        0.85, // Increased width
+                    maxWidth: MediaQuery.of(context).size.width * 0.85,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    // Removed border
                   ),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 0.0),
+                      horizontal: 12.0, vertical: 0.0),
                   child: Text(
                     text,
                     style: const TextStyle(
