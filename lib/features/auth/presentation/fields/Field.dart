@@ -32,7 +32,7 @@ class Field extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Colors.indigoAccent, width: 2),
+              borderSide: const BorderSide(color: Colors.indigoAccent, width: 1),
             ),
             contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           ),

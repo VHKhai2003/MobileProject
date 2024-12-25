@@ -41,9 +41,9 @@ class _UpdateButtonState extends State<UpdateButton>
     if (state == AppLifecycleState.resumed) {
       print("Application comes from background!");
       // call getUsage here to update status
-      // final tokenUsageProvider =
-      //     Provider.of<TokenUsageProvider>(context, listen: false);
-      // tokenUsageProvider.getUsage1();
+      final tokenUsageProvider =
+          Provider.of<TokenUsageProvider>(context, listen: false);
+      tokenUsageProvider.getUsage();
     } else if (state == AppLifecycleState.paused) {
       print("Application is paused");
     }
