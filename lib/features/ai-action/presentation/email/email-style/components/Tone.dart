@@ -14,17 +14,17 @@ class _ToneState extends State<Tone> {
   @override
   Widget build(BuildContext context) {
     List<Widget> tones = [
-      StyleButton(icon: 'assets/icons/thanks.png', label: 'Witty', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/sorry.png', label: 'Direct', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/like.png', label: 'Personable', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/dislike.png', label: 'Informational', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/followup.png', label: 'Friendly', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/confused.png', label: 'Confident', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/confused.png', label: 'Sincere', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/confused.png', label: 'Enthusiastic', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/confused.png', label: 'Optimistic', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/confused.png', label: 'Concerned', value: widget.tone, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/confused.png', label: 'Empathetic', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😜', label: 'Witty', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😯', label: 'Direct', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '🧐', label: 'Personable', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '🤓', label: 'Informational', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😀', label: 'Friendly', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😎', label: 'Confident', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😌', label: 'Sincere', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '🤩', label: 'Enthusiastic', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😇', label: 'Optimistic', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '😰', label: 'Concerned', value: widget.tone, onChange: widget.onChange,),
+      StyleButton(icon: '🥺', label: 'Empathetic', value: widget.tone, onChange: widget.onChange,),
     ];
     return Column(
       children: [

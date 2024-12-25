@@ -342,10 +342,12 @@ class _LoginPageState extends State<LoginPage> {
                             if (isLoading) ...[
                               const SizedBox(height: 15),
                               Center(
-                                  child: SizedBox(
-                                      width: 15,
-                                      height: 15,
-                                      child: CircularProgressIndicator())),
+                                child: SizedBox(
+                                  width: 15,
+                                  height: 15,
+                                  child: CircularProgressIndicator()
+                                )
+                              ),
                             ],
                             const SizedBox(height: 15),
                             ForgotPasswordButton(

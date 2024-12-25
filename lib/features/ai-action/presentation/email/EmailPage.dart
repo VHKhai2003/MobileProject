@@ -3,6 +3,7 @@ import 'package:code/features/ai-action/presentation/email/components/JarvisRepl
 import 'package:code/features/ai-action/presentation/email/components/ReceivedEmail.dart';
 import 'package:code/features/ai-action/presentation/email/components/promptEmailChatBox.dart';
 import 'package:code/features/ai-action/presentation/email/email-style/EmailStyle.dart';
+import 'package:code/features/ai-action/presentation/email/email-style/components/SuggestIdeas.dart';
 import 'package:code/features/ai-action/providers/EmailProvider.dart';
 import 'package:code/features/ai-action/providers/EmailStyleProvider.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
@@ -19,10 +20,28 @@ class EmailPage extends StatefulWidget {
 
 class _EmailPageState extends State<EmailPage> {
   final TextEditingController receivedEmailController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    receivedEmailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
 
     return MultiProvider(
       providers: [
@@ -50,11 +69,12 @@ class _EmailPageState extends State<EmailPage> {
               children: [
                 Expanded(
                   child: ListView(
+                    controller: scrollController,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                     children: [
                       const EmailLabel(),
                       ReceivedEmail(receivedEmailController: receivedEmailController,),
-                      const SizedBox(height: 15),
+                      SuggestIdeas(receivedEmailController: receivedEmailController,),
                       const EmailStyle(),
                       const SizedBox(height: 15),
                       const JarvisReply(),

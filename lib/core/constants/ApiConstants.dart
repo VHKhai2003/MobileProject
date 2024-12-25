@@ -16,5 +16,6 @@ class ApiConstants {
   static const String sendMessage = "/api/v1/ai-chat/messages";
   static const String crudPrompts = "/api/v1/prompts";
   static const String replyEmail = "/api/v1/ai-email";
+  static const String suggestIdeasReplyEmail = "/api/v1/ai-email/reply-ideas";
   static const String upgradeUrl = "https://admin.dev.jarvis.cx/pricing/overview";
 }

@@ -14,9 +14,9 @@ class _FormalityState extends State<Formality> {
   @override
   Widget build(BuildContext context) {
     List<Widget> tones = [
-      StyleButton(icon: 'assets/icons/thanks.png', label: 'Casual', value: widget.formality, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/sorry.png', label: 'Neutral', value: widget.formality, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/like.png', label: 'Formal', value: widget.formality, onChange: widget.onChange,),
+      StyleButton(icon: '🤙', label: 'Casual', value: widget.formality, onChange: widget.onChange,),
+      StyleButton(icon: '📄', label: 'Neutral', value: widget.formality, onChange: widget.onChange,),
+      StyleButton(icon: '💼', label: 'Formal', value: widget.formality, onChange: widget.onChange,),
     ];
     return Column(
         children: [

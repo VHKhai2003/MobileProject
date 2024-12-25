@@ -32,12 +32,15 @@ class _StyleButtonState extends State<StyleButton> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            widget.icon,
-            width: 20,
-            height: 20,
-          ),
-          const SizedBox(width: 8),
+          // Image.asset(
+          //   widget.icon,
+          //   width: 20,
+          //   height: 20,
+          // ),
+          if (widget.icon != '') ...[
+            Text(widget.icon),
+            const SizedBox(width: 8),
+          ],
           Text(widget.label, style: const TextStyle(fontSize: 15),),
         ],
       ),
