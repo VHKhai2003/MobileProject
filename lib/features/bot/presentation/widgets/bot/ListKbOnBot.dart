@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../dialog/AddKnowledgeDialog.dart';
-import 'PopupContentMenu.dart';
+import '../../chat-with-bot-dialog/AddKnowledgeDialog.dart';
+import '../commom/PopupContentMenu.dart';
 
 class ListKbOnBot extends StatefulWidget {
   final List<String> listKnownledge;

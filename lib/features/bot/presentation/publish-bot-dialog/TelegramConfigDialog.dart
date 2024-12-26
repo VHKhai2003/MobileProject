@@ -5,7 +5,6 @@ import 'package:code/features/bot/models/Bot.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TelegramConfigDialog extends StatefulWidget {
-  // Chuyển thành StatefulWidget
   final Bot bot;
   final BotProvider botProvider;
 
@@ -51,7 +50,7 @@ class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
               backgroundColor: Colors.green,
             ),
           );
-          // Trả về cả trạng thái verify và thông tin cấu hình
+
           Navigator.pop(context, {
             'verified': true,
             'config': {
@@ -107,7 +106,7 @@ class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
           ),
           const SizedBox(height: 8),
           TextField(
-            controller: _tokenController, // Sử dụng controller
+            controller: _tokenController,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -135,7 +134,6 @@ class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -218,7 +216,6 @@ class _TelegramConfigDialogState extends State<TelegramConfigDialog> {
               const SizedBox(height: 8),
               _buildInputField('Token'),
               const SizedBox(height: 16),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

@@ -219,7 +219,6 @@ class ThreadBotProvider with ChangeNotifier {
         ),
       );
       if (response.data != null && response.data['data'] is List) {
-        print(response.data);
         if (offset == 0) {
           threads.clear();
         }

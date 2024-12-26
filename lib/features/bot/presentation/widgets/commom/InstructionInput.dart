@@ -23,7 +23,7 @@ class InstructionInput extends StatefulWidget {
 class _InstructionInputState extends State<InstructionInput> {
   String _tempInstruction = '';
   final TextEditingController _dialogController = TextEditingController();
-  bool _isLoading = false; // Thêm state loading
+  bool _isLoading = false;
 
   void _showEditDialog() {
     _tempInstruction = widget.controller.text;
@@ -31,9 +31,8 @@ class _InstructionInputState extends State<InstructionInput> {
     setState(() => _isLoading = false);
     showDialog(
       context: context,
-      barrierDismissible: !_isLoading, // Không cho phép đóng khi đang loading
+      barrierDismissible: !_isLoading,
       builder: (context) => StatefulBuilder(
-        // Để có thể update state trong dialog
         builder: (context, setState) => Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -71,8 +70,6 @@ class _InstructionInputState extends State<InstructionInput> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // TextField
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
@@ -81,7 +78,7 @@ class _InstructionInputState extends State<InstructionInput> {
                   ),
                   child: TextField(
                     controller: _dialogController,
-                    enabled: !_isLoading, // Disable khi đang loading
+                    enabled: !_isLoading,
                     decoration: InputDecoration(
                       hintText:
                           "E.g., Answer in a professional tone, Be concise...",
@@ -106,8 +103,6 @@ class _InstructionInputState extends State<InstructionInput> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

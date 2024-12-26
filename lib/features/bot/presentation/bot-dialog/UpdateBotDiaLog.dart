@@ -33,7 +33,6 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
 
   Future<void> _loadBotData() async {
     try {
-      // Fetch fresh data from server
       final freshBot = await widget.botProvider.getBot(widget.bot.id);
 
       if (mounted) {
@@ -52,15 +51,12 @@ class _UpdateBotDialogState extends State<UpdateBotDialog> {
     } catch (e) {
       print('Error loading fresh bot data: $e');
       if (mounted) {
-        // Fallback to props data if fetch fails
         nameController.text = widget.bot.name;
         instructionsController.text = widget.bot.instructions ?? '';
         descriptionController.text = widget.bot.description ?? '';
-
         nameCharacterCount = widget.bot.name.length;
         instructionsCharacterCount = widget.bot.instructions?.length ?? 0;
         descriptionCharacterCount = widget.bot.description?.length ?? 0;
-
         setState(() => isInitializing = false);
       }
     }

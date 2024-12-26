@@ -117,7 +117,7 @@ class _KnowledgePopupContentState extends State<KnowledgePopupContent> {
         ),
         trailing: IconButton(
           icon: const Icon(Icons.remove_circle, color: Colors.red),
-          iconSize: 20, // Kích thước icon rõ ràng
+          iconSize: 20,
           onPressed: () async {
             await widget.onDelete(widget.botId, knowledge.id);
             if (mounted) {

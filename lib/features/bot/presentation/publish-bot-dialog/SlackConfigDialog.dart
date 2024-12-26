@@ -81,7 +81,7 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
               backgroundColor: Colors.green,
             ),
           );
-          // Trả về cả trạng thái verify và thông tin cấu hình
+
           Navigator.pop(context, {
             'verified': true,
             'config': {
@@ -223,7 +223,6 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -269,7 +268,6 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
                 ),
               ),
               const SizedBox(height: 16),
-
               if (_errorMessage != null)
                 Container(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -294,8 +292,6 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
                     ],
                   ),
                 ),
-
-              // Slack copylink section
               _buildInfoSection(
                 icon: Icons.info_outline,
                 title: 'Slack copylink',
@@ -318,8 +314,6 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
                 'https://knowledge-api.dev.jarvis.cx/kb-core/v1/hook/slack/slash/${widget.bot.id}',
               ),
               const SizedBox(height: 16),
-
-              // Slack information section
               _buildInfoSection(
                 icon: Icons.info_outline,
                 title: 'Slack information',
@@ -331,8 +325,6 @@ class _SlackConfigDialogState extends State<SlackConfigDialog> {
               _buildInputField('Client Secret', _clientSecretController),
               _buildInputField('Signing Secret', _signingSecretController),
               const SizedBox(height: 16),
-
-              // Action buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

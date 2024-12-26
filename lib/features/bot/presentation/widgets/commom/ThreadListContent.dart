@@ -1,4 +1,3 @@
-// thread_list_dialog.dart
 import 'package:flutter/material.dart';
 
 class ThreadListDialog extends StatelessWidget {
