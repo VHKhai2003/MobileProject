@@ -74,7 +74,7 @@ class _BotDashboardState extends State<BotDashboard> {
             child: FilledButton.icon(
               onPressed: widget.onCreateBot,
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.blue.shade700,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

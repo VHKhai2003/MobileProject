@@ -262,11 +262,11 @@ class _LoginPageState extends State<LoginPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(),
         body: ListView(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom + 30),
             children: [
+              SizedBox(height: 50,),
               Row(
                 children: [
                   Expanded(flex: 1, child: Container()),
@@ -342,10 +342,12 @@ class _LoginPageState extends State<LoginPage> {
                             if (isLoading) ...[
                               const SizedBox(height: 15),
                               Center(
-                                  child: SizedBox(
-                                      width: 15,
-                                      height: 15,
-                                      child: CircularProgressIndicator())),
+                                child: SizedBox(
+                                  width: 15,
+                                  height: 15,
+                                  child: CircularProgressIndicator()
+                                )
+                              ),
                             ],
                             const SizedBox(height: 15),
                             ForgotPasswordButton(

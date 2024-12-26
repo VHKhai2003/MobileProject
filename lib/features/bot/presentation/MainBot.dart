@@ -84,6 +84,7 @@ class _MainBotState extends State<MainBot> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: const Color(0xFFEBEFFF),
+          title: Text('Bot', style: TextStyle(fontWeight: FontWeight.bold),),
           actions: buildActions(context, tokenUsageProvider.tokenUsage),
         ),
         drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),

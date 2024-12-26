@@ -14,9 +14,9 @@ class _LengthState extends State<Length> {
   @override
   Widget build(BuildContext context) {
     List<Widget> lengths = [
-      StyleButton(icon: 'assets/icons/thanks.png', label: 'Short', value: widget.length, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/sorry.png', label: 'Medium', value: widget.length, onChange: widget.onChange,),
-      StyleButton(icon: 'assets/icons/like.png', label: 'Long', value: widget.length, onChange: widget.onChange,),
+      StyleButton(icon: '', label: 'Short', value: widget.length, onChange: widget.onChange,),
+      StyleButton(icon: '', label: 'Medium', value: widget.length, onChange: widget.onChange,),
+      StyleButton(icon: '', label: 'Long', value: widget.length, onChange: widget.onChange,),
     ];
     return Column(
         children: [
