@@ -17,6 +17,9 @@ import 'core/utils/event_bus.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // MobileAds.instance.updateRequestConfiguration(
+  //   RequestConfiguration(testDeviceIds: ['D67BE787D86284D785329A057D33F657']), // Thay bằng Test Device ID thực tế
+  // );
   MobileAds.instance.initialize();
   final ApiService apiService = ApiService();
   await apiService.init();

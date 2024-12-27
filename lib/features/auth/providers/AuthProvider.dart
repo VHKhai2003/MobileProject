@@ -5,7 +5,7 @@ import 'package:code/data/apis/KBApiService.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -14,28 +14,28 @@ class AuthProvider with ChangeNotifier {
 
   AuthProvider(this._tokenUsageProvider);
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: ApiConstants.googleOauthClientId,
-    scopes: ['email', 'profile', 'openid'],
-  );
-
-  Future<String?> getGoogleAuthToken() async {
-    try {
-      print('>>> hahahaha');
-      final GoogleSignInAccount? account = await _googleSignIn.signIn();
-      print('>>> hihihihi');
-      print('>>> account ${account.toString()}');
-      // if (account != null) {
-      //   final GoogleSignInAuthentication auth = await account.authentication;
-      //   print('>>> idToken ${auth.idToken}');
-      //   print('>>> accessToken ${auth.idToken}');
-      //   return auth.idToken;
-      // }
-    } catch (error) {
-      print('Google Sign-In failed: $error');
-    }
-    return null;
-  }
+  // final GoogleSignIn _googleSignIn = GoogleSignIn(
+  //   serverClientId: ApiConstants.googleOauthClientId,
+  //   scopes: ['email', 'profile', 'openid'],
+  // );
+  //
+  // Future<String?> getGoogleAuthToken() async {
+  //   try {
+  //     print('>>> hahahaha');
+  //     final GoogleSignInAccount? account = await _googleSignIn.signIn();
+  //     print('>>> hihihihi');
+  //     print('>>> account ${account.toString()}');
+  //     // if (account != null) {
+  //     //   final GoogleSignInAuthentication auth = await account.authentication;
+  //     //   print('>>> idToken ${auth.idToken}');
+  //     //   print('>>> accessToken ${auth.idToken}');
+  //     //   return auth.idToken;
+  //     // }
+  //   } catch (error) {
+  //     print('Google Sign-In failed: $error');
+  //   }
+  //   return null;
+  // }
 
   Future<String?> loginWithGoogle(String token) async {
     try {

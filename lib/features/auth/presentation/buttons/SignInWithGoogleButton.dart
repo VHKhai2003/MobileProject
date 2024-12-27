@@ -1,17 +1,15 @@
-import 'package:code/features/auth/providers/AuthProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SignInWithGoogleButton extends StatelessWidget {
   const SignInWithGoogleButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     return ElevatedButton(
       onPressed: () {
-        authProvider.getGoogleAuthToken();
+        // authProvider.getGoogleAuthToken();
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.all(5),

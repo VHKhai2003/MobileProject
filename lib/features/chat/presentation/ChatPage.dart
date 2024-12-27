@@ -30,6 +30,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> loadAds() async {
     await Future.delayed(Duration(seconds: 10));
+    _bannerAd?.dispose();
     _bannerAd = BannerAd(
       adUnitId: 'ca-app-pub-3940256099942544/6300978111',
       size: AdSize.banner,
@@ -127,7 +128,7 @@ class _ChatPageState extends State<ChatPage> {
                   ],
                 ),
               ),
-              if (_isAdLoaded) ...[
+              if (_isAdLoaded && _bannerAd != null) ...[
                 Positioned(
                   top: 0,
                   left: 50,
@@ -147,6 +148,7 @@ class _ChatPageState extends State<ChatPage> {
                             setState(() {
                               _isAdLoaded = false;
                             });
+                            _bannerAd?.dispose();
                             await loadAds();
                           },
                           child: Container(
