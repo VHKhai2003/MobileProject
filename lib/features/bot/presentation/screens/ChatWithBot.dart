@@ -40,7 +40,11 @@ class _ChatWithBotState extends State<ChatWithBot> {
   @override
   void initState() {
     super.initState();
-    _handleNewConversation();
+    final threadProvider = context.read<ThreadBotProvider>();
+    currentThreadId = null;
+    threadProvider.messages.clear();
+    chatController.clear();
+    instructionController.clear();
     _loadInitialData();
   }
 

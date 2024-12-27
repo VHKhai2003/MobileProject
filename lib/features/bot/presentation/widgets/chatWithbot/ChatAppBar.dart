@@ -6,33 +6,31 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int tokenUsage;
 
   const ChatAppBar({
-    Key? key,
+    super.key,
     required this.botName,
     required this.tokenUsage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: const Color(0xFFEBEFFF),
-      title: Expanded(
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/icons/bot-icon.png',
-              width: 40,
-              height: 40,
-              fit: BoxFit.contain,
+      title: Row(
+        children: [
+          Image.asset(
+            'assets/icons/bot-icon.png',
+            width: 40,
+            height: 40,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              botName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                botName,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
       actions: buildActions(context, tokenUsage),
     );

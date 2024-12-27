@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 import 'package:code/features/bot/models/Bot.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,10 +8,10 @@ class TelegramConfigDialog extends StatefulWidget {
   final BotProvider botProvider;
 
   const TelegramConfigDialog({
-    Key? key,
+    super.key,
     required this.bot,
     required this.botProvider,
-  }) : super(key: key);
+  });
 
   @override
   State<TelegramConfigDialog> createState() => _TelegramConfigDialogState();
