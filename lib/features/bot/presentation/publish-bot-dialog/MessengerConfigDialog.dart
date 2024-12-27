@@ -78,7 +78,6 @@ class _MessengerConfigDialogState extends State<MessengerConfigDialog> {
               backgroundColor: Colors.green,
             ),
           );
-          // Trả về cả trạng thái verify và thông tin cấu hình
           Navigator.pop(context, {
             'verified': true,
             'config': {

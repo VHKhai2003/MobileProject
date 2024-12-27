@@ -18,19 +18,6 @@ class ChatBubble extends StatelessWidget {
     this.timestamp,
   }) : super(key: key);
 
-  String _formatTimestamp(dynamic timestamp) {
-    if (timestamp == null) return '';
-    DateTime dateTime;
-    if (timestamp is String) {
-      dateTime = DateTime.parse(timestamp);
-    } else if (timestamp is DateTime) {
-      dateTime = timestamp;
-    } else {
-      return '';
-    }
-    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -52,7 +39,6 @@ class ChatBubble extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar
               CircleAvatar(
                 radius: 16,
                 backgroundColor: isBot ? Colors.blue[100] : Colors.grey[200],

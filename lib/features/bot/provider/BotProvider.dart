@@ -118,7 +118,6 @@ class BotProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        print(response.data);
         return response.data as List<dynamic>;
       } else {
         throw Exception('Failed to load bot configurations: No data');

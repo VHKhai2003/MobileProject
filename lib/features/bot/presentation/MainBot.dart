@@ -1,20 +1,20 @@
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
-import 'package:code/features/bot/presentation/widgets/BotCard.dart';
+import 'package:code/features/bot/presentation/widgets/bot/BotCard.dart';
 import 'package:code/shared/widgets/drawer/NavigationDrawer.dart'
     as navigation_drawer;
 import 'package:code/features/bot/presentation/screens/BotDashboard.dart';
-import 'package:code/features/bot/presentation/dialog/CreateBotDiaLog.dart';
-import 'package:code/features/bot/presentation/dialog/UpdateBotDiaLog.dart';
-import 'package:code/features/bot/presentation/dialog/DeleteBotDialog.dart';
+import 'package:code/features/bot/presentation/bot-dialog/CreateBotDiaLog.dart';
+import 'package:code/features/bot/presentation/bot-dialog/UpdateBotDiaLog.dart';
+import 'package:code/features/bot/presentation/bot-dialog/DeleteBotDialog.dart';
 import 'package:code/features/bot/presentation/screens/ChatWithBot.dart';
 import 'package:code/features/bot/models/Bot.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
 import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
-import 'package:code/features/bot/presentation/dialog/PublishBotDialog.dart';
+import 'package:code/features/bot/presentation/publish-bot-dialog/PublishBotDialog.dart';
 import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 
 class MainBot extends StatefulWidget {

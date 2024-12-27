@@ -25,7 +25,6 @@ class EmptyChat extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon và tiêu đề
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -57,7 +56,6 @@ class EmptyChat extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
-
             _buildSuggestionButton(
               'Please summarize the following content for me',
               Icons.analytics_outlined,
