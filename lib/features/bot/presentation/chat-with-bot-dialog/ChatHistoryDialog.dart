@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/ThreadBotProvider.dart';
-import '../widgets/commom/TimeAgo.dart';
 import '../widgets/commom/ThreadListTitle.dart';
 
 class ChatHistoryDialog extends StatelessWidget {

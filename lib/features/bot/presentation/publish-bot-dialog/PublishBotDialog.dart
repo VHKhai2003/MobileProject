@@ -10,11 +10,11 @@ class PublishBotDialog extends StatefulWidget {
   final List<dynamic> configurations;
 
   const PublishBotDialog({
-    Key? key,
+    super.key,
     required this.botProvider,
     required this.bot,
     required this.configurations,
-  }) : super(key: key);
+  });
 
   @override
   State<PublishBotDialog> createState() => _PublishBotDialogState();
@@ -40,14 +40,16 @@ class _PublishBotDialogState extends State<PublishBotDialog> {
           maxWidth: 400,
           minWidth: 300,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            _buildPlatforms(),
-            _buildActions(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              _buildPlatforms(),
+              _buildActions(),
+            ],
+          ),
         ),
       ),
     );
