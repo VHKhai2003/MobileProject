@@ -31,7 +31,6 @@ class _KnowledgeInfoState extends State<KnowledgeInfo> {
             children: [
               Row(
                 children: [
-                  knowledge.knowledgeName.length > 30 ?
                   Expanded(
                     child: Text(
                         knowledge.knowledgeName,
@@ -41,12 +40,6 @@ class _KnowledgeInfoState extends State<KnowledgeInfo> {
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                    ),
-                  ) : Text(
-                    knowledge.knowledgeName,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18
                     ),
                   ),
                   IconButton(onPressed: () {

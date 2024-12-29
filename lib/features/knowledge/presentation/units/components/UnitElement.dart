@@ -122,7 +122,7 @@ class _UnitElementState extends State<UnitElement> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          "From ${unit.type}",
+                          "From ${unit.type == 'local_file' ? 'file' : unit.type}",
                           style: TextStyle(
                               fontSize: 15,
                               color: Colors.grey
@@ -136,7 +136,7 @@ class _UnitElementState extends State<UnitElement> {
                             height: 20,
                             fit: BoxFit.cover,
                           ),
-                          SizedBox(width: 5),
+                          SizedBox(width: 2),
                           Text(
                               "${(unit.size / 1024).toStringAsFixed(2)} KB",
                               style: TextStyle(
@@ -149,7 +149,7 @@ class _UnitElementState extends State<UnitElement> {
                       Row(
                         children: [
                           Icon(CupertinoIcons.time, color: Colors.grey, size: 20),
-                          SizedBox(width: 5),
+                          SizedBox(width: 2),
                           Text(
                               unit.createdAt.toIso8601String().substring(0, 10),
                               style: TextStyle(

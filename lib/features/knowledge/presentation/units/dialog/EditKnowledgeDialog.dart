@@ -1,5 +1,3 @@
-import 'package:code/features/knowledge/models/Knowledge.dart';
-import 'package:code/features/knowledge/models/Unit.dart';
 import 'package:code/features/knowledge/providers/UnitProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,10 +14,8 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
   bool isLoading = false;
   final TextEditingController knowledgeNameController = TextEditingController();
   final TextEditingController knowledgeDescriptionController = TextEditingController();
-
   final FocusNode knowledgeNameFocusNode = FocusNode();
   final FocusNode knowledgeDescriptionFocusNode = FocusNode();
-
   late int knowledgeNameCharacterCount;
   late int knowledgeDescriptionCharacterCount;
 
@@ -45,18 +41,14 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+      onTap: () {FocusScope.of(context).unfocus();},
       child: AlertDialog(
         backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Edit knowledge', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-            IconButton(onPressed: () {
-              Navigator.of(context).pop();
-            }, icon: const Icon(Icons.close)),
+            IconButton(onPressed: () {Navigator.of(context).pop();}, icon: const Icon(Icons.close)),
           ],
         ),
         content: SizedBox(
@@ -64,29 +56,12 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
           height: 400,
           child: ListView(
             children: [
-              Image.asset(
-                'assets/icons/knowledge-base.png',
-                width: 80,
-                height: 80,
-                fit: BoxFit.contain,
-              ),
+              Image.asset('assets/icons/knowledge-base.png', width: 80, height: 80, fit: BoxFit.contain,),
               SizedBox(height: 20),
               RichText(text: TextSpan(
                 children: <TextSpan>[
-                  const TextSpan(
-                      text: "* ",
-                      style: TextStyle(
-                        color: Colors.redAccent,
-                        fontWeight: FontWeight.bold
-                      )
-                  ),
-                  TextSpan(
-                      text: "Knowledge name",
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                      ),
-                  ),
+                  const TextSpan(text: "* ", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                  TextSpan(text: "Knowledge name", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold,),),
                 ]
               )),
               SizedBox(height: 10),
@@ -100,9 +75,6 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
                     cursorColor: Colors.indigoAccent,
                     style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
                     decoration: InputDecoration(
-                      // filled: true,
-                      // fillColor: const Color.fromRGBO(242, 243, 250, 1),
-                      // hintText: "Type the text here...",
                       hintStyle: const TextStyle(color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -114,7 +86,7 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.indigoAccent, width: 2),
+                        borderSide: BorderSide(color: Colors.blue.shade700, width: 1),
                       ),
                     ),
                     onSubmitted: (value) {
@@ -146,10 +118,6 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
                     cursorColor: Colors.indigoAccent,
                     style: const TextStyle(fontSize: 15, letterSpacing: 0.5),
                     decoration: InputDecoration(
-                      // filled: true,
-                      // fillColor: const Color.fromRGBO(242, 243, 250, 1),
-                      // hintText: "Type the text here...",
-                      // hintStyle: const TextStyle(color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(color: Colors.grey, width: 1),
@@ -160,7 +128,7 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.indigoAccent, width: 2),
+                        borderSide: BorderSide(color: Colors.blue.shade700, width: 1),
                       ),
                     ),
                     scrollController: ScrollController(),
@@ -179,16 +147,12 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
         ),
         actions: [
           OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            onPressed: () {Navigator.of(context).pop();},
             child: const Text('Cancel'),
           ),
           FilledButton(
               onPressed: () async {
-                if(isLoading) {
-                  return;
-                }
+                if(isLoading) {return;}
                 String name = knowledgeNameController.text;
                 String description = knowledgeDescriptionController.text;
                 if(name.trim().isEmpty) {
@@ -203,9 +167,7 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
                   Fluttertoast.showToast(msg: 'Description is too long');
                   return;
                 }
-                setState(() {
-                  isLoading = true;
-                });
+                setState(() {isLoading = true;});
                 bool status = await widget.unitProvider.updateKnowledge(name, description);
                 if(status == false) {
                   Fluttertoast.showToast(msg: 'Failed to update knowledge');
@@ -218,14 +180,7 @@ class _EditKnowledgeDialogState extends State<EditKnowledgeDialog> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  isLoading ? SizedBox(
-                    width: 10,
-                    height: 10,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  ) : SizedBox.shrink(),
+                  isLoading ? SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,),) : SizedBox.shrink(),
                   SizedBox(width: 4,),
                   const Text('Confirm'),
                 ],
