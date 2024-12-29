@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isBot;
@@ -10,34 +10,24 @@ class ChatBubble extends StatelessWidget {
   final String botName;
 
   const ChatBubble({
-    Key? key,
+    super.key,
     required this.isBot,
     required this.text,
     required this.botName,
     this.threadId,
     this.timestamp,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final ValueNotifier<bool> isTap = ValueNotifier(false);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 40.0, bottom: 2.0),
-            child: Text(
-              isBot ? botName : 'You',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-          ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
                 radius: 16,
@@ -55,25 +45,73 @@ class ChatBubble extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(width: 4),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  isBot ? botName : 'You',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(width: 25),
               Flexible(
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.85,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0, vertical: 0.0),
-                  child: Text(
-                    text,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: isTap,
+                  builder: (context, value, child) {
+                    return Container(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.85,
+                      ),
+                      decoration: BoxDecoration(
+                        color: value ? Colors.grey.shade100 : Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                      child: GestureDetector(
+                        onTapDown: (_) {
+                          isTap.value = true;
+                        },
+                        onTapUp: (_) {
+                          isTap.value = false;
+                        },
+                        onTapCancel: () {
+                          isTap.value = false;
+                        },
+                        onLongPress: () {
+                          Clipboard.setData(ClipboardData(text: text));
+                          Fluttertoast.showToast(
+                            msg: "Copied to clipboard!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16.0,
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                          child: Text(
+                            text,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

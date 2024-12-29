@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'ChatBubble.dart';
 
 class ChatMessages extends StatelessWidget {
@@ -9,33 +10,21 @@ class ChatMessages extends StatelessWidget {
   final String botName;
 
   const ChatMessages({
-    Key? key,
+    super.key,
     required this.scrollController,
     required this.messages,
     this.isLoading = false,
     required this.isBotTyping,
     required this.botName,
-  }) : super(key: key);
+  });
 
   Widget _buildTypingIndicator() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 40.0, bottom: 2.0),
-            child: Text(
-              botName,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-          ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
                 radius: 16,
@@ -53,7 +42,23 @@ class ChatMessages extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  botName,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(width: 35),
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 12.0),
@@ -68,9 +73,10 @@ class ChatMessages extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildDot(1),
-                    _buildDot(2),
-                    _buildDot(3),
+                    SpinKitThreeBounce(
+                      color: Colors.blue.shade700,
+                      size: 12,
+                    ),
                   ],
                 ),
               ),
@@ -78,24 +84,6 @@ class ChatMessages extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDot(int index) {
-    return TweenAnimationBuilder(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 300 * index),
-      builder: (context, double value, child) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(
-            color: Colors.blue.shade700.withOpacity(value),
-            shape: BoxShape.circle,
-          ),
-        );
-      },
     );
   }
 

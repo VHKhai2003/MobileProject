@@ -9,7 +9,9 @@ import 'package:code/features/chat/models/MessageResponse.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -30,6 +32,8 @@ class ChatProvider with ChangeNotifier {
   String? get openAiThreadId => _openAiThreadId;
 
   Widget buildResponse(AiAgent agent, String content) {
+    final ValueNotifier<bool> isTap = ValueNotifier(false);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,26 +41,69 @@ class ChatProvider with ChangeNotifier {
           borderRadius: BorderRadius.circular(100),
           child: Image.asset(
             agent.image,
-            width: 20, height: 20,
+            width: 20,
+            height: 20,
             fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(width: 8,),
+        const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(agent.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
-              const SizedBox(height: 4,),
-              Text(content),
+              Text(
+                agent.name,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              GestureDetector(
+                onTapDown: (_) {
+                  isTap.value = true;
+                },
+                onTapUp: (_) {
+                  isTap.value = false;
+                },
+                onTapCancel: () {
+                  isTap.value = false;
+                },
+                onLongPress: () {
+                  Clipboard.setData(ClipboardData(text: content));
+                  Fluttertoast.showToast(
+                    msg: "Copied to clipboard!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16.0,
+                  );
+                },
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: isTap,
+                  builder: (context, value, child) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: value ? Colors.grey.shade100 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      child: Text(content),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
-        )
+        ),
       ],
     );
   }
 
   Widget buildResponseBot(Bot bot, String content) {
+    final ValueNotifier<bool> isTap = ValueNotifier(false);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -75,7 +122,41 @@ class ChatProvider with ChangeNotifier {
             children: [
               Text(bot.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
               const SizedBox(height: 4,),
-              Text(content),
+              GestureDetector(
+                onTapDown: (_) {
+                  isTap.value = true;
+                },
+                onTapUp: (_) {
+                  isTap.value = false;
+                },
+                onTapCancel: () {
+                  isTap.value = false;
+                },
+                onLongPress: () {
+                  Clipboard.setData(ClipboardData(text: content));
+                  Fluttertoast.showToast(
+                    msg: "Copied to clipboard!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16.0,
+                  );
+                },
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: isTap,
+                  builder: (context, value, child) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: value ? Colors.grey.shade100 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      child: Text(content),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         )
@@ -154,6 +235,8 @@ class ChatProvider with ChangeNotifier {
   }
 
   Widget buildQuestion(String content) {
+    final ValueNotifier<bool> isTap = ValueNotifier(false);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -172,7 +255,41 @@ class ChatProvider with ChangeNotifier {
             children: [
               const Text("You", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
               const SizedBox(height: 4,),
-              Text(content)
+              GestureDetector(
+                onTapDown: (_) {
+                  isTap.value = true;
+                },
+                onTapUp: (_) {
+                  isTap.value = false;
+                },
+                onTapCancel: () {
+                  isTap.value = false;
+                },
+                onLongPress: () {
+                  Clipboard.setData(ClipboardData(text: content));
+                  Fluttertoast.showToast(
+                    msg: "Copied to clipboard!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16.0,
+                  );
+                },
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: isTap,
+                  builder: (context, value, child) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: value ? Colors.grey.shade100 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      child: Text(content),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         )
