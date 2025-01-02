@@ -18,4 +18,5 @@ class ApiConstants {
   static const String replyEmail = "/api/v1/ai-email";
   static const String suggestIdeasReplyEmail = "/api/v1/ai-email/reply-ideas";
   static const String upgradeUrl = "https://admin.dev.jarvis.cx/pricing/overview";
+  static const String privacyUrl = "https://www.freeprivacypolicy.com/live/209791da-8f42-4611-abb8-df503eb84892";
 }
