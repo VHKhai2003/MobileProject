@@ -12,7 +12,7 @@ class JarvisLogoAndLabel extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: ClipOval(
             child: Image.asset(
-              'assets/icons/jarvis-icon.png',
+              'assets/icons/logo-icon.png',
               width: 30,
               height: 30,
               fit: BoxFit.cover,
@@ -20,11 +20,12 @@ class JarvisLogoAndLabel extends StatelessWidget {
           ),
         ),
         const Text(
-          'Jarvis',
+          'EchoAI',
           style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: Color.fromRGBO(20, 80, 163, 1)
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+              // color: Color.fromRGBO(20, 80, 163, 1)
+            color: Colors.pink
           ),
         ),
       ],

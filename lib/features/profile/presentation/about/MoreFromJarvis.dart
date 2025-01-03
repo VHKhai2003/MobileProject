@@ -12,7 +12,7 @@ class MoreFromJarvis extends StatelessWidget {
       child: ListTile(
         tileColor: const Color(0xFFEBEFFF),
         leading: const Icon(Icons.more_horiz, color: Colors.blue),
-        title: const Text('More from Jarvis', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text('More from EchoAI', style: TextStyle(fontWeight: FontWeight.bold),),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {},
       ),

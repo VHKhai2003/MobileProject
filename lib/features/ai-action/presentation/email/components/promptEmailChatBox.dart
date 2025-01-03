@@ -25,7 +25,7 @@ class PromptEmailChatBox extends StatelessWidget {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: const Color.fromRGBO(242, 243, 250, 1),
-                hintText: "Tell Jarvis how you want to reply...",
+                hintText: "Tell EchoAI how you want to reply...",
                 hintStyle: const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
