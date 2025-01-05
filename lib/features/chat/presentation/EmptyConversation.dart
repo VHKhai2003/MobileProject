@@ -25,7 +25,7 @@ class EmptyConversation extends StatelessWidget {
           children: [
             const Text("👋", style: TextStyle(fontSize: 36, color: Colors.yellow),),
             Text("Hello, Good ${getPartOfDay()}", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),),
-            const Text("I'm Jarvis, your personal assistant"),
+            const Text("I'm EchoAI, your personal assistant"),
             const SizedBox(height: 32,),
             SuggestionPrompt(
               promptController: promptController,

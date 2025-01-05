@@ -1,3 +1,4 @@
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 import 'package:code/features/chat/providers/AiModelProvider.dart';
 import 'package:code/features/chat/providers/ChatProvider.dart';
 import 'package:code/features/chat/providers/ConversationsProvider.dart';
@@ -20,6 +21,16 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final FocusNode promptFocusNode = FocusNode();
   final TextEditingController promptController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    promptController.dispose();
+    promptFocusNode.dispose();
+    super.dispose();
+  }
+  // end ads
 
   bool isEmpty = true;
   void _handleNewChat() {
@@ -33,6 +44,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
@@ -41,7 +53,13 @@ class _ChatPageState extends State<ChatPage> {
       providers: [
         ChangeNotifierProvider(create: (_) => AiModelProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider(context.read<TokenUsageProvider>())),
-        ChangeNotifierProvider(create: (context) => ConversationsProvider(context.read<ChatProvider>(), context.read<AiModelProvider>())),
+        ChangeNotifierProvider(create:
+          (context) => ConversationsProvider(
+            context.read<ChatProvider>(),
+            context.read<AiModelProvider>(),
+            context.read<ThreadBotProvider>()
+          )
+        ),
       ],
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -53,26 +71,31 @@ class _ChatPageState extends State<ChatPage> {
             actions: buildActions(context, tokenUsageProvider.tokenUsage),
           ),
           drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
-          body: Container(
-            padding: const EdgeInsets.all(20),
-            color: Colors.white,
-            child: Column(
-              children: [
-                isEmpty ?
-                EmptyConversation(
-                  changeConversation: _handleOpenConversation,
-                  promptController: promptController,
-                ) :
-                Expanded(child: Conversation(isConversationHistory: isEmpty)),
-                Chatbox(
-                  isNewChat: isEmpty,
-                  changeConversation: _handleOpenConversation,
-                  openNewChat: _handleNewChat,
-                  promptFocusNode: promptFocusNode,
-                  promptController: promptController,
+          body: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    isEmpty ?
+                    EmptyConversation(
+                      changeConversation: _handleOpenConversation,
+                      promptController: promptController,
+                    ) :
+                    Expanded(child: Conversation(isConversationHistory: isEmpty, scrollController: _scrollController,)),
+                    Chatbox(
+                      isNewChat: isEmpty,
+                      changeConversation: _handleOpenConversation,
+                      openNewChat: _handleNewChat,
+                      promptFocusNode: promptFocusNode,
+                      promptController: promptController,
+                      scrollController: _scrollController,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

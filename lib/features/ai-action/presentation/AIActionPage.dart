@@ -20,7 +20,7 @@ class AIActionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

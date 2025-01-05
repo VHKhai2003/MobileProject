@@ -89,7 +89,7 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
 
   @override
   Widget build(BuildContext context) {
-    final conversationProvider = Provider.of<ConversationsProvider>(context, listen: false);
+    final conversationProvider = Provider.of<ConversationsProvider>(context);
 
     return prompts.isNotEmpty ?
     Column(
@@ -99,7 +99,7 @@ class _SuggestionPromptState extends State<SuggestionPrompt> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("You don't know what to say, use a prompt", style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 100, 116, 139)),),
+                    Expanded(child: Text("You don't know what to say, use a prompt", style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 100, 116, 139)),)),
                     TextButton(
                         onPressed: () async {
                           String? data = await showModalBottomSheet(

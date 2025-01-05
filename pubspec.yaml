@@ -38,9 +38,15 @@ dependencies:
   fluttertoast: ^8.2.8
   intl: ^0.19.0
   flutter_spinkit: ^5.2.1
+#  google_sign_in: ^6.2.2
+  http_parser: ^4.0.0
+  url_launcher: ^6.3.1
+#  google_mobile_ads: ^5.2.0
+  event_bus: ^2.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -51,6 +57,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo-icon.png"
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -69,13 +79,7 @@ flutter:
     - assets/icons/gemini-15-flash.webp
     - assets/icons/gemini-15-pro.png
     - assets/icons/claude-3-haiku.jpg
-    - assets/icons/confused.png
-    - assets/icons/dislike.png
     - assets/icons/fire.png
-    - assets/icons/followup.png
-    - assets/icons/like.png
-    - assets/icons/sorry.png
-    - assets/icons/thanks.png
     - assets/icons/basic.png
     - assets/icons/infinity.png
     - assets/icons/pro.png
@@ -90,6 +94,12 @@ flutter:
     - assets/icons/google-drive.png
     - assets/icons/confluence.png
     - assets/icons/source.png
+    - assets/icons/android.png
+    - assets/icons/bot-icon.png
+    - assets/icons/messenger.png
+    - assets/icons/telegram.png
+    - assets/icons/user.jpg
+    - assets/icons/logo-icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,98 +1,182 @@
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:code/shared/widgets/appbar/BuildActions.dart';
 import 'package:flutter/material.dart';
-import 'package:code/features/bot/presentation/widgets/BotCard.dart';
-import 'package:code/shared/widgets/drawer/NavigationDrawer.dart' as navigation_drawer;
+import 'package:code/features/bot/presentation/widgets/bot/BotCard.dart';
+import 'package:code/shared/widgets/drawer/NavigationDrawer.dart'
+    as navigation_drawer;
 import 'package:code/features/bot/presentation/screens/BotDashboard.dart';
-import 'package:code/features/bot/presentation/screens/CreateBotDiaLog.dart';
+import 'package:code/features/bot/presentation/bot-dialog/CreateBotDiaLog.dart';
+import 'package:code/features/bot/presentation/bot-dialog/UpdateBotDiaLog.dart';
+import 'package:code/features/bot/presentation/bot-dialog/DeleteBotDialog.dart';
 import 'package:code/features/bot/presentation/screens/ChatWithBot.dart';
 import 'package:code/features/bot/models/Bot.dart';
 import 'package:provider/provider.dart';
+import 'package:code/features/bot/provider/BotProvider.dart';
+import 'package:code/features/bot/provider/RLTBotAndKBProvider.dart';
+import 'package:code/features/knowledge/providers/KnowledgeProvider.dart';
+import 'package:code/features/bot/presentation/publish-bot-dialog/PublishBotDialog.dart';
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
 
-class MainBot extends StatelessWidget {
-  final List<Bot> bots = [
-    Bot(
-      name: 'Bot1',
-      description: 'This is the first bot',
-      date: '6/10/2024',
-      knowledge: ['AI Basics', 'Machine Learning', 'Deep Learning'],
-    ),
-    Bot(
-      name: 'Bot2',
-      description: 'This is the second bot',
-      date: '7/10/2024',
-      knowledge: ['Natural Language Processing', 'Computer Vision'],
-    ),
-    Bot(
-      name: 'Bot3',
-      description: 'This is the third bot',
-      date: '8/10/2024',
-      knowledge: ['Reinforcement Learning', 'AI Ethics'],
-    ),
-  ];
+class MainBot extends StatefulWidget {
+  @override
+  State<MainBot> createState() => _MainBotState();
+}
+
+class _MainBotState extends State<MainBot> {
+  String searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBots();
+  }
+
+  Future<void> _loadBots() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BotProvider>().loadBots('');
+    });
+  }
+
+  Future<void> _navigateToChatWithBot(
+      BuildContext context, BotProvider botProvider, Bot bot) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => RLTBotAndKBProvider()),
+            ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
+            // ChangeNotifierProvider(create: (_) => ThreadBotProvider()),
+          ],
+          child: ChatWithBot(
+            botProvider: botProvider,
+            bot: bot,
+          ),
+        ),
+      ),
+    );
+
+    if (result == true || result == null) {
+      await _loadBots();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context, listen: false);
+    final tokenUsageProvider = Provider.of<TokenUsageProvider>(context);
+    final botProvider = Provider.of<BotProvider>(context);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFEBEFFF),
-        actions: buildActions(context, tokenUsageProvider.tokenUsage),
-      ),
-      drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            BotDashboard(
-              onBotTypeChanged: (type) {
-                print("Selected bot type: $type");
-              },
-              onSearch: (query) {
-                print("Search query: $query");
-              },
-              onCreateBot: () {
-                showDialog(
+    List<Bot> filteredBots = searchQuery.isEmpty
+        ? botProvider.bots
+        : botProvider.bots
+            .where((bot) =>
+                bot.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+                (bot.description?.toLowerCase() ?? '')
+                    .contains(searchQuery.toLowerCase()))
+            .toList();
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFEBEFFF),
+          title: Text('Bot', style: TextStyle(fontWeight: FontWeight.bold),),
+          actions: buildActions(context, tokenUsageProvider.tokenUsage),
+        ),
+        drawer: const SafeArea(child: navigation_drawer.NavigationDrawer()),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              BotDashboard(
+                onBotTypeChanged: (type) {},
+                onSearch: (query) {
+                  setState(() {
+                    searchQuery = query;
+                  });
+                },
+                onCreateBot: () {
+                  showDialog(
                     context: context,
-                    builder: (context) {
-                      return CreateBotDialog(
-                          createNewBot: (String name, String description) {});
-                    });
-              },
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: bots.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: BotCard(
-                      name: bots[index].name,
-                      description: bots[index].description,
-                      date: bots[index].date,
-                      onFavorite: () {},
-                      onPublish: () {},
-                      onDelete: () {},
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatWithBot(
-                              botName: bots[index].name,
-                              listKnowledge: bots[index].knowledge,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    builder: (context) =>
+                        CreateBotDialog(botProvider: botProvider),
                   );
                 },
               ),
-            ),
-          ],
+              SizedBox(height: 16),
+              Expanded(
+                child: botProvider.isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: filteredBots.length,
+                        itemBuilder: (context, index) {
+                          final bot = filteredBots[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: BotCard(
+                              name: bot.name,
+                              description: bot.description ?? '',
+                              createdAt: bot.createdAt,
+                              updatedAt: bot.updatedAt,
+                              onEdit: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => UpdateBotDialog(
+                                    botProvider: botProvider,
+                                    bot: bot,
+                                  ),
+                                );
+                              },
+                              onPublish: () async {
+                                try {
+                                  // Gọi getConfigurations trước
+                                  final configurations = await botProvider
+                                      .getConfigurations(bot.id);
+
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => PublishBotDialog(
+                                        botProvider: botProvider,
+                                        bot: bot,
+                                        configurations: configurations,
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Không thể lấy cấu hình bot: $e')),
+                                    );
+                                  }
+                                }
+                              },
+                              onDelete: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => DeleteBotDialog(
+                                    botProvider: botProvider,
+                                    bot: bot,
+                                  ),
+                                );
+                              },
+                              onTap: () {
+                                _navigateToChatWithBot(
+                                    context, botProvider, bot);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

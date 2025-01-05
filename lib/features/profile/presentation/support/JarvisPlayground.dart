@@ -12,7 +12,7 @@ class JarvisPlayground extends StatelessWidget {
       child: ListTile(
         tileColor: const Color(0xFFEBEFFF),
         leading: const Icon(Icons.explore, color: Colors.blue),
-        title: const Text('Jarvis Playground', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text('EchoAI Playground', style: TextStyle(fontWeight: FontWeight.bold),),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {},
       ),

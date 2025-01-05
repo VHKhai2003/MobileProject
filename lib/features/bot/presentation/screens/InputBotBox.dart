@@ -1,187 +1,346 @@
 import 'package:flutter/material.dart';
-import 'package:code/features/bot/presentation/screens/SelectKnowledgeDialog.dart';
+import 'package:provider/provider.dart';
+import 'package:code/features/bot/provider/ThreadBotProvider.dart';
+import 'package:code/features/bot/presentation/widgets/bot/ListKbOnBot.dart';
+import 'package:code/features/bot/presentation/widgets/commom/InstructionInput.dart';
+import 'package:code/features/bot/presentation/widgets/chatWithbot/ChatInput.dart';
+import 'package:intl/intl.dart';
+import 'package:code/features/bot/presentation/widgets/commom/ThreadListContent.dart';
 
-class InputBotBox extends StatefulWidget {
+class InputBotBox extends StatelessWidget {
   final VoidCallback changeConversation;
-  final VoidCallback openNewChat;
   final List<String> listKnownledge;
+  final String botId;
+  final TextEditingController instructionController;
+  final TextEditingController chatController;
+  final bool isUpdating;
+  final bool showSuccess;
+  final VoidCallback onCancelInstruction;
+  final ValueChanged<String> onInstructionChange;
+  final Function(String message, String threadId, String instruction)?
+      onSendMessage;
+  final Function(String assistantId, String message)? onCreateThread;
+  final Function(String assistantId, String message)? onUpdateThread;
+  final Function(String threadId)? onViewMessages;
+  final Function(String assistantId)? onViewThreadList;
+  final String? currentThreadId;
 
-  InputBotBox({
-    Key? key,
+  const InputBotBox({
+    super.key,
     required this.changeConversation,
-    required this.openNewChat,
     required this.listKnownledge,
-  }) : super(key: key);
+    required this.botId,
+    required this.instructionController,
+    required this.chatController,
+    required this.isUpdating,
+    required this.showSuccess,
+    required this.onInstructionChange,
+    this.onSendMessage,
+    this.onCreateThread,
+    this.onUpdateThread,
+    this.onViewMessages,
+    this.onViewThreadList,
+    this.currentThreadId,
+    required this.onCancelInstruction,
+  });
+  String timeAgo(String? dateStr) {
+    if (dateStr == null) return '';
+    try {
+      final currentTime = DateTime.now();
+      final createdAt = DateTime.parse(dateStr);
+      final difference = currentTime.difference(createdAt);
 
-  @override
-  _InputBotBoxState createState() => _InputBotBoxState();
-}
-
-class _InputBotBoxState extends State<InputBotBox> {
-  final TextEditingController _controller = TextEditingController();
-
-  void sendMessage(String message, String? knowledge) {
-    print("Tin nhắn gửi: $message, Kiến thức: $knowledge");
-    _controller.clear();
+      if (difference.inDays >= 7) {
+        final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+        return dateFormat.format(createdAt);
+      } else if (difference.inDays > 0) {
+        return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+      } else {
+        return 'Just now';
+      }
+    } catch (e) {
+      return '';
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                ListKnownledge(listKnownledge: widget.listKnownledge),
-                IconButton(
-                  onPressed: () async {
-                    List<Map<String, dynamic>> mockData = [
-                      {"name": "New", "size": "0.77"},
-                      {"name": "DRL", "size": "5.79"},
-                      {"name": "Flutter", "size": "1.02"}
-                    ];
-
-                    final selectedKnowledge = await showDialog(
-                      context: context,
-                      builder: (context) =>
-                          SelectKnowledgeDialog(knowledges: mockData),
-                    );
-
-                    if (selectedKnowledge != null) {
-                      print('Bạn đã chọn: ${selectedKnowledge['name']}');
-                    }
-                  },
-                  icon: const Icon(Icons.add, color: Colors.blueGrey),
-                ),
-              ],
-            ),
-            IconButton(
-              onPressed: widget.openNewChat,
-              icon:
-                  Icon(Icons.add_comment_outlined, color: Colors.blue.shade700),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue.shade800, width: 0.6),
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: "Ask me anything, press '/' for prompts...",
-                  hintStyle: TextStyle(fontSize: 14, color: Colors.blueGrey),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(4, 2, 2, 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.add_circle_outline,
-                          color: Colors.blueGrey),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        String userMessage = _controller.text.trim();
-                        if (userMessage.isNotEmpty &&
-                            widget.listKnownledge.isNotEmpty) {
-                          sendMessage(userMessage, widget.listKnownledge.first);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Input somethings')),
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.send, color: Colors.blueGrey),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ListKnownledge extends StatelessWidget {
-  final List<String> listKnownledge;
-
-  const ListKnownledge({super.key, required this.listKnownledge});
-
-  void _showKnowledgeBottomSheet(BuildContext context) {
+  void showThreadListDialog(
+      BuildContext context, List<dynamic> threads, String? currentThreadId) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Available Knowledge",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: listKnownledge.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(listKnownledge[index]),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          print('Xóa kiến thức: ${listKnownledge[index]}');
-                        },
-                      ),
-                    );
-                  },
-                ),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              TextButton(
-                child: Text("Close"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Chat History',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close),
+                        )
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: Consumer<ThreadBotProvider>(
+                      builder: (context, provider, _) {
+                        if (provider.isLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        if (provider.threads.isEmpty) {
+                          return const Center(child: Text('No chat history'));
+                        }
+
+                        final threads = provider.threads.map((thread) {
+                          return Map<String, dynamic>.from(thread as Map);
+                        }).toList();
+
+                        return ListView.separated(
+                          controller: controller,
+                          itemCount: threads.length,
+                          separatorBuilder: (context, index) => const Divider(
+                            height: 1,
+                            thickness: 0.5,
+                            color: Colors.blueGrey,
+                          ),
+                          itemBuilder: (context, index) {
+                            final thread = threads[index];
+                            final isCurrentThread =
+                                thread['openAiThreadId'] == currentThreadId;
+
+                            return ListTile(
+                              onTap: () {
+                                Navigator.pop(context);
+                                if (onViewMessages != null) {
+                                  onViewMessages!(thread['openAiThreadId']);
+                                }
+                              },
+                              tileColor: isCurrentThread
+                                  ? Colors.blueGrey.shade50
+                                  : null,
+                              title: Row(
+                                children: [
+                                  if (isCurrentThread)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      margin: const EdgeInsets.only(right: 4),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            255, 23, 37, 84),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Text(
+                                        'current',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  Expanded(
+                                    child: Text(
+                                      thread['threadName'] ??
+                                          'Chat ${index + 1}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              subtitle: Text(
+                                timeAgo(thread['createdAt']),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
+    onViewThreadList?.call(botId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showKnowledgeBottomSheet(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        constraints: BoxConstraints(maxHeight: 32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.grey.shade100,
-        ),
-        child: Center(
-          child: Text(
-            "View Knowledge",
-            style: TextStyle(color: Colors.black),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+            child: Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListKbOnBot(
+                    listKnownledge: listKnownledge,
+                    botId: botId,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InstructionInput(
+                          controller: instructionController,
+                          onInstructionChange: onInstructionChange,
+                          isUpdating: isUpdating,
+                          showSuccess: showSuccess,
+                          onCancel: onCancelInstruction,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                onViewThreadList?.call(botId);
+                              });
+
+                              return Material(
+                                color: Colors.transparent,
+                                child: Consumer<ThreadBotProvider>(
+                                  builder: (context, provider, _) {
+                                    return ThreadListDialog(
+                                      threads: provider.threads
+                                          .map((thread) =>
+                                              Map<String, dynamic>.from(
+                                                  thread as Map))
+                                          .toList(),
+                                      isLoading: provider.isLoading,
+                                      currentThreadId: currentThreadId,
+                                      onViewMessages: onViewMessages,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        icon: Icon(
+                          Icons.history,
+                          color: Colors.blue.shade700,
+                          size: 22,
+                        ),
+                        tooltip: 'Chat History',
+                        splashRadius: 20,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          changeConversation();
+                          chatController.clear();
+                        },
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Colors.blue.shade700,
+                          size: 22,
+                        ),
+                        tooltip: 'New Chat',
+                        splashRadius: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade100, width: 1),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ChatInput(controller: chatController),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (chatController.text.isEmpty) return;
+                    if (onSendMessage != null) {
+                      onSendMessage!(
+                        chatController.text,
+                        currentThreadId ?? '',
+                        instructionController.text,
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    Icons.send_rounded,
+                    color: Colors.blue.shade700,
+                    size: 22,
+                  ),
+                  tooltip: 'Send Message',
+                  splashRadius: 20,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

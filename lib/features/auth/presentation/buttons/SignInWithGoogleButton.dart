@@ -5,8 +5,12 @@ class SignInWithGoogleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        // authProvider.getGoogleAuthToken();
+      },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.all(5),
       ),

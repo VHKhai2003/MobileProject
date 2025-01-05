@@ -1,6 +1,9 @@
 class ApiConstants {
   static const String baseUrl = "https://api.dev.jarvis.cx";
   static const String login = "/api/v1/auth/sign-in";
+  static const String loginWithGoogle = "/api/v1/auth/google-sign-in";
+  static const String googleOauthClientId =
+      "599361404647-e74vpq6s2ab8q6r275s12sdhr36enq5l.apps.googleusercontent.com";
   static const String register = "/api/v1/auth/sign-up";
   static const String logout = "/api/v1/auth/sign-out";
   static const String getUser = "/api/v1/auth/me";
@@ -12,4 +15,8 @@ class ApiConstants {
   static const String newThreadChat = "/api/v1/ai-chat";
   static const String sendMessage = "/api/v1/ai-chat/messages";
   static const String crudPrompts = "/api/v1/prompts";
+  static const String replyEmail = "/api/v1/ai-email";
+  static const String suggestIdeasReplyEmail = "/api/v1/ai-email/reply-ideas";
+  static const String upgradeUrl = "https://admin.dev.jarvis.cx/pricing/overview";
+  static const String privacyUrl = "https://www.freeprivacypolicy.com/live/209791da-8f42-4611-abb8-df503eb84892";
 }

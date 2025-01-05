@@ -1,7 +1,10 @@
 import 'package:code/core/constants/ApiConstants.dart';
+import 'package:code/core/utils/event_bus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -14,6 +17,7 @@ class ApiService {
 
   Future<void> init() async {
     await loadTokens();
+    // await refreshAccessToken();
   }
 
   ApiService() {
@@ -26,8 +30,8 @@ class ApiService {
         final requireToken = options.extra['requireToken'] ?? false;
 
         if (requireToken) {
-          if (_accessToken == null || await _isTokenExpired()) {
-            await _refreshAccessToken();
+          if (_accessToken == null || await isTokenExpired()) {
+            await refreshAccessToken();
           }
           options.headers['Authorization'] = 'Bearer $_accessToken';
         }
@@ -37,6 +41,17 @@ class ApiService {
         return handler.next(response);
       },
       onError: (DioException e, handler) {
+        if (e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.sendTimeout ||
+            e.type == DioExceptionType.receiveTimeout ||
+            e.type == DioExceptionType.connectionError) {
+          print('Lỗi kết nối mạng: ${e.message}');
+          Fluttertoast.showToast(
+            msg: 'Please check your Internet connection.',
+          );
+        } else {
+          print('Lỗi khác: ${e.message}');
+        }
         return handler.next(e);
       },
     ));
@@ -54,7 +69,7 @@ class ApiService {
     await _storage.write(key: 'refreshToken', value: refreshToken);
   }
 
-  Future<bool> _isTokenExpired() async {
+  Future<bool> isTokenExpired() async {
     if (_accessToken == null) return true;
     try {
       final parts = _accessToken!.split('.');
@@ -71,7 +86,7 @@ class ApiService {
     }
   }
 
-  Future<void> _refreshAccessToken() async {
+  Future<void> refreshAccessToken() async {
     await loadTokens();
     try {
       final response = await _dio.get(
@@ -89,9 +104,14 @@ class ApiService {
         throw Exception('Failed to refresh token');
       }
     } catch (e) {
-      throw Exception('Error refreshing token: $e');
+      _accessToken = null;
+      _refreshToken = null;
+      await _storage.deleteAll();
+      eventBus.fire(TokenRefreshFailedEvent());
     }
   }
 
   Dio get dio => _dio;
 }
+
+class TokenRefreshFailedEvent {}

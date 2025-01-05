@@ -5,7 +5,7 @@ class BotDashboard extends StatefulWidget {
   final Function(String) onSearch;
   final VoidCallback onCreateBot;
 
-  BotDashboard({
+  const BotDashboard({
     Key? key,
     required this.onBotTypeChanged,
     required this.onSearch,
@@ -18,88 +18,92 @@ class BotDashboard extends StatefulWidget {
 
 class _BotDashboardState extends State<BotDashboard> {
   final TextEditingController searchController = TextEditingController();
-  String dropdownValue = 'All';
-  List<String> list = <String>['All', 'Favorite'];
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            DropdownMenu<String>(
-              initialSelection: list.first,
-              onSelected: (String? value) {
-                // This is called when the user selects an item.
-                setState(() {
-                  dropdownValue = value!;
-                });
-              },
-              dropdownMenuEntries:
-                  list.map<DropdownMenuEntry<String>>((String value) {
-                return DropdownMenuEntry<String>(value: value, label: value);
-              }).toList(),
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: TextField(
-                  controller: searchController,
-                  onChanged: (value) {
-                    widget.onSearch(value); // Gọi callback khi tìm kiếm
-                  },
-                  cursorColor: Colors.indigoAccent,
-                  decoration: InputDecoration(
-                    hintText: 'Find bot here ...',
-                    prefixIcon: const Icon(Icons.search),
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          const BorderSide(color: Colors.grey, width: 1),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: 44,
+              child: TextField(
+                controller: searchController,
+                onChanged: widget.onSearch,
+                cursorColor: Colors.blue,
+                decoration: InputDecoration(
+                  hintText: 'Find bot here ...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 16,
+                  ),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.grey.shade400,
+                      size: 20,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Colors.indigoAccent, width: 2),
-                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 16,
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.blueAccent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ElevatedButton(
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            height: 44,
+            child: FilledButton.icon(
               onPressed: widget.onCreateBot,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                foregroundColor: Colors.white,
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.blue.shade700,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 0,
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.add_circle_outline, size: 20),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'New bot',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              icon: const Icon(
+                Icons.add,
+                size: 20,
+              ),
+              label: const Text(
+                'New bot',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 }

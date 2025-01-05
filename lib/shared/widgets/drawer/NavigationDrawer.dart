@@ -57,7 +57,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     // Icon(Icons.android, color: Colors.blue,),
                     ClipOval(
                       child: Image.asset(
-                        'assets/icons/jarvis-icon.png',
+                        'assets/icons/logo-icon.png',
                         width: 30,
                         height: 30,
                         fit: BoxFit.cover,
@@ -65,7 +65,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     ),
                     const SizedBox(width: 10),
                     const Text(
-                      'Jarvis15',
+                      'EchoAI',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -181,14 +181,23 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                           ),
                         ],
                       ),
-                      TokenUsageWidget(totalTokens: tokenUsageProvider.tokenUsageModel.totalTokens, usedTokens: tokenUsageProvider.tokenUsage),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("${tokenUsageProvider.tokenUsage}"),
-                          Text("${tokenUsageProvider.tokenUsageModel.totalTokens}")
-                        ],
-                      ),
+                      tokenUsageProvider.tokenUsageModel.unlimited
+                          ? TokenUsageWidget(totalTokens: 1, usedTokens: 1)
+                          : TokenUsageWidget(totalTokens: tokenUsageProvider.tokenUsageModel.totalTokens, usedTokens: tokenUsageProvider.tokenUsage),
+                      tokenUsageProvider.tokenUsageModel.unlimited
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text("Unlimited")
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("${tokenUsageProvider.tokenUsage}"),
+                                Text("${tokenUsageProvider.tokenUsageModel.totalTokens}")
+                              ],
+                            ),
                     ],
                   ),
                 ),

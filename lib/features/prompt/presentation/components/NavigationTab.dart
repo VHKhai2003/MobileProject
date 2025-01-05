@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NavigationTab extends StatelessWidget {
-  NavigationTab({super.key, required this.selections, required this.onPressed});
-  List<bool> selections;
-  void Function(int) onPressed;
+  const NavigationTab({super.key, required this.selections, required this.onPressed});
+  final List<bool> selections;
+  final void Function(int) onPressed;
 
   @override
   Widget build(BuildContext context) {
