@@ -6,7 +6,6 @@ import 'package:code/features/chat/presentation/ChatPage.dart';
 import 'package:code/shared/providers/TokenUsageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:code/features/bot/provider/BotProvider.dart';
 import 'package:code/features/bot/provider/RLTBotAndKbProvider.dart';
@@ -17,10 +16,6 @@ import 'core/utils/event_bus.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // MobileAds.instance.updateRequestConfiguration(
-  //   RequestConfiguration(testDeviceIds: ['D67BE787D86284D785329A057D33F657']), // Thay bằng Test Device ID thực tế
-  // );
-  MobileAds.instance.initialize();
   final ApiService apiService = ApiService();
   await apiService.init();
 

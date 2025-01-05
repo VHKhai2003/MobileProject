@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:code/shared/widgets/drawer/NavigationDrawer.dart' as navigation_drawer;
 import 'package:code/features/chat/presentation/chatbox/ChatBox.dart';
 import 'package:code/features/chat/presentation/EmptyConversation.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -24,43 +23,11 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController promptController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  // ads
-  BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
-
-  Future<void> loadAds() async {
-    await Future.delayed(Duration(seconds: 10));
-    _bannerAd?.dispose();
-    _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      size: AdSize.banner,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          print('Ad failed to load: $error');
-          ad.dispose();
-        },
-      ),
-    )..load();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadAds();
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
     promptController.dispose();
     promptFocusNode.dispose();
-    _bannerAd?.dispose();
     super.dispose();
   }
   // end ads
@@ -128,39 +95,6 @@ class _ChatPageState extends State<ChatPage> {
                   ],
                 ),
               ),
-              if (_isAdLoaded && _bannerAd != null) ...[
-                Positioned(
-                  top: 0,
-                  left: 50,
-                  child: Stack(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: _bannerAd!.size.width.toDouble(),
-                        height: _bannerAd!.size.height.toDouble(),
-                        child: AdWidget(ad: _bannerAd!),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: GestureDetector(
-                          onTap: () async {
-                            setState(() {
-                              _isAdLoaded = false;
-                            });
-                            _bannerAd?.dispose();
-                            await loadAds();
-                          },
-                          child: Container(
-                            color: Colors.white,
-                            child: Icon(Icons.clear, color: Colors.blue, size: 20,)
-                          )
-                        )
-                      )
-                    ],
-                  ),
-                ),
-              ]
             ],
           ),
         ),
